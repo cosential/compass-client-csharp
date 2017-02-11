@@ -3,8 +3,6 @@ using System.Net;
 using RestSharp;
 using RestSharp.Authenticators;
 
-//ToDo: Create a git hub account for Cosential to host this project as an open source project (along with unit tests)
-
 namespace Cosential.Integrations.CompassApiClient
 {
     public class Client
