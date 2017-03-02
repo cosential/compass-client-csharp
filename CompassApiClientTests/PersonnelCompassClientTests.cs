@@ -3,6 +3,7 @@ using Cosential.Integrations.Compass.Client;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,10 +36,13 @@ namespace Cosential.Integrations.Compass.Client.Tests
 
             var result = _client.Create(personnel);
 
+            Trace.Write(result);
+
             Assert.IsNotNull(result);
             Assert.AreEqual(result.FirstName, personnel.FirstName);
             Assert.AreEqual(result.LastName, personnel.LastName);
             Assert.AreEqual(personnel.ExternalId, personnel.ExternalId);
+            Assert.IsTrue(result.PersonnelId.HasValue);
         }
 
         [TestMethod()]
