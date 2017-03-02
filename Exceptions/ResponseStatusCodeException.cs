@@ -3,7 +3,7 @@ using System.Net;
 using System.Runtime.Serialization;
 using RestSharp;
 
-namespace Cosential.Integrations.CompassApiClient
+namespace Cosential.Integrations.Compass.Client
 {
     [Serializable]
     internal class ResponseStatusCodeException : Exception

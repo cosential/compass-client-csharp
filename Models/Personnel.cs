@@ -1,7 +1,7 @@
 ﻿using System;
 using RestSharp;
 
-namespace Cosential.Integrations.CompassApiClient.Models
+namespace Cosential.Integrations.Compass.Client.Models
 {
     public class Personnel
     {

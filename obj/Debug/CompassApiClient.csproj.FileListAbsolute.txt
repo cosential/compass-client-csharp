@@ -1,6 +1,0 @@
-D:\tfs\Misc_Purpose_Built_Projects\Trunk\BambooHR\CompassApiClient\bin\Debug\CompassApiClient.dll
-D:\tfs\Misc_Purpose_Built_Projects\Trunk\BambooHR\CompassApiClient\bin\Debug\CompassApiClient.pdb
-D:\tfs\Misc_Purpose_Built_Projects\Trunk\BambooHR\CompassApiClient\bin\Debug\RestSharp.dll
-D:\tfs\Misc_Purpose_Built_Projects\Trunk\BambooHR\CompassApiClient\bin\Debug\RestSharp.xml
-D:\tfs\Misc_Purpose_Built_Projects\Trunk\BambooHR\CompassApiClient\obj\Debug\CompassApiClient.dll
-D:\tfs\Misc_Purpose_Built_Projects\Trunk\BambooHR\CompassApiClient\obj\Debug\CompassApiClient.pdb
