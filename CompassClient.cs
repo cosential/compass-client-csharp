@@ -48,14 +48,14 @@ namespace Cosential.Integrations.Compass.Client
             }
         }
 
-        public IRestResponse Execute(RestRequest request)
+        protected IRestResponse Execute(RestRequest request)
         {
             var res = _client.Execute(request);
             ValidateResponse(res);
             return res;
         }
 
-        public IRestResponse<T> Execute<T>(RestRequest request) where T : new()
+        protected IRestResponse<T> Execute<T>(RestRequest request) where T : new()
         {
             var res = _client.Execute<T>(request);
             ValidateResponse(res);
