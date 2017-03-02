@@ -3,6 +3,9 @@
 # or wget:
 # wget --no-check-certificate http://gist.githubusercontent.com/kmorcinek/2710267/raw/.gitignore
 
+# Project-specific files
+Credentials.cs
+
 # User-specific files
 *.suo
 *.user
