@@ -4,3 +4,11 @@ D:\tfs\Misc_Purpose_Built_Projects\Trunk\BambooHR\CompassApiClient\bin\Debug\Res
 D:\tfs\Misc_Purpose_Built_Projects\Trunk\BambooHR\CompassApiClient\bin\Debug\RestSharp.xml
 D:\tfs\Misc_Purpose_Built_Projects\Trunk\BambooHR\CompassApiClient\obj\Debug\CompassApiClient.dll
 D:\tfs\Misc_Purpose_Built_Projects\Trunk\BambooHR\CompassApiClient\obj\Debug\CompassApiClient.pdb
+D:\projects\cosential-client-csharp\bin\Debug\CompassApiClient.dll
+D:\projects\cosential-client-csharp\bin\Debug\CompassApiClient.pdb
+D:\projects\cosential-client-csharp\bin\Debug\log4net.dll
+D:\projects\cosential-client-csharp\bin\Debug\RestSharp.dll
+D:\projects\cosential-client-csharp\bin\Debug\log4net.xml
+D:\projects\cosential-client-csharp\bin\Debug\RestSharp.xml
+D:\projects\cosential-client-csharp\obj\Debug\CompassApiClient.dll
+D:\projects\cosential-client-csharp\obj\Debug\CompassApiClient.pdb

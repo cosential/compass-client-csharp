@@ -1,4 +1,4 @@
-﻿namespace Cosential.Integrations.CompassApiClient
+﻿namespace Cosential.Integrations.Compass.Client
 {
     public enum UpsertAction
     {

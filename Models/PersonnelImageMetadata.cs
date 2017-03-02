@@ -1,6 +1,6 @@
 using System;
 
-namespace Cosential.Integrations.CompassApiClient
+namespace Cosential.Integrations.Compass.Client
 {
     public class PersonnelImageMetadata
     {
