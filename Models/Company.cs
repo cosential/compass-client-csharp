@@ -10,7 +10,7 @@ namespace Cosential.Integrations.Compass.Client.Models
     {
 
         public Company() {
-            
+
         }
 
 
@@ -63,7 +63,6 @@ namespace Cosential.Integrations.Compass.Client.Models
         public int ParentCompanyId { get; set; }
         public string Services { get; set; }
         public string Sector { get; set; }
-        public object[] Offices { get; set; }
 
     }
 }
