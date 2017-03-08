@@ -53,8 +53,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompanyCompassClient.cs" />
     <Compile Include="CompassClient.cs" />
+    <Compile Include="ContactCompassClient.cs" />
     <Compile Include="Models\AuthenticatedUser.cs" />
+    <Compile Include="Models\Contact.cs" />
     <Compile Include="Models\Company.cs" />
     <Compile Include="Models\Personnel.cs" />
     <Compile Include="Models\Office.cs" />

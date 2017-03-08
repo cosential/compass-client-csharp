@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Cosential.Integrations.Compass.Client.Models
 {
-    class Company
+    public class Company
     {
 
         public Company() {
