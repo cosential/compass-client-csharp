@@ -5,23 +5,24 @@ using System.Net;
 using Cosential.Integrations.Compass.Client.Models;
 using RestSharp;
 
-namespace Cosential.Integrations.Compass.Client
+namespace Cosential.Integrations.Compass.Client.Contexts
 {
-    [Obsolete("Use PersonnelContext instead", false)]
-    public class PersonnelCompassClient : CompassClient
+    public class PersonnelContext
     {
-        public PersonnelCompassClient(int firmId, Guid apiKey, string username, string password, Uri host=null) : base(firmId, apiKey, username, password, host)
+        private readonly CompassClient _client;
+        public PersonnelContext(CompassClient client)
         {
+            _client = client;
         }
 
         #region CRUD
 
         public IList<Personnel> Create(IEnumerable<Personnel> personnel)
         {
-            var request = new RestRequest("personnel", Method.POST) {RequestFormat = DataFormat.Json};
+            var request = new RestRequest("personnel", Method.POST) { RequestFormat = DataFormat.Json };
             request.AddBody(personnel);
 
-            var results = Execute<List<Personnel>>(request);
+            var results = _client.Execute<List<Personnel>>(request);
             return results.Data;
         }
 
@@ -32,10 +33,10 @@ namespace Cosential.Integrations.Compass.Client
 
         public Personnel Get(int personnelId)
         {
-            var request = new RestRequest("personnel/{id}", Method.GET) {RequestFormat = DataFormat.Json};
+            var request = new RestRequest("personnel/{id}", Method.GET) { RequestFormat = DataFormat.Json };
             request.AddUrlSegment("id", personnelId.ToString());
 
-            var results = Execute<Personnel>(request);
+            var results = _client.Execute<Personnel>(request);
             return results.Data;
         }
 
@@ -45,7 +46,7 @@ namespace Cosential.Integrations.Compass.Client
             request.AddQueryParameter("from", from.ToString());
             request.AddQueryParameter("take", take.ToString());
 
-            var results = Execute<List<Personnel>>(request);
+            var results = _client.Execute<List<Personnel>>(request);
             return results.Data;
         }
 
@@ -55,7 +56,7 @@ namespace Cosential.Integrations.Compass.Client
             request.AddUrlSegment("id", personnel.PersonnelId.ToString());
             request.AddBody(personnel);
 
-            var results = Execute<Personnel>(request);
+            var results = _client.Execute<Personnel>(request);
             return results.Data;
         }
 
@@ -64,16 +65,16 @@ namespace Cosential.Integrations.Compass.Client
             var request = new RestRequest("personnel/{id}", Method.DELETE) { RequestFormat = DataFormat.Json };
             request.AddUrlSegment("id", personnelId.ToString());
 
-            var results = Execute<Personnel>(request);
+            var results = _client.Execute<Personnel>(request);
         }
 
         #endregion
 
         public IEnumerable<PersonnelImageMetadata> GetPersonnelImageData(Personnel personnel)
         {
-            var request = new RestRequest("personnel/{id}/images", Method.GET) {RequestFormat = DataFormat.Json};
+            var request = new RestRequest("personnel/{id}/images", Method.GET) { RequestFormat = DataFormat.Json };
             request.AddUrlSegment("id", personnel.PersonnelId.ToString());
-            var result = Execute<List<PersonnelImageMetadata>>(request);
+            var result = _client.Execute<List<PersonnelImageMetadata>>(request);
             return result.Data;
         }
 
@@ -91,21 +92,21 @@ namespace Cosential.Integrations.Compass.Client
             request.AddQueryParameter("defaultImage", "true");
             request.AddQueryParameter("url", photoUrl);
             request.AddHeader("Content-Type", "application/json");
-            
-            var result = Execute(request);
+
+            var result = _client.Execute(request);
             return result.ResponseStatus == ResponseStatus.Completed;
         }
 
         #region SEARCH
 
-        public List<Personnel> Search(string query, int from=0,int take=50)
+        public List<Personnel> Search(string query, int from = 0, int take = 50)
         {
             var request = new RestRequest("personnel/search");
             request.AddQueryParameter("q", query);
             request.AddQueryParameter("from", from.ToString());
             request.AddQueryParameter("take", take.ToString());
 
-            var results = Execute<List<Personnel>>(request);
+            var results = _client.Execute<List<Personnel>>(request);
             return results.Data;
         }
 
@@ -134,9 +135,9 @@ namespace Cosential.Integrations.Compass.Client
             var data = new List<Office>();
 
             //Look up office
-            var findOfficeRequest = new RestRequest($"firmorgs/offices", Method.GET) {RequestFormat = DataFormat.Json};
+            var findOfficeRequest = new RestRequest($"firmorgs/offices", Method.GET) { RequestFormat = DataFormat.Json };
             findOfficeRequest.AddQueryParameter("q", $"OfficeName.raw:{officeName}");
-            var findOfficeResults = Execute<List<Office>>(findOfficeRequest);
+            var findOfficeResults = _client.Execute<List<Office>>(findOfficeRequest);
 
             if (findOfficeResults.Data.Any())
             {
@@ -146,16 +147,16 @@ namespace Cosential.Integrations.Compass.Client
             {
                 //Add new office
                 var addOfficeRequest = new RestRequest($"firmorgs/offices", Method.POST) { RequestFormat = DataFormat.Json };
-                addOfficeRequest.AddBody(new List<Office> {new Office {OfficeName = officeName}});
-                var addOfficeResponse = Execute<List<Office>>(addOfficeRequest);
+                addOfficeRequest.AddBody(new List<Office> { new Office { OfficeName = officeName } });
+                var addOfficeResponse = _client.Execute<List<Office>>(addOfficeRequest);
                 if (addOfficeResponse.Data.Any()) data.Add(addOfficeResponse.Data.First());
                 else throw new Exception($"Could not find or create an office named {officeName} in Cosential");
             }
 
             //Associate the office to the personnel
-            var request = new RestRequest($"personnel/{personnelId}/offices", Method.POST) {RequestFormat = DataFormat.Json};
+            var request = new RestRequest($"personnel/{personnelId}/offices", Method.POST) { RequestFormat = DataFormat.Json };
             request.AddBody(data);
-            var results = Execute<List<Office>>(request);
+            var results = _client.Execute<List<Office>>(request);
             return results.Data;
         }
 

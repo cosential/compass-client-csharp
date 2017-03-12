@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CompassClient.cs" />
+    <Compile Include="Contexts\PersonnelContext.cs" />
     <Compile Include="Models\AuthenticatedUser.cs" />
     <Compile Include="Models\Personnel.cs" />
     <Compile Include="Models\Office.cs" />
