@@ -24,9 +24,9 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         #region FirmOrgsLists
 
-        public IList<Office> ListOffices(int from, int take)
+        public IList<Office> ListOffices(int from, int take, string entity, int? entityId)
         {
-            var request = new RestRequest("firmorgs/offices", Method.GET)
+            var request = new RestRequest($"{entity}/{entityId}/offices", Method.GET)
             {
                 RequestFormat = DataFormat.Json
             };
@@ -38,9 +38,9 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         }
 
-        public IList<Division> ListDivisions(int from, int take)
+        public IList<Division> ListDivisions(int from, int take, string entity, int? entityId)
         {
-            var request = new RestRequest("firmorgs/divisions", Method.GET) {
+            var request = new RestRequest($"{entity}/{entityId}/divisions", Method.GET) {
                 RequestFormat = DataFormat.Json
             };
                 request.AddQueryParameter("from", from.ToString());
@@ -51,9 +51,9 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         
         }
 
-        public IList<OfficeDivision> ListOfficeDivisions(int from, int take)
+        public IList<OfficeDivision> ListOfficeDivisions(int from, int take, string entity, int? entityId)
         {
-            var request = new RestRequest("firmorgs/officeDivisions", Method.GET)
+            var request = new RestRequest($"{entity}/{entityId}/officeDivisions", Method.GET)
             {
                 RequestFormat = DataFormat.Json
             };
@@ -65,9 +65,9 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         }
 
-        public IList<Studio> ListStudios(int from, int take)
+        public IList<Studio> ListStudios(int from, int take, string entity, int? entityId)
         {
-            var request = new RestRequest("firmorgs/officeDivisions", Method.GET)
+            var request = new RestRequest($"{entity}/{entityId}/studios", Method.GET)
             {
                 RequestFormat = DataFormat.Json
             };
@@ -79,9 +79,9 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         }
 
-        public IList<Territory> ListTerritories(int from, int take)
+        public IList<Territory> ListTerritories(int from, int take, string entity, int? entityId)
         {
-            var request = new RestRequest("firmorgs/officeDivisions", Method.GET)
+            var request = new RestRequest($"{entity}/{entityId}/territories", Method.GET)
             {
                 RequestFormat = DataFormat.Json
             };
@@ -93,9 +93,9 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         }
 
-        public IList<PracticeArea> ListPracticeAreas(int from, int take)
+        public IList<PracticeArea> ListPracticeAreas(int from, int take, string entity, int? entityId)
         {
-            var request = new RestRequest("firmorgs/officeDivisions", Method.GET)
+            var request = new RestRequest($"{entity}/{entityId}/practiceAreas", Method.GET)
             {
                 RequestFormat = DataFormat.Json
             };

@@ -15,7 +15,7 @@ namespace Cosential.Integrations.Compass.Client.Models
         }
 
         public int? ContactId { get; set; }
-        public int? CompanyId { get; }
+        public int? CompanyId { get; set; }
         public string CompanyName { get; set; }
         public string Prefix { get; set; }
         public string FirstName { get; set; }

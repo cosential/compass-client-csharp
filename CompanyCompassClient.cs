@@ -16,7 +16,7 @@ namespace Cosential.Integrations.Compass.Client
 
         #region CRUD
 
-        public Company Get(int CompanyId)
+        public Company Get(int? CompanyId)
         {
             var request = new RestRequest("companies/{id}", Method.GET) { RequestFormat = DataFormat.Json };
             request.AddUrlSegment("id", CompanyId.ToString());
