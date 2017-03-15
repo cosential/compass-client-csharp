@@ -60,7 +60,7 @@ namespace Cosential.Integrations.Compass.Client
             };
 
             request.AddQueryParameter( "from", from.ToString() );
-            request.AddQueryParameter( "take", take.ToString() );
+            request.AddQueryParameter( "size", take.ToString() );
 
             var results = Execute<List<Contact>>(request);
             return results.Data;
