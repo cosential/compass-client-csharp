@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 using Cosential.Integrations.Compass.Client.Models;
 using RestSharp;
 
@@ -47,6 +49,22 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             request.AddQueryParameter("take", take.ToString());
 
             var results = _client.Execute<List<Personnel>>(request);
+            return results.Data;
+        }
+
+        public IList<ChangeEvent> GetChanges(byte[] version)
+        {
+            var request = new RestRequest("personnel/changes/{version}, Method.GET") { RequestFormat = DataFormat.Json };
+            request.AddUrlSegment("version", Convert.ToBase64String(version));
+            var results = _client.Execute<List<ChangeEvent>>(request);
+            return results.Data;
+        }
+
+        public async Task<IList<ChangeEvent>> GetChangesAsync(byte[] version, CancellationToken cancel)
+        {
+            var request = new RestRequest("personnel/changes/{version}, Method.GET") { RequestFormat = DataFormat.Json };
+            request.AddUrlSegment("version", Convert.ToBase64String(version));
+            var results = await _client.ExecuteAsyc<List<ChangeEvent>>(request, cancel);
             return results.Data;
         }
 

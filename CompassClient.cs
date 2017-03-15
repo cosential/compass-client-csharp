@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 using Cosential.Integrations.Compass.Client.Models;
 using RestSharp;
 using RestSharp.Authenticators;
@@ -58,6 +60,13 @@ namespace Cosential.Integrations.Compass.Client
         public IRestResponse<T> Execute<T>(RestRequest request) where T : new()
         {
             var res = _client.Execute<T>(request);
+            ValidateResponse(res);
+            return res;
+        }
+
+        public async Task<IRestResponse<T>> ExecuteAsyc<T>(RestRequest request, CancellationToken cancel)
+        {
+            var res = await _client.ExecuteTaskAsync<T>(request, cancel);
             ValidateResponse(res);
             return res;
         }
