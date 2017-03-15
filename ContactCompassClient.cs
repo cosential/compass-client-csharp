@@ -48,7 +48,7 @@ namespace Cosential.Integrations.Compass.Client
         }
 
         public IList<Contact> List(
-                int from, int take
+                int from, int take, bool fullRecord=true
             )
         {
             var request = new RestRequest(
@@ -59,8 +59,9 @@ namespace Cosential.Integrations.Compass.Client
                 RequestFormat = DataFormat.Json
             };
 
-            request.AddQueryParameter( "from", from.ToString() );
-            request.AddQueryParameter( "size", take.ToString() );
+            request.AddQueryParameter("from", from.ToString());
+            request.AddQueryParameter("size", take.ToString());
+            request.AddQueryParameter("full", fullRecord.ToString());
 
             var results = Execute<List<Contact>>(request);
             return results.Data;

@@ -50,6 +50,18 @@ namespace Cosential.Integrations.Compass.Client
             }
         }
 
+        public List<T> GetSubItems<T>(PrimaryEntityType entityType, int entityId, string subitem)
+        {
+            var request = new RestRequest("{entityType}/{id}/{subitem}", Method.GET) { RequestFormat = DataFormat.Json };
+            request.AddUrlSegment("entityType", entityType.ToPlural());
+            request.AddUrlSegment("id", entityId.ToString());
+            request.AddUrlSegment("subitem", subitem);
+
+            var results = Execute<List<T>>(request);
+
+            return results.Data;
+        }
+
         public IRestResponse Execute(RestRequest request)
         {
             var res = _client.Execute(request);

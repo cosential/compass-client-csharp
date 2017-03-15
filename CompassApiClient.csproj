@@ -57,8 +57,10 @@
     <Compile Include="CompassClient.cs" />
     <Compile Include="ContactCompassClient.cs" />
     <Compile Include="Contexts\FirmOrgContext.cs" />
-    <Compile Include="Contexts\PersonnelContext.cs" />
+    <Compile Include="Models\ChangeEvent.cs" />
     <Compile Include="Models\AuthenticatedUser.cs" />
+    <Compile Include="Models\CompanyAddress.cs" />
+    <Compile Include="Models\CompanyType.cs" />
     <Compile Include="Models\Contact.cs" />
     <Compile Include="Models\Company.cs" />
     <Compile Include="Models\Division.cs" />
@@ -71,6 +73,7 @@
     <Compile Include="PersonnelCompassClient.cs" />
     <Compile Include="Models\PersonnelImageMetadata.cs" />
     <Compile Include="Contexts\PersonnelContext.cs" />
+    <Compile Include="PrimaryEntityType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Exceptions\ResponseStatusCodeException.cs" />
     <Compile Include="UpsertResult.cs" />

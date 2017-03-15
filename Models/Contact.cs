@@ -42,7 +42,7 @@ namespace Cosential.Integrations.Compass.Client.Models
         public DateTime SpouseBirthday { get; set; }
         public string ExternalId { get; set; }
         public int ImportedRecord { get; set; }
-        public int SameAsCompanyId { get; set; }
+        public int SameAsCompanyInd { get; set; }
         public DateTime CreateDateTime { get; set; }
         public int CreatedByUserId { get; set; }
         public DateTime LastModifiedDateTime { get; set; }

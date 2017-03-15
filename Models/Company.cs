@@ -23,7 +23,7 @@ namespace Cosential.Integrations.Compass.Client.Models
         public string ParentCompanyName { get; set; }
         public string TickerSymbol { get; set; }
         public int SalesTarget { get; set; }
-        public int AnnualRevenue { get; set; }
+        public string AnnualRevenue { get; set; }
         public int NumberOfEmployees { get; set; }
         public bool isHeadquarters { get; set; }
         public string ContactFirmsShortText1 { get; set; }
