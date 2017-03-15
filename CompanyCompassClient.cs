@@ -16,7 +16,7 @@ namespace Cosential.Integrations.Compass.Client
 
         #region CRUD
 
-        public Company Get(int CompanyId)
+        public Company Get(int? CompanyId)
         {
             var request = new RestRequest("companies/{id}", Method.GET) { RequestFormat = DataFormat.Json };
             request.AddUrlSegment("id", CompanyId.ToString());
@@ -25,11 +25,11 @@ namespace Cosential.Integrations.Compass.Client
             return results.Data;
         }
 
-        public IList<Company> List(int from, int take)
+        public IList<Company> List(int from, int size)
         {
             var request = new RestRequest("companies", Method.GET) { RequestFormat = DataFormat.Json };
             request.AddQueryParameter("from", from.ToString());
-            request.AddQueryParameter("take", take.ToString());
+            request.AddQueryParameter("size", size.ToString());
 
             var results = Execute<List<Company>>(request);
             return results.Data;
