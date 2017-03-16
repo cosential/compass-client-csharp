@@ -1,4 +1,6 @@
-﻿namespace Cosential.Integrations.Compass.Client.Models
+﻿using System.Collections.Generic;
+
+namespace Cosential.Integrations.Compass.Client.Models
 {
     public class ChangeEvent
     {

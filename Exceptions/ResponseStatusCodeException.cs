@@ -14,7 +14,7 @@ namespace Cosential.Integrations.Compass.Client
         {
         }
 
-        public ResponseStatusCodeException(IRestResponse response) : base($"Web service responded with status code: {response.StatusCode:D}. Content: {response.Content}", response.ErrorException)
+        public ResponseStatusCodeException(IRestResponse response) : base($"Web service [{response.ResponseUri}] responded with status code: [{response.StatusCode:D}]", response.ErrorException)
         {
             StatusCode = response.StatusCode;
             ResponseContent = response.Content;

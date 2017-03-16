@@ -26,5 +26,6 @@ namespace Cosential.Integrations.Compass.Client.Models
         public string OfficePhoneExtension { get; set; }
         public string NickName { get; set; }
         public DateTime? BirthDate { get; set; }
+        public bool DeleteInd { get; set; }
     }
 }
