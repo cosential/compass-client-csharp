@@ -28,9 +28,24 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return results.Data;
         }
 
+        public async Task<IList<Personnel>> CreateAsync(IEnumerable<Personnel> personnel, CancellationToken cancel)
+        {
+            var request = new RestRequest("personnel", Method.POST);
+            request.AddBody(personnel);
+
+            var results = await _client.ExecuteAsync<List<Personnel>>(request, cancel);
+            return results.Data;
+        }
+
         public Personnel Create(Personnel personnel)
         {
             return Create(new[] { personnel }).FirstOrDefault();
+        }
+
+        public async Task<Personnel> CreateAsync(Personnel personnel, CancellationToken cancel)
+        {
+            var result = await CreateAsync(new [] {personnel}, cancel);
+            return result.FirstOrDefault();
         }
 
         public Personnel Get(int personnelId)
@@ -47,7 +62,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             var request = new RestRequest("personnel/{id}", Method.GET);
             request.AddUrlSegment("id", personnelId.ToString());
 
-            var results = await _client.ExecuteAsyc<Personnel>(request, cancelToken);
+            var results = await _client.ExecuteAsync<Personnel>(request, cancelToken);
             return results.Data;
         }
 
@@ -73,7 +88,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         {
             var request = new RestRequest("personnel/changes/{version}", Method.GET);
             request.AddUrlSegment("version", Convert.ToBase64String(version));
-            var results = await _client.ExecuteAsyc<List<ChangeEvent>>(request, cancel);
+            var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, cancel);
             return results.Data;
         }
 
@@ -84,6 +99,16 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             request.AddBody(personnel);
 
             var results = _client.Execute<Personnel>(request);
+            return results.Data;
+        }
+
+        public async Task<Personnel> UpdateAsync(Personnel personnel, CancellationToken cancel)
+        {
+            var request = new RestRequest("personnel/{id}", Method.PUT);
+            request.AddUrlSegment("id", personnel.PersonnelId.ToString());
+            request.AddBody(personnel);
+
+            var results = await _client.ExecuteAsync<Personnel>(request, cancel);
             return results.Data;
         }
 
@@ -154,6 +179,24 @@ namespace Cosential.Integrations.Compass.Client.Contexts
                 Action = (personnel.PersonnelId.HasValue && personnel.PersonnelId.Value > 0) ? UpsertAction.Updated : UpsertAction.Created,
                 Data = (personnel.PersonnelId.HasValue && personnel.PersonnelId.Value > 0) ? Update(personnel) : Create(personnel)
             };
+        }
+
+        public async Task<UpsertResult<Personnel>> UpsertAsync(Personnel personnel, CancellationToken cancel)
+        {
+            var result = new UpsertResult<Personnel>();
+
+            if (personnel.PersonnelId.HasValue && personnel.PersonnelId.Value > 0)
+            {
+                result.Action = UpsertAction.Updated;
+                result.Data = await UpdateAsync(personnel, cancel);
+            }
+            else
+            {
+                result.Action = UpsertAction.Created;
+                result.Data = await CreateAsync(personnel, cancel);
+            }
+
+            return result;
         }
 
         public List<Office> AddOfficeToPersonnel(int personnelId, string officeName)

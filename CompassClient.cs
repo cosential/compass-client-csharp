@@ -94,7 +94,7 @@ namespace Cosential.Integrations.Compass.Client
             return res;
         }
 
-        public async Task<IRestResponse<T>> ExecuteAsyc<T>(RestRequest request, CancellationToken cancel)
+        public async Task<IRestResponse<T>> ExecuteAsync<T>(RestRequest request, CancellationToken cancel)
         {
             request.RequestFormat = DataFormat.Json;
             request.JsonSerializer = _json;
