@@ -21,7 +21,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public IList<Personnel> Create(IEnumerable<Personnel> personnel)
         {
-            var request = new RestRequest("personnel", Method.POST);
+            var request = _client.NewRequest("personnel", Method.POST);
             request.AddBody(personnel);
 
             var results = _client.Execute<List<Personnel>>(request);
@@ -30,7 +30,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public async Task<IList<Personnel>> CreateAsync(IEnumerable<Personnel> personnel, CancellationToken cancel)
         {
-            var request = new RestRequest("personnel", Method.POST);
+            var request = _client.NewRequest("personnel", Method.POST);
             request.AddBody(personnel);
 
             var results = await _client.ExecuteAsync<List<Personnel>>(request, cancel);
@@ -50,7 +50,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public Personnel Get(int personnelId)
         {
-            var request = new RestRequest("personnel/{id}", Method.GET);
+            var request = _client.NewRequest("personnel/{id}", Method.GET);
             request.AddUrlSegment("id", personnelId.ToString());
 
             var results = _client.Execute<Personnel>(request);
@@ -59,7 +59,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public async Task<Personnel> GetAsync(int personnelId, CancellationToken cancelToken)
         {
-            var request = new RestRequest("personnel/{id}", Method.GET);
+            var request = _client.NewRequest("personnel/{id}", Method.GET);
             request.AddUrlSegment("id", personnelId.ToString());
 
             var results = await _client.ExecuteAsync<Personnel>(request, cancelToken);
@@ -68,7 +68,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public IList<Personnel> List(int from, int take)
         {
-            var request = new RestRequest("personnel", Method.GET);
+            var request = _client.NewRequest("personnel", Method.GET);
             request.AddQueryParameter("from", from.ToString());
             request.AddQueryParameter("take", take.ToString());
 
@@ -78,7 +78,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public IList<ChangeEvent> GetChanges(byte[] version)
         {
-            var request = new RestRequest("personnel/changes/{version}", Method.GET);
+            var request = _client.NewRequest("personnel/changes/{version}", Method.GET);
             request.AddUrlSegment("version", Convert.ToBase64String(version));
             var results = _client.Execute<List<ChangeEvent>>(request);
             return results.Data;
@@ -86,7 +86,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public async Task<List<ChangeEvent>> GetChangesAsync(byte[] version, CancellationToken cancel)
         {
-            var request = new RestRequest("personnel/changes/{version}", Method.GET);
+            var request = _client.NewRequest("personnel/changes/{version}", Method.GET);
             request.AddUrlSegment("version", Convert.ToBase64String(version));
             var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, cancel);
             return results.Data;
@@ -94,7 +94,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public Personnel Update(Personnel personnel)
         {
-            var request = new RestRequest("personnel/{id}", Method.PUT);
+            var request = _client.NewRequest("personnel/{id}", Method.PUT);
             request.AddUrlSegment("id", personnel.PersonnelId.ToString());
             request.AddBody(personnel);
 
@@ -104,7 +104,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public async Task<Personnel> UpdateAsync(Personnel personnel, CancellationToken cancel)
         {
-            var request = new RestRequest("personnel/{id}", Method.PUT);
+            var request = _client.NewRequest("personnel/{id}", Method.PUT);
             request.AddUrlSegment("id", personnel.PersonnelId.ToString());
             request.AddBody(personnel);
 
@@ -114,7 +114,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public void Delete(int personnelId)
         {
-            var request = new RestRequest("personnel/{id}", Method.DELETE);
+            var request = _client.NewRequest("personnel/{id}", Method.DELETE);
             request.AddUrlSegment("id", personnelId.ToString());
 
             var results = _client.Execute<Personnel>(request);
@@ -124,7 +124,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public IEnumerable<PersonnelImageMetadata> GetPersonnelImageData(Personnel personnel)
         {
-            var request = new RestRequest("personnel/{id}/images", Method.GET);
+            var request = _client.NewRequest("personnel/{id}/images", Method.GET);
             request.AddUrlSegment("id", personnel.PersonnelId.ToString());
             var result = _client.Execute<List<PersonnelImageMetadata>>(request);
             return result.Data;
@@ -139,7 +139,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         {
             if (string.IsNullOrWhiteSpace(photoUrl) || HasImage(personnel)) return false;
 
-            var request = new RestRequest("/images/personnel/{id}", Method.POST);
+            var request = _client.NewRequest("/images/personnel/{id}", Method.POST);
             request.AddUrlSegment("id", personnel.PersonnelId.ToString());
             request.AddQueryParameter("defaultImage", "true");
             request.AddQueryParameter("url", photoUrl);
@@ -153,7 +153,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public List<Personnel> Search(string query, int from = 0, int take = 50)
         {
-            var request = new RestRequest("personnel/search");
+            var request = _client.NewRequest("personnel/search");
             request.AddQueryParameter("q", query);
             request.AddQueryParameter("from", from.ToString());
             request.AddQueryParameter("take", take.ToString());
@@ -205,7 +205,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             var data = new List<Office>();
 
             //Look up office
-            var findOfficeRequest = new RestRequest($"firmorgs/offices", Method.GET) { RequestFormat = DataFormat.Json };
+            var findOfficeRequest = _client.NewRequest($"firmorgs/offices");
             findOfficeRequest.AddQueryParameter("q", $"OfficeName.raw:{officeName}");
             var findOfficeResults = _client.Execute<List<Office>>(findOfficeRequest);
 
@@ -216,7 +216,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             else
             {
                 //Add new office
-                var addOfficeRequest = new RestRequest($"firmorgs/offices", Method.POST) { RequestFormat = DataFormat.Json };
+                var addOfficeRequest = _client.NewRequest($"firmorgs/offices", Method.POST);
                 addOfficeRequest.AddBody(new List<Office> { new Office { OfficeName = officeName } });
                 var addOfficeResponse = _client.Execute<List<Office>>(addOfficeRequest);
                 if (addOfficeResponse.Data.Any()) data.Add(addOfficeResponse.Data.First());
@@ -224,7 +224,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             }
 
             //Associate the office to the personnel
-            var request = new RestRequest($"personnel/{personnelId}/offices", Method.POST) { RequestFormat = DataFormat.Json };
+            var request = _client.NewRequest($"personnel/{personnelId}/offices", Method.POST);
             request.AddBody(data);
             var results = _client.Execute<List<Office>>(request);
             return results.Data;

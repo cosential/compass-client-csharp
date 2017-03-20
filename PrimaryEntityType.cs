@@ -17,13 +17,10 @@ namespace Cosential.Integrations.Compass.Client
             {
                 case PrimaryEntityType.Personnel:
                     return "personnel";
-                    break;
                 case PrimaryEntityType.Company:
                     return "companies";
-                    break;
                 case PrimaryEntityType.Contact:
-                    return "contact";
-                    break;
+                    return "contacts";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }

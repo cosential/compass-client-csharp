@@ -17,7 +17,7 @@ namespace Cosential.Integrations.Compass.Client
         {
         }
 
-        public HttpResponseException(IRestResponse response)
+        public HttpResponseException(IRestResponse response) : base($"{response.Request.Method} to [{response.ResponseUri}] resulted in error", response.ErrorException)
         {
             this.response = response;
         }

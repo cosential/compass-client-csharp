@@ -26,10 +26,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public IList<Office> ListOffices(int from, int take, string entity, int? entityId)
         {
-            var request = new RestRequest($"{entity}/{entityId}/offices", Method.GET)
-            {
-                RequestFormat = DataFormat.Json
-            };
+            var request = _client.NewRequest($"{entity}/{entityId}/offices", Method.GET)
+                ;
             request.AddQueryParameter("from", from.ToString());
             request.AddQueryParameter("size", take.ToString());
 
@@ -40,9 +38,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public IList<Division> ListDivisions(int from, int take, string entity, int? entityId)
         {
-            var request = new RestRequest($"{entity}/{entityId}/divisions", Method.GET) {
-                RequestFormat = DataFormat.Json
-            };
+            var request = _client.NewRequest($"{entity}/{entityId}/divisions", Method.GET);
                 request.AddQueryParameter("from", from.ToString());
                 request.AddQueryParameter("size", take.ToString());
 
@@ -53,10 +49,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public IList<OfficeDivision> ListOfficeDivisions(int from, int take, string entity, int? entityId)
         {
-            var request = new RestRequest($"{entity}/{entityId}/officeDivisions", Method.GET)
-            {
-                RequestFormat = DataFormat.Json
-            };
+            var request = _client.NewRequest($"{entity}/{entityId}/officeDivisions", Method.GET);
             request.AddQueryParameter("from", from.ToString());
             request.AddQueryParameter("size", take.ToString());
 
@@ -67,10 +60,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public IList<Studio> ListStudios(int from, int take, string entity, int? entityId)
         {
-            var request = new RestRequest($"{entity}/{entityId}/studios", Method.GET)
-            {
-                RequestFormat = DataFormat.Json
-            };
+            var request = _client.NewRequest($"{entity}/{entityId}/studios", Method.GET);
             request.AddQueryParameter("from", from.ToString());
             request.AddQueryParameter("size", take.ToString());
 
@@ -81,10 +71,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public IList<Territory> ListTerritories(int from, int take, string entity, int? entityId)
         {
-            var request = new RestRequest($"{entity}/{entityId}/territories", Method.GET)
-            {
-                RequestFormat = DataFormat.Json
-            };
+            var request = _client.NewRequest($"{entity}/{entityId}/territories", Method.GET);
             request.AddQueryParameter("from", from.ToString());
             request.AddQueryParameter("size", take.ToString());
 
@@ -95,10 +82,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public IList<PracticeArea> ListPracticeAreas(int from, int take, string entity, int? entityId)
         {
-            var request = new RestRequest($"{entity}/{entityId}/practiceAreas", Method.GET)
-            {
-                RequestFormat = DataFormat.Json
-            };
+            var request = _client.NewRequest($"{entity}/{entityId}/practiceAreas", Method.GET);
             request.AddQueryParameter("from", from.ToString());
             request.AddQueryParameter("size", take.ToString());
 

@@ -31,13 +31,10 @@ namespace Cosential.Integrations.Compass.Client
 
         public Contact Get(int ContactId)
         {
-            var request = new RestRequest(
+            var request = NewRequest(
                 "contacts/{id}", 
                 Method.GET
-                )
-            {
-                RequestFormat = DataFormat.Json
-            };
+                );
 
             request.AddUrlSegment("id", ContactId.ToString());
 
@@ -51,13 +48,10 @@ namespace Cosential.Integrations.Compass.Client
                 int from, int take, bool fullRecord=true
             )
         {
-            var request = new RestRequest(
+            var request = NewRequest(
                 "contacts",
                 Method.GET
-                )
-            {
-                RequestFormat = DataFormat.Json
-            };
+                );
 
             request.AddQueryParameter("from", from.ToString());
             request.AddQueryParameter("size", take.ToString());

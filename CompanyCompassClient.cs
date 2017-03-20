@@ -11,16 +11,16 @@ namespace Cosential.Integrations.Compass.Client
     public class CompanyCompassClient : CompassClient
     {
 
-        public CompanyCompassClient(int firmId, Guid apiKey, string username, string password, Uri host=null) : base(firmId, apiKey, username, password)
+        public CompanyCompassClient(int firmId, Guid apiKey, string username, string password, Uri host=null) : base(firmId, apiKey, username, password, host)
         {
         }
 
         #region CRUD
 
-        public Company Get(int? CompanyId)
+        public Company Get(int companyId)
         {
-            var request = new RestRequest("companies/{id}", Method.GET) { RequestFormat = DataFormat.Json };
-            request.AddUrlSegment("id", CompanyId.ToString());
+            var request = NewRequest("companies/{id}", Method.GET);
+            request.AddUrlSegment("id", companyId.ToString());
 
             var results = Execute<Company>(request);
             return results.Data;
@@ -28,7 +28,7 @@ namespace Cosential.Integrations.Compass.Client
 
         public List<Company> List(int from, int size, bool full=true)
         {
-            var request = new RestRequest("companies", Method.GET) { RequestFormat = DataFormat.Json };
+            var request = NewRequest("companies", Method.GET);
             request.AddQueryParameter("from", from.ToString());
             request.AddQueryParameter("size", size.ToString());
             request.AddQueryParameter("full", full.ToString());
