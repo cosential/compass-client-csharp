@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Cosential.Integrations.Compass.Client.Contexts;
 using Cosential.Integrations.Compass.Client.Exceptions;
 using Cosential.Integrations.Compass.Client.Models;
 using RestSharp;
@@ -18,6 +19,8 @@ namespace Cosential.Integrations.Compass.Client
 
         public static readonly Uri DefaultUri = new Uri("https://compass.cosential.com/api");
         public readonly JsonSerializer Json;
+
+        public PersonnelContext PersonnelContext => new PersonnelContext(this);
 
         public CompassClient(int firmId, Guid apiKey, string username, string password, Uri host= null)
         {
