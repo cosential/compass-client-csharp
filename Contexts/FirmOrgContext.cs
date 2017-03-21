@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Cosential.Integrations.Compass.Client.Models;
 using RestSharp;
@@ -26,7 +27,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public IList<Office> ListOffices(int from, int take, string entity, int? entityId)
         {
-            var request = _client.NewRequest($"{entity}/{entityId}/offices", Method.GET)
+            var request = _client.NewRequest($"{entity}/{entityId}/offices")
                 ;
             request.AddQueryParameter("from", from.ToString());
             request.AddQueryParameter("size", take.ToString());
@@ -38,13 +39,19 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public IList<Division> ListDivisions(int from, int take, string entity, int? entityId)
         {
-            var request = _client.NewRequest($"{entity}/{entityId}/divisions", Method.GET);
-                request.AddQueryParameter("from", from.ToString());
-                request.AddQueryParameter("size", take.ToString());
+            var request = _client.NewRequest($"{entity}/{entityId}/divisions");
+
+            request.AddQueryParameter("from", from.ToString());
+            request.AddQueryParameter("size", take.ToString());
 
             var results = _client.Execute<List<Division>>(request);
             return results.Data;
         
+        }
+
+        public Task<List<ChangeEvent>> GetOfficeChangesAsync(byte[] rowVersion, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
 
         public IList<OfficeDivision> ListOfficeDivisions(int from, int take, string entity, int? entityId)

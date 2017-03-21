@@ -20,7 +20,8 @@ namespace Cosential.Integrations.Compass.Client
         public static readonly Uri DefaultUri = new Uri("https://compass.cosential.com/api");
         public readonly JsonSerializer Json;
 
-        public PersonnelContext PersonnelContext => new PersonnelContext(this);
+        public PersonnelContext PersonnelContext { get; private set; }
+        public FirmOrgContext FirmOrgContext { get; private set; }
 
         public CompassClient(int firmId, Guid apiKey, string username, string password, Uri host= null)
         {
@@ -46,6 +47,9 @@ namespace Cosential.Integrations.Compass.Client
             _client.AddHandler("text/x-json", Json);
             _client.AddHandler("text/javascript", Json);
             _client.AddHandler("*+json", Json);
+
+            PersonnelContext = new PersonnelContext(this);
+            FirmOrgContext = new FirmOrgContext(this);
         }
 
         public bool IsAuth()

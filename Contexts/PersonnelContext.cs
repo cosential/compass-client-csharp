@@ -76,19 +76,19 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return results.Data;
         }
 
-        public IList<ChangeEvent> GetChanges(byte[] version)
+        public IList<ChangeEvent> GetChanges(byte[] version=null)
         {
-            var request = _client.NewRequest("personnel/changes/{version}", Method.GET);
-            request.AddUrlSegment("version", Convert.ToBase64String(version));
+            var request = _client.NewRequest("personnel/changes");
+            if (version != null) request.AddQueryParameter("version", Convert.ToBase64String(version));
             var results = _client.Execute<List<ChangeEvent>>(request);
             return results.Data;
         }
 
-        public async Task<List<ChangeEvent>> GetChangesAsync(byte[] version, CancellationToken cancel)
+        public async Task<List<ChangeEvent>> GetChangesAsync(byte[] version=null, CancellationToken? cancel=null)
         {
-            var request = _client.NewRequest("personnel/changes/{version}", Method.GET);
-            request.AddUrlSegment("version", Convert.ToBase64String(version));
-            var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, cancel);
+            var request = _client.NewRequest("personnel/changes");
+            if (version != null) request.AddQueryParameter("version", Convert.ToBase64String(version));
+            var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, cancel ?? CancellationToken.None);
             return results.Data;
         }
 
