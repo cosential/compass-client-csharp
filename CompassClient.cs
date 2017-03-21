@@ -116,6 +116,13 @@ namespace Cosential.Integrations.Compass.Client
             return res;
         }
 
+        public async Task<IRestResponse> ExecuteAsync(RestRequest request, CancellationToken cancel)
+        {
+            var res = await _client.ExecuteTaskAsync(request, cancel);
+            ValidateResponse(res);
+            return res;
+        }
+
         private static void ValidateResponse(IRestResponse response)
         {
             if (response.ErrorException != null) throw new HttpResponseException($"Exception in http response from [{response.ResponseUri}]", response.ErrorException);

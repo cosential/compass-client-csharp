@@ -60,6 +60,8 @@
     <Compile Include="CompanyCompassClient.cs" />
     <Compile Include="CompassClient.cs" />
     <Compile Include="ContactCompassClient.cs" />
+    <Compile Include="Contexts\CompanyContext.cs" />
+    <Compile Include="Models\FirmOrg.cs" />
     <Compile Include="Contexts\FirmOrgContext.cs" />
     <Compile Include="Exceptions\HttpResponseException.cs" />
     <Compile Include="Models\ChangeEvent.cs" />

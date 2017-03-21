@@ -50,7 +50,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public Personnel Get(int personnelId)
         {
-            var request = _client.NewRequest("personnel/{id}", Method.GET);
+            var request = _client.NewRequest("personnel/{id}");
             request.AddUrlSegment("id", personnelId.ToString());
 
             var results = _client.Execute<Personnel>(request);
@@ -59,7 +59,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public async Task<Personnel> GetAsync(int personnelId, CancellationToken cancelToken)
         {
-            var request = _client.NewRequest("personnel/{id}", Method.GET);
+            var request = _client.NewRequest("personnel/{id}");
             request.AddUrlSegment("id", personnelId.ToString());
 
             var results = await _client.ExecuteAsync<Personnel>(request, cancelToken);
@@ -68,7 +68,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public IList<Personnel> List(int from, int take)
         {
-            var request = _client.NewRequest("personnel", Method.GET);
+            var request = _client.NewRequest("personnel");
             request.AddQueryParameter("from", from.ToString());
             request.AddQueryParameter("take", take.ToString());
 
@@ -76,18 +76,18 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return results.Data;
         }
 
-        public IList<ChangeEvent> GetChanges(byte[] version=null)
+        public IList<ChangeEvent> GetChanges(byte[] version = null, bool includeDeleted = false)
         {
-            var request = _client.NewRequest("personnel/changes");
-            if (version != null) request.AddQueryParameter("version", Convert.ToBase64String(version));
-            var results = _client.Execute<List<ChangeEvent>>(request);
-            return results.Data;
+            var task = GetChangesAsync(version, includeDeleted, CancellationToken.None);
+            task.RunSynchronously();
+            return task.Result;
         }
 
-        public async Task<List<ChangeEvent>> GetChangesAsync(byte[] version=null, CancellationToken? cancel=null)
+        public async Task<List<ChangeEvent>> GetChangesAsync(byte[] version=null, bool includeDeleted = false, CancellationToken? cancel=null)
         {
             var request = _client.NewRequest("personnel/changes");
             if (version != null) request.AddQueryParameter("version", Convert.ToBase64String(version));
+            if (includeDeleted) request.AddQueryParameter("includeDeleted", true.ToString());
             var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, cancel ?? CancellationToken.None);
             return results.Data;
         }
@@ -120,11 +120,19 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             var results = _client.Execute<Personnel>(request);
         }
 
+        public async Task DeleteAsync(int personnelId, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("personnel/{id}", Method.DELETE);
+            request.AddUrlSegment("id", personnelId.ToString());
+
+            await _client.ExecuteAsync(request, cancelToken);
+        }
+
         #endregion
 
         public IEnumerable<PersonnelImageMetadata> GetPersonnelImageData(Personnel personnel)
         {
-            var request = _client.NewRequest("personnel/{id}/images", Method.GET);
+            var request = _client.NewRequest("personnel/{id}/images");
             request.AddUrlSegment("id", personnel.PersonnelId.ToString());
             var result = _client.Execute<List<PersonnelImageMetadata>>(request);
             return result.Data;

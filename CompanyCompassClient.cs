@@ -8,6 +8,7 @@ using RestSharp;
 
 namespace Cosential.Integrations.Compass.Client
 {
+    [Obsolete("Use CompanyContext instead")]
     public class CompanyCompassClient : CompassClient
     {
 
