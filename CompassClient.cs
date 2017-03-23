@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Cosential.Integrations.Compass.Client.Contexts;
 using Cosential.Integrations.Compass.Client.Exceptions;
 using Cosential.Integrations.Compass.Client.Models;
+using Cosential.Integrations.Compass.Contexts;
 using RestSharp;
 using RestSharp.Authenticators;
 
@@ -21,7 +22,8 @@ namespace Cosential.Integrations.Compass.Client
         public readonly JsonSerializer Json;
 
         public PersonnelContext PersonnelContext { get; private set; }
-        public FirmOrgContext FirmOrgContext { get; private set; }
+        public CompanyContext CompanyContext { get; private set; }
+        public OfficeContext OfficeContext { get; private set; }
 
         public CompassClient(int firmId, Guid apiKey, string username, string password, Uri host= null)
         {
@@ -49,7 +51,8 @@ namespace Cosential.Integrations.Compass.Client
             _client.AddHandler("*+json", Json);
 
             PersonnelContext = new PersonnelContext(this);
-            FirmOrgContext = new FirmOrgContext(this);
+            CompanyContext = new CompanyContext(this);
+            OfficeContext = new OfficeContext(this);
         }
 
         public bool IsAuth()
@@ -126,8 +129,11 @@ namespace Cosential.Integrations.Compass.Client
         private static void ValidateResponse(IRestResponse response)
         {
             if (response.ErrorException != null) throw new HttpResponseException($"Exception in http response from [{response.ResponseUri}]", response.ErrorException);
-            if (response.StatusCode != HttpStatusCode.OK) throw new ResponseStatusCodeException(response);
-            
+
+            if (response.StatusCode == HttpStatusCode.OK) return;
+            if (response.StatusCode == HttpStatusCode.NotFound) return;
+
+            throw new ResponseStatusCodeException(response);
         }
 
         public void Dispose()

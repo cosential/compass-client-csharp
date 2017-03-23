@@ -9,7 +9,7 @@ using RestSharp;
 
 namespace Cosential.Integrations.Compass.Client.Contexts
 {
-    public class PersonnelContext
+    public class PersonnelContext : ICompassContext<Personnel>
     {
         private readonly CompassClient _client;
         public PersonnelContext(CompassClient client)
@@ -83,12 +83,12 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return task.Result;
         }
 
-        public async Task<List<ChangeEvent>> GetChangesAsync(byte[] version=null, bool includeDeleted = false, CancellationToken? cancel=null)
+        public async Task<List<ChangeEvent>> GetChangesAsync(byte[] version, bool includeDeleted, CancellationToken cancel)
         {
             var request = _client.NewRequest("personnel/changes");
             if (version != null) request.AddQueryParameter("version", Convert.ToBase64String(version));
             if (includeDeleted) request.AddQueryParameter("includeDeleted", true.ToString());
-            var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, cancel ?? CancellationToken.None);
+            var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, cancel);
             return results.Data;
         }
 

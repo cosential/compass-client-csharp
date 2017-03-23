@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using log4net;
 using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Deserializers;
@@ -9,9 +11,12 @@ namespace Cosential.Integrations.Compass.Client
     public class JsonSerializer : ISerializer, IDeserializer
     {
         private readonly Newtonsoft.Json.JsonSerializer _serializer;
+        private readonly ILog _log;
         
         public JsonSerializer()
         {
+            _log = LogManager.GetLogger(GetType());
+
             ContentType = "application/json";
             _serializer = new Newtonsoft.Json.JsonSerializer
             {
@@ -48,7 +53,15 @@ namespace Cosential.Integrations.Compass.Client
 
         public T Deserialize<T>(IRestResponse response)
         {
-            return JsonConvert.DeserializeObject<T>(response.Content);
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(response.Content);
+            }
+            catch (Exception ex)
+            {
+                _log.Error($"Error attempting to deserialize response content to type [{typeof(T).FullName}]", ex);
+                return default(T);
+            }
         }
 
         public string RootElement { get; set; }

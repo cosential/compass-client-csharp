@@ -9,6 +9,7 @@ using RestSharp;
 
 namespace Cosential.Integrations.Compass.Client.Contexts
 {
+    [Obsolete("Each firm org needs its own context because they are different data types")]
     public class FirmOrgContext
     {
 
@@ -79,6 +80,12 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<IList<Office>> CreateAsync(IEnumerable<Office> data, CancellationToken cancel)
         {
             var request = _client.NewRequest("firmorgs/offices", Method.POST);
+
+            foreach (var office in data)
+            {
+                office.OfficeID = office.OfficeID ?? 0;
+            }
+
             request.AddBody(data);
 
             var results = await _client.ExecuteAsync<List<Office>>(request, cancel);

@@ -6,12 +6,13 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Cosential.Integrations.Compass.Client;
+using Cosential.Integrations.Compass.Client.Contexts;
 using Cosential.Integrations.Compass.Client.Models;
 using RestSharp;
 
 namespace Cosential.Integrations.Compass.Contexts
 {
-    public class CompanyContext
+    public class CompanyContext : ICompassContext<Company>
     {
         private readonly CompassClient _client;
         public CompanyContext(CompassClient client)
@@ -23,11 +24,69 @@ namespace Cosential.Integrations.Compass.Contexts
 
         public Company Get(int companyId)
         {
-            var request = _client.NewRequest("companies/{id}", Method.GET);
+            var task = GetAsync(companyId, CancellationToken.None);
+            task.RunSynchronously();
+            return task.Result;
+        }
+
+        public async Task<Company> GetAsync(int companyId, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("companies/{id}");
             request.AddUrlSegment("id", companyId.ToString());
 
-            var results = _client.Execute<Company>(request);
+            var results = await _client.ExecuteAsync<Company>(request, cancelToken);
             return results.Data;
+        }
+
+        public async Task<Company> UpdateAsync(Company entity, CancellationToken cancel)
+        {
+            var request = _client.NewRequest("companies/{id}", Method.PUT);
+            request.AddUrlSegment("id", entity.CompanyId.ToString());
+            request.AddBody(entity);
+
+            var results = await _client.ExecuteAsync<Company>(request, cancel);
+            return results.Data;
+        }
+
+        public async Task DeleteAsync(int id, CancellationToken cancel)
+        {
+            var request = _client.NewRequest("companies/{id}", Method.DELETE);
+            request.AddUrlSegment("id", id.ToString());
+            
+            await _client.ExecuteAsync<Company>(request, cancel);
+        }
+
+        public async Task<Company> CreateAsync(Company entity, CancellationToken cancel)
+        {
+            var result = await CreateAsync(new[] { entity }, cancel);
+            return result.FirstOrDefault();
+        }
+
+        public async Task<IList<Company>> CreateAsync(IEnumerable<Company> entities, CancellationToken cancel)
+        {
+            var request = _client.NewRequest("companies", Method.POST);
+            request.AddBody(entities);
+
+            var results = await _client.ExecuteAsync<List<Company>>(request, cancel);
+            return results.Data;
+        }
+
+        public async Task<UpsertResult<Company>> UpsertAsync(Company entity, CancellationToken cancelToken)
+        {
+            var result = new UpsertResult<Company>();
+
+            if (entity.CompanyId.HasValue && entity.CompanyId.Value > 0)
+            {
+                result.Action = UpsertAction.Updated;
+                result.Data = await UpdateAsync(entity, cancelToken);
+            }
+            else
+            {
+                result.Action = UpsertAction.Created;
+                result.Data = await CreateAsync(entity, cancelToken);
+            }
+
+            return result;
         }
 
         public List<Company> List(int from, int size, bool full = true)
@@ -56,12 +115,12 @@ namespace Cosential.Integrations.Compass.Contexts
             return task.Result;
         }
 
-        public async Task<List<ChangeEvent>> GetChangesAsync(byte[] version = null, bool includeDeleted = false, CancellationToken? cancel = null)
+        public async Task<List<ChangeEvent>> GetChangesAsync(byte[] version, bool includeDeleted, CancellationToken cancel)
         {
             var request = _client.NewRequest("companies/changes");
             if (version != null) request.AddQueryParameter("version", Convert.ToBase64String(version));
             if (includeDeleted) request.AddQueryParameter("includeDeleted", true.ToString());
-            var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, cancel ?? CancellationToken.None);
+            var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, cancel);
             return results.Data;
         }
 
