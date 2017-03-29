@@ -14,7 +14,7 @@ using RestSharp.Authenticators;
 
 namespace Cosential.Integrations.Compass.Client
 {
-    public class CompassClient: IDisposable
+    public class CompassClient : IDisposable
     {
         private readonly RestClient _client;
 
@@ -24,6 +24,7 @@ namespace Cosential.Integrations.Compass.Client
         public PersonnelContext PersonnelContext { get; private set; }
         public CompanyContext CompanyContext { get; private set; }
         public OfficeContext OfficeContext { get; private set; }
+        public DivisionContext DivisionContext { get; private set; }
 
         public CompassClient(int firmId, Guid apiKey, string username, string password, Uri host= null)
         {
