@@ -2,7 +2,7 @@
 {
     public class OfficeDivision
     {
-        public int OfficeDivisionID { get; set; }
+        public int? OfficeDivisionID { get; set; }
         public string OfficeDivisionName { get; set; }
     }
 }

@@ -86,7 +86,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public async Task DeleteAsync( int id, CancellationToken cancelToken)
         {
-            var request = _client.NewRequest("firmorgs/offices/{id}", Method.DELETE);
+            var request = _client.NewRequest("firmorgs/divisions/{id}", Method.DELETE);
                 request.AddUrlSegment("id", id.ToString());
 
             await _client.ExecuteAsync(request, cancelToken);

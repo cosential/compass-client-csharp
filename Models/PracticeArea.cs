@@ -2,7 +2,7 @@
 {
     public class PracticeArea
     {
-        public int PracticeAreaID { get; set; }
+        public int? PracticeAreaID { get; set; }
         public string PracticeAreaName { get; set; }
     }
 }

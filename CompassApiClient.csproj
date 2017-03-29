@@ -64,6 +64,10 @@
     <Compile Include="Contexts\DivisionContext.cs" />
     <Compile Include="Contexts\ICompassContext.cs" />
     <Compile Include="Contexts\OfficeContext.cs" />
+    <Compile Include="Contexts\OfficeDivisionContext.cs" />
+    <Compile Include="Contexts\PracticeAreaContext.cs" />
+    <Compile Include="Contexts\StudioContext.cs" />
+    <Compile Include="Contexts\TerritoryContext.cs" />
     <Compile Include="Models\FirmOrg.cs" />
     <Compile Include="Contexts\FirmOrgContext.cs" />
     <Compile Include="Exceptions\HttpResponseException.cs" />
