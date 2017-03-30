@@ -68,6 +68,7 @@
     <Compile Include="Contexts\PracticeAreaContext.cs" />
     <Compile Include="Contexts\StudioContext.cs" />
     <Compile Include="Contexts\TerritoryContext.cs" />
+    <Compile Include="Models\CallLog.cs" />
     <Compile Include="Models\FirmOrg.cs" />
     <Compile Include="Contexts\FirmOrgContext.cs" />
     <Compile Include="Exceptions\HttpResponseException.cs" />
@@ -80,9 +81,11 @@
     <Compile Include="Models\Division.cs" />
     <Compile Include="JsonSerializer.cs" />
     <Compile Include="Models\OfficeDivision.cs" />
+    <Compile Include="Models\Opportunity.cs" />
     <Compile Include="Models\Personnel.cs" />
     <Compile Include="Models\Office.cs" />
     <Compile Include="Models\PracticeArea.cs" />
+    <Compile Include="Models\Project.cs" />
     <Compile Include="Models\Studio.cs" />
     <Compile Include="Models\Territory.cs" />
     <Compile Include="PersonnelCompassClient.cs" />

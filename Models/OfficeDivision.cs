@@ -4,5 +4,6 @@
     {
         public int? OfficeDivisionID { get; set; }
         public string OfficeDivisionName { get; set; }
+        public bool DeleteIndicator { get; set; }
     }
 }
