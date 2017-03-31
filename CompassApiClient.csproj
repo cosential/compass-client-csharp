@@ -65,6 +65,7 @@
     <Compile Include="Contexts\ICompassContext.cs" />
     <Compile Include="Contexts\OfficeContext.cs" />
     <Compile Include="Contexts\OfficeDivisionContext.cs" />
+    <Compile Include="Contexts\OpportunityContext.cs" />
     <Compile Include="Contexts\PracticeAreaContext.cs" />
     <Compile Include="Contexts\StudioContext.cs" />
     <Compile Include="Contexts\TerritoryContext.cs" />
