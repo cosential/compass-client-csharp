@@ -29,6 +29,7 @@ namespace Cosential.Integrations.Compass.Client
         public TerritoryContext TerritoryContext { get; set; }
         public PracticeAreaContext PracticeAreaContext { get; set; }
         public OfficeDivisionContext OfficeDivisionContext { get; set; }
+        public OpportunityContext OpportunityContext { get; set; }
 
         public CompassClient(int firmId, Guid apiKey, string username, string password, Uri host= null)
         {
