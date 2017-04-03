@@ -12,7 +12,7 @@ namespace Cosential.Integrations.Compass.Client.Models
         public string AddressTypeName { get; set; }
         public bool DefaultInd { get; set; }
         public int CompanyId { get; set; }
-        public DateTime createdate { get; set; }
+        public DateTime? createdate { get; set; }
         public string Address1 { get; set; }
         public string Address2 { get; set; }
         public string Address3 { get; set; }
@@ -25,10 +25,10 @@ namespace Cosential.Integrations.Compass.Client.Models
         public string OfficePhone { get; set; }
         public string OfficeFax { get; set; }
         public bool IsAddressVerified { get; set; }
-        public DateTime AddrVerifiedDateTime { get; set; }
+        public DateTime? AddrVerifiedDateTime { get; set; }
         public string AddrVerifiedMethod { get; set; }
-        public float AddrLat { get; set; }
-        public float AddrLong { get; set; }
+        public float? AddrLat { get; set; }
+        public float? AddrLong { get; set; }
         public string County { get; set; }
         public string CongressDistrict { get; set; }
         public string CarrierRoute { get; set; }

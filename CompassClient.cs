@@ -24,9 +24,15 @@ namespace Cosential.Integrations.Compass.Client
         public PersonnelContext PersonnelContext { get; private set; }
         public CompanyContext CompanyContext { get; private set; }
         public OfficeContext OfficeContext { get; private set; }
+        public ContactContext ContactContext { get; private set; }
 
         public CompassClient(int firmId, Guid apiKey, string username, string password, Uri host= null)
         {
+            PersonnelContext = new PersonnelContext(this);
+            CompanyContext = new CompanyContext(this);
+            OfficeContext = new OfficeContext(this);
+            ContactContext = new ContactContext(this);
+
             if (host == null) host = DefaultUri;
 
             Json = new JsonSerializer();
@@ -49,10 +55,6 @@ namespace Cosential.Integrations.Compass.Client
             _client.AddHandler("text/x-json", Json);
             _client.AddHandler("text/javascript", Json);
             _client.AddHandler("*+json", Json);
-
-            PersonnelContext = new PersonnelContext(this);
-            CompanyContext = new CompanyContext(this);
-            OfficeContext = new OfficeContext(this);
         }
 
         public bool IsAuth()

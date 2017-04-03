@@ -37,18 +37,26 @@ namespace Cosential.Integrations.Compass.Client.Models
         public string AssistantEmail { get; set; }
         public string Notes { get; set; }
         public string Department { get; set; }
-        public DateTime Birthday { get; set; }
+        public DateTime? Birthday { get; set; }
         public string SpouseName { get; set; }
-        public DateTime SpouseBirthday { get; set; }
+        public DateTime? SpouseBirthday { get; set; }
         public string ExternalId { get; set; }
-        public int ImportedRecord { get; set; }
+        public int? ImportedRecord { get; set; }
         public int SameAsCompanyInd { get; set; }
-        public DateTime CreateDateTime { get; set; }
-        public int CreatedByUserId { get; set; }
-        public DateTime LastModifiedDateTime { get; set; }
-        public int LastModifiedByUserId { get; set; }
-        public DateTime LastDeletedDateTime { get; set; }
-        public int LastDeletedByUserId { get; set; }
+        public DateTime? CreateDateTime { get; set; }
+        public int? CreatedByUserId { get; set; }
+        public DateTime? LastModifiedDateTime { get; set; }
+        public int? LastModifiedByUserId { get; set; }
+        public DateTime? LastDeletedDateTime { get; set; }
+        public int? LastDeletedByUserId { get; set; }
+        public int? MailingStatusID { get; set; }
+        public string IndividualShortText1 { get; set; }
+        public string IndividualShortText2 { get; set; }
+        public string IndividualShortText3 { get; set; }
+        public string IndividualShortText4 { get; set; }
+        public string IndividualShortText5 { get; set; }
+        public byte[] ROW_VERSION { get; set; }
+        public string AssistantTitle { get; set; }
 
     }
 }

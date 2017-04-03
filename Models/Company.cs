@@ -64,6 +64,6 @@ namespace Cosential.Integrations.Compass.Client.Models
         public int? ParentCompanyId { get; set; }
         public string Services { get; set; }
         public string Sector { get; set; }
-
+        public byte[] ROW_VERSION { get; set; }
     }
 }
