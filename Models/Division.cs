@@ -2,7 +2,8 @@
 {
     public class Division
     {
-        public int DivisionID { get; set; }
+        public int? DivisionID { get; set; }
         public string DivisionName { get; set; }
+        public bool DeleteIndicator { get; set; }
     }
 }

@@ -6,7 +6,8 @@ namespace Cosential.Integrations.Compass.Client
     {
         Personnel,
         Company,
-        Contact    
+        Contact,
+        Opportunity    
     }
 
     public static class PrimaryEntityTypeExtensions
@@ -21,6 +22,8 @@ namespace Cosential.Integrations.Compass.Client
                     return "companies";
                 case PrimaryEntityType.Contact:
                     return "contacts";
+                case PrimaryEntityType.Opportunity:
+                    return "opportunities";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }

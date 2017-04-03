@@ -36,15 +36,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+      <HintPath>..\CosentialSQLConnector\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\CosentialSQLConnector\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\CosentialSQLConnector\packages\Newtonsoft.Json.10.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\RestSharp.105.2.3\lib\net45\RestSharp.dll</HintPath>
+      <HintPath>..\CosentialSQLConnector\packages\RestSharp.105.2.3\lib\net45\RestSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -61,9 +61,16 @@
     <Compile Include="CompassClient.cs" />
     <Compile Include="ContactCompassClient.cs" />
     <Compile Include="Contexts\CompanyContext.cs" />
+    <Compile Include="Contexts\DivisionContext.cs" />
     <Compile Include="Contexts\ContactContext.cs" />
     <Compile Include="Contexts\ICompassContext.cs" />
     <Compile Include="Contexts\OfficeContext.cs" />
+    <Compile Include="Contexts\OfficeDivisionContext.cs" />
+    <Compile Include="Contexts\OpportunityContext.cs" />
+    <Compile Include="Contexts\PracticeAreaContext.cs" />
+    <Compile Include="Contexts\StudioContext.cs" />
+    <Compile Include="Contexts\TerritoryContext.cs" />
+    <Compile Include="Models\CallLog.cs" />
     <Compile Include="Models\ContactAddress.cs" />
     <Compile Include="Models\FirmOrg.cs" />
     <Compile Include="Contexts\FirmOrgContext.cs" />
@@ -77,9 +84,11 @@
     <Compile Include="Models\Division.cs" />
     <Compile Include="JsonSerializer.cs" />
     <Compile Include="Models\OfficeDivision.cs" />
+    <Compile Include="Models\Opportunity.cs" />
     <Compile Include="Models\Personnel.cs" />
     <Compile Include="Models\Office.cs" />
     <Compile Include="Models\PracticeArea.cs" />
+    <Compile Include="Models\Project.cs" />
     <Compile Include="Models\Studio.cs" />
     <Compile Include="Models\Territory.cs" />
     <Compile Include="PersonnelCompassClient.cs" />

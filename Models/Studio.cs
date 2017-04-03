@@ -2,7 +2,7 @@
 {
     public class Studio
     {
-        public int StudioID { get; set; }
+        public int? StudioID { get; set; }
         public string StudioName { get; set; }
     }
 }
