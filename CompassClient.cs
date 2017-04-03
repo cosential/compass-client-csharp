@@ -21,24 +21,19 @@ namespace Cosential.Integrations.Compass.Client
         public static readonly Uri DefaultUri = new Uri("https://compass.cosential.com/api");
         public readonly JsonSerializer Json;
 
-        public PersonnelContext PersonnelContext { get; private set; }
-        public CompanyContext CompanyContext { get; private set; }
-        public OfficeContext OfficeContext { get; private set; }
-        public DivisionContext DivisionContext { get; private set; }
-        public StudioContext StudioContext { get; set; }
-        public TerritoryContext TerritoryContext { get; set; }
-        public PracticeAreaContext PracticeAreaContext { get; set; }
-        public OfficeDivisionContext OfficeDivisionContext { get; set; }
-        public OpportunityContext OpportunityContext { get; set; }
-        public ContactContext ContactContext { get; private set; }
+        public PersonnelContext PersonnelContext => new PersonnelContext(this);
+        public CompanyContext CompanyContext => new CompanyContext(this);
+        public OfficeContext OfficeContext => new OfficeContext(this);
+        public DivisionContext DivisionContext => new DivisionContext(this);
+        public StudioContext StudioContext => new StudioContext(this);
+        public TerritoryContext TerritoryContext => new TerritoryContext(this);
+        public PracticeAreaContext PracticeAreaContext => new PracticeAreaContext(this);
+        public OfficeDivisionContext OfficeDivisionContext => new OfficeDivisionContext(this);
+        public OpportunityContext OpportunityContext => new OpportunityContext(this);
+        public ContactContext ContactContext => new ContactContext(this);
 
         public CompassClient(int firmId, Guid apiKey, string username, string password, Uri host= null)
         {
-            PersonnelContext = new PersonnelContext(this);
-            CompanyContext = new CompanyContext(this);
-            OfficeContext = new OfficeContext(this);
-            ContactContext = new ContactContext(this);
-
             if (host == null) host = DefaultUri;
 
             Json = new JsonSerializer();
