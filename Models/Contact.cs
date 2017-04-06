@@ -55,8 +55,28 @@ namespace Cosential.Integrations.Compass.Client.Models
         public string IndividualShortText3 { get; set; }
         public string IndividualShortText4 { get; set; }
         public string IndividualShortText5 { get; set; }
-        public byte[] ROW_VERSION { get; set; }
         public string AssistantTitle { get; set; }
-
+        public string Webpage { get; set; }
+        public string CustomField1 { get; set; }
+        public string CustomField2 { get; set; }
+        public string CustomField3 { get; set; }
+        public string CustomField4 { get; set; }
+        public string IndividualLongText1 { get; set; }
+        public string IndividualLongText2 { get; set; }
+        public string IndividualLongText3 { get; set; }
+        public string IndividualLongText4 { get; set; }
+        public string IndividualLongText5 { get; set; }
+        public int? IndividualNumber1 { get; set; }
+        public int? IndividualNumber2 { get; set; }
+        public DateTime? IndividualDate1 { get; set; }
+        public DateTime? IndividualDate2 { get; set; }
+        public int? IndividualValueListID1 { get; set; }
+        public int? IndividualValueListID2 { get; set; }
+        public int? IndividualValueListID3 { get; set; }
+        public decimal? IndividualMoney1 { get; set; }
+        public decimal? IndividualMoney2 { get; set; }
+        public int? ImportTypeID { get; set; }
+        public string twitterURL { get; set; }
+        public string linkedinURL { get; set; }
     }
 }

@@ -70,7 +70,7 @@ namespace Cosential.Integrations.Compass.Client.Models
         public DateTime? PreviousStartDate { get; set; }
         public DateTime? PreviousSeparationDate { get; set; }
         public DateTime? LastPromotionDate { get; set; }
-        public float? AdditionalTimeWithFirm { get; set; }
+        public decimal? AdditionalTimeWithFirm { get; set; }
         public int? YearsWithOtherFirms { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? LastModifiedDate { get; set; }
@@ -100,9 +100,6 @@ namespace Cosential.Integrations.Compass.Client.Models
         public string DeskOfficeLocation { get; set; }
         public int? SF254Code { get; set; }
         public bool Confidential { get; set; }
-        public string SF330DisciplineCode { get; set; }
-        public string Supervisor { get; set; }
-        public int? DisciplineCodeId { get; set; }
 
     }
 }

@@ -23,7 +23,7 @@ namespace Cosential.Integrations.Compass.Client.Models
         public string FPISImportId { get; set; }
         public string ParentCompanyName { get; set; }
         public string TickerSymbol { get; set; }
-        public float? SalesTarget { get; set; }
+        public decimal? SalesTarget { get; set; }
         public string AnnualRevenue { get; set; }
         public int? NumberOfEmployees { get; set; }
         public bool isHeadquarters { get; set; }
@@ -42,16 +42,16 @@ namespace Cosential.Integrations.Compass.Client.Models
         public string ContactFirmsNumber3 { get; set; }
         public string ContactFirmsNumber4 { get; set; }
         public string ContactFirmsNumber5 { get; set; }
-        public float? ContactFirmsMoney1 { get; set; }
-        public float? ContactFirmsMoney2 { get; set; }
-        public float? ContactFirmsMoney3 { get; set; }
-        public float? ContactFirmsMoney4 { get; set; }
-        public float? ContactFirmsMoney5 { get; set; }
-        public float? ContactFirmsPercent1 { get; set; }
-        public float? ContactFirmsPercent2 { get; set; }
-        public float? ContactFirmsPercent3 { get; set; }
-        public float? ContactFirmsPercent4 { get; set; }
-        public float? ContactFirmsPercent5 { get; set; }
+        public decimal? ContactFirmsMoney1 { get; set; }
+        public decimal? ContactFirmsMoney2 { get; set; }
+        public decimal? ContactFirmsMoney3 { get; set; }
+        public decimal? ContactFirmsMoney4 { get; set; }
+        public decimal? ContactFirmsMoney5 { get; set; }
+        public decimal? ContactFirmsPercent1 { get; set; }
+        public decimal? ContactFirmsPercent2 { get; set; }
+        public decimal? ContactFirmsPercent3 { get; set; }
+        public decimal? ContactFirmsPercent4 { get; set; }
+        public decimal? ContactFirmsPercent5 { get; set; }
         public string OtherCompanyName { get; set; }
         public string Division { get; set; }
         public string Notes { get; set; }
@@ -64,6 +64,16 @@ namespace Cosential.Integrations.Compass.Client.Models
         public int? ParentCompanyId { get; set; }
         public string Services { get; set; }
         public string Sector { get; set; }
-        public byte[] ROW_VERSION { get; set; }
+        public DateTime? ContactFirmsDate1 { get; set; }
+        public DateTime? ContactFirmsDate2 { get; set; }
+        public DateTime? ContactFirmsDate3 { get; set; }
+        public DateTime? ContactFirmsDate4 { get; set; }
+        public DateTime? ContactFirmsDate5 { get; set; }
+        public int? ContactFirmsValueListID1 { get; set; }
+        public int? ContactFirmsValueListID2 { get; set; }
+        public int? ContactFirmsValueListID3 { get; set; }
+        public int? ContactFirmsValueListID4 { get; set; }
+        public int? ContactFirmsValueListID5 { get; set; }
+        public string DUNSNumber { get; set; }
     }
 }

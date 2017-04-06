@@ -64,7 +64,7 @@ namespace Cosential.Integrations.Compass.Client
         {
             var request = _client.NewRequest("contacts/changes");
             request.AddQueryParameter("version", Convert.ToBase64String(rowVersion));
-            request.AddQueryParameter("includeDeleted", true.ToString());
+            if (includeDeleted) request.AddQueryParameter("includeDeleted", true.ToString());
             var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, token);
             return results.Data;
         }

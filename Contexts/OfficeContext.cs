@@ -30,7 +30,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         {
             var request = _client.NewRequest("firmorgs/offices/changes");
             request.AddQueryParameter("version", Convert.ToBase64String(rowVersion));
-            request.AddQueryParameter("includeDeleted", true.ToString());
+            if (includeDeleted) request.AddQueryParameter("includeDeleted", true.ToString());
             var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, token);
             return results.Data;
         }
