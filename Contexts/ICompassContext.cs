@@ -13,5 +13,6 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         Task<T> CreateAsync(T entity, CancellationToken cancelToken);
         Task<T> UpdateAsync(T entity, CancellationToken cancelToken);
         Task DeleteAsync(int id, CancellationToken cancelToken);
+        Task<Dictionary<string, object>> GetMetadataAync(MetadataScope scope, int id, CancellationToken cancellationToken);
     }
 }

@@ -125,5 +125,14 @@ namespace Cosential.Integrations.Compass.Client
             return result.Data;
         }
 
+        public async Task<Dictionary<string, object>> GetMetadataAync(MetadataScope scope, int id, CancellationToken cancellationToken)
+        {
+            var request = _client.NewRequest("contacts/{id}/metadata/{scope}");
+            request.AddUrlSegment("id", id.ToString());
+            request.AddUrlSegment("scope", scope.ToString());
+
+            var result = await _client.ExecuteAsync<Dictionary<string, object>>(request, cancellationToken);
+            return result.Data ?? new Dictionary<string, object>();
+        }
     }
 }

@@ -64,6 +64,7 @@
     <Compile Include="Contexts\DivisionContext.cs" />
     <Compile Include="Contexts\ContactContext.cs" />
     <Compile Include="Contexts\ICompassContext.cs" />
+    <Compile Include="Models\MetadataScope.cs" />
     <Compile Include="Contexts\OfficeContext.cs" />
     <Compile Include="Contexts\OfficeDivisionContext.cs" />
     <Compile Include="Contexts\OpportunityContext.cs" />

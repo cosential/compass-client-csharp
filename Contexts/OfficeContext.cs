@@ -85,5 +85,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
             await _client.ExecuteAsync(request, cancelToken);
         }
+
+        public Task<Dictionary<string, object>> GetMetadataAync(MetadataScope scope, int id, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(new Dictionary<string, object>());
+        }
     }
 }

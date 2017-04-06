@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using System.Threading.Tasks;
 using Cosential.Integrations.Compass.Client;
@@ -91,7 +92,7 @@ namespace Cosential.Integrations.Compass.Contexts
 
         public List<Company> List(int from, int size, bool full = true)
         {
-            var request = _client.NewRequest("companies", Method.GET);
+            var request = _client.NewRequest("companies");
             request.AddQueryParameter("from", from.ToString());
             request.AddQueryParameter("size", size.ToString());
             request.AddQueryParameter("full", full.ToString());
@@ -146,6 +147,16 @@ namespace Cosential.Integrations.Compass.Contexts
         public List<PracticeArea> GetPracticeAreas(int companyId)
         {
             return _client.GetSubItems<PracticeArea>(PrimaryEntityType.Company, companyId, "practiceareas");
+        }
+
+        public async Task<Dictionary<string, object>> GetMetadataAync(MetadataScope scope, int id, CancellationToken cancellationToken)
+        {
+            var request = _client.NewRequest("companies/{id}/metadata/{scope}");
+            request.AddUrlSegment("id", id.ToString());
+            request.AddUrlSegment("scope", scope.ToString());
+
+            var result = await _client.ExecuteAsync<Dictionary<string, object>>(request, cancellationToken);
+            return result.Data ?? new Dictionary<string, object>();
         }
 
         #endregion
