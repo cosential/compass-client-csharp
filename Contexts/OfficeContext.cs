@@ -90,5 +90,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         {
             return Task.FromResult(new Dictionary<string, object>());
         }
+
+        public Task<Dictionary<string, object>> PutMetadataAsync(MetadataScope scope, int entityId, Dictionary<string, object> data, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(new Dictionary<string, object>());
+        }
     }
 }

@@ -133,7 +133,10 @@ namespace Cosential.Integrations.Compass.Client
         {
             if (response.ErrorException != null) throw new HttpResponseException($"Exception in http response from [{response.ResponseUri}]", response.ErrorException);
 
-            if (response.StatusCode == HttpStatusCode.OK) return;
+            //Any success
+            if ((int)response.StatusCode >= 200 && (int)response.StatusCode < 300) return;
+
+            //404 isn't always an error, sometimes we are checking for existence and 404 is valid
             if (response.StatusCode == HttpStatusCode.NotFound) return;
 
             throw new ResponseStatusCodeException(response);

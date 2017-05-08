@@ -167,6 +167,17 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return result.Data ?? new Dictionary<string, object>();
         }
 
+        public async Task<Dictionary<string, object>> PutMetadataAsync(MetadataScope scope, int entityId, Dictionary<string, object> data, CancellationToken cancellationToken)
+        {
+            var request = _client.NewRequest("personnel/{id}/metadata/{scope}", Method.PUT);
+            request.AddUrlSegment("id", entityId.ToString());
+            request.AddUrlSegment("scope", scope.ToString());
+            request.AddBody(data);
+
+            var result = await _client.ExecuteAsync<Dictionary<string, object>>(request, cancellationToken);
+            return result.Data ?? new Dictionary<string, object>();
+        }
+
         #region SEARCH
 
         public List<Personnel> Search(string query, int from = 0, int take = 50)
