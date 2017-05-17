@@ -112,7 +112,7 @@ namespace Cosential.Integrations.Compass.Client.Models
         public decimal? FeeCIDifVolume { get; set; }
         public int? LaborDifferentialDollars { get; set; }
         public int? OppSelfPerformHours { get; set; }
-        public decimal? EstimatedManagementUnits { get; set; }
+        public float? EstimatedManagementUnits { get; set; }
         public decimal? GrossMargin { get; set; }
         public decimal? GrossMarginPercent { get; set; }
         public int? MasterOpportunityId { get; set; }

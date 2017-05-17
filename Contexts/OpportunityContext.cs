@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using Cosential.Integrations.Compass.Client;
-using Cosential.Integrations.Compass.Client.Contexts;
 using Cosential.Integrations.Compass.Client.Models;
 using RestSharp;
 
@@ -196,6 +192,15 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
                 await _client.ExecuteAsync(request, cancel);
             }
+        }
+
+        public async Task<List<PrimaryCategory>> GetPrimaryCategoriesAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/primarycategories");
+            request.AddUrlSegment("id", opportunityId.ToString());
+
+            var result = await _client.ExecuteAsync<List<PrimaryCategory>>(request, cancelToken);
+            return result.Data ?? new List<PrimaryCategory>();
         }
 
         public List<Studio> GetStudios(int opportunityId)

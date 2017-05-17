@@ -31,6 +31,7 @@ namespace Cosential.Integrations.Compass.Client
         public OfficeDivisionContext OfficeDivisionContext => new OfficeDivisionContext(this);
         public OpportunityContext OpportunityContext => new OpportunityContext(this);
         public ContactContext ContactContext => new ContactContext(this);
+        public ProjectContext ProjectContext => new ProjectContext(this);
 
         public CompassClient(int firmId, Guid apiKey, string username, string password, Uri host= null)
         {

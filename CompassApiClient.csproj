@@ -62,6 +62,8 @@
     <Compile Include="Contexts\DivisionContext.cs" />
     <Compile Include="Contexts\ContactContext.cs" />
     <Compile Include="Contexts\ICompassContext.cs" />
+    <Compile Include="Contexts\ProjectContext.cs" />
+    <Compile Include="Models\ContractType.cs" />
     <Compile Include="Models\MetadataScope.cs" />
     <Compile Include="Contexts\OfficeContext.cs" />
     <Compile Include="Contexts\OfficeDivisionContext.cs" />
@@ -87,6 +89,7 @@
     <Compile Include="Models\Personnel.cs" />
     <Compile Include="Models\Office.cs" />
     <Compile Include="Models\PracticeArea.cs" />
+    <Compile Include="Models\PrimaryCategory.cs" />
     <Compile Include="Models\Project.cs" />
     <Compile Include="Models\Studio.cs" />
     <Compile Include="Models\Territory.cs" />
