@@ -133,14 +133,13 @@ namespace Cosential.Integrations.Compass.Client
         private static void ValidateResponse(IRestResponse response)
         {
             if (response.ErrorException != null) throw new HttpResponseException($"Exception in http response from [{response.ResponseUri}]", response.ErrorException);
-
-            //Any success
-            if ((int)response.StatusCode >= 200 && (int)response.StatusCode < 300) return;
-
-            //404 isn't always an error, sometimes we are checking for existence and 404 is valid
-            if (response.StatusCode == HttpStatusCode.NotFound) return;
-
-            throw new ResponseStatusCodeException(response);
+//            //Any success
+//            if ((int)response.StatusCode >= 200 && (int)response.StatusCode < 300) return;
+//
+//            //404 isn't always an error, sometimes we are checking for existence and 404 is valid
+//            if (response.StatusCode == HttpStatusCode.NotFound) return;
+//
+//            throw new ResponseStatusCodeException(response);
         }
 
         public void Dispose()
