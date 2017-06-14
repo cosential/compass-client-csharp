@@ -65,6 +65,7 @@
     <Compile Include="Contexts\ProjectContext.cs" />
     <Compile Include="Models\CompanyIdent.cs" />
     <Compile Include="Models\ContractType.cs" />
+    <Compile Include="Models\DeliveryMethod.cs" />
     <Compile Include="Models\MetadataScope.cs" />
     <Compile Include="Contexts\OfficeContext.cs" />
     <Compile Include="Contexts\OfficeDivisionContext.cs" />

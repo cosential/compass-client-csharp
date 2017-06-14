@@ -203,6 +203,15 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return result.Data ?? new List<PrimaryCategory>();
         }
 
+        public async Task<List<DeliveryMethod>> GetDeliveryMethodsAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/deliverymethod");
+            request.AddUrlSegment("id", opportunityId.ToString());
+
+            var result = await _client.ExecuteAsync<List<DeliveryMethod>>(request, cancelToken);
+            return result.Data ?? new List<DeliveryMethod>();
+        }
+
         public async Task<List<OpportunityCompany>> GetCompaniesAsync(int opportunityId, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/{id}/companies");
