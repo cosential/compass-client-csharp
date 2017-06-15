@@ -21,17 +21,41 @@ namespace Cosential.Integrations.Compass.Client
         public static readonly Uri DefaultUri = new Uri("https://compass.cosential.com/api");
         public readonly JsonSerializer Json;
 
-        public PersonnelContext PersonnelContext => new PersonnelContext(this);
-        public CompanyContext CompanyContext => new CompanyContext(this);
-        public OfficeContext OfficeContext => new OfficeContext(this);
-        public DivisionContext DivisionContext => new DivisionContext(this);
-        public StudioContext StudioContext => new StudioContext(this);
-        public TerritoryContext TerritoryContext => new TerritoryContext(this);
-        public PracticeAreaContext PracticeAreaContext => new PracticeAreaContext(this);
-        public OfficeDivisionContext OfficeDivisionContext => new OfficeDivisionContext(this);
-        public OpportunityContext OpportunityContext => new OpportunityContext(this);
-        public ContactContext ContactContext => new ContactContext(this);
-        public ProjectContext ProjectContext => new ProjectContext(this);
+        private PersonnelContext _personnelContext;
+        public PersonnelContext PersonnelContext => _personnelContext ?? (_personnelContext = new PersonnelContext(this));
+
+        private CompanyContext _companyContext;
+        public CompanyContext CompanyContext => _companyContext ?? (_companyContext = new CompanyContext(this));
+
+        private OfficeContext _officeContext;
+        public OfficeContext OfficeContext => _officeContext ?? (_officeContext = new OfficeContext(this));
+
+        private DivisionContext _divisionContext;
+        public DivisionContext DivisionContext => _divisionContext ?? (_divisionContext = new DivisionContext(this));
+
+        private StudioContext _studioContext;
+        public StudioContext StudioContext => _studioContext ?? (_studioContext = new StudioContext(this));
+
+        private TerritoryContext _territoryContext;
+        public TerritoryContext TerritoryContext => _territoryContext ?? (_territoryContext = new TerritoryContext(this));
+
+        private PracticeAreaContext _practiceAreaContext;
+        public PracticeAreaContext PracticeAreaContext => _practiceAreaContext ?? (_practiceAreaContext = new PracticeAreaContext(this));
+
+        private OfficeDivisionContext _officeDivisionContext;
+        public OfficeDivisionContext OfficeDivisionContext => _officeDivisionContext ?? (_officeDivisionContext  = new OfficeDivisionContext(this));
+
+        private OpportunityContext _opportunityContext;
+        public OpportunityContext OpportunityContext => _opportunityContext ?? (_opportunityContext = new OpportunityContext(this));
+
+        private ContactContext _contactContext;
+        public ContactContext ContactContext => _contactContext ?? (_contactContext = new ContactContext(this));
+
+        private ProjectContext _projectContext;
+        public ProjectContext ProjectContext => _projectContext ?? (_projectContext = new ProjectContext(this));
+
+        private StaffTeamContext _staffTeamContext;
+        public StaffTeamContext StaffTeamContext => _staffTeamContext ?? (_staffTeamContext = new StaffTeamContext(this));
 
         public CompassClient(int firmId, Guid apiKey, string username, string password, Uri host= null)
         {
