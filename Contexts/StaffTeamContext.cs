@@ -20,6 +20,15 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             _client = client;
         }
 
+        #region CRUD
+
+        public StaffTeam Get(int staffTeamId)
+        {
+            var task = GetAsync(staffTeamId, CancellationToken.None);
+            task.RunSynchronously();
+            return task.Result;
+        }
+
         public async Task<StaffTeam> GetAsync(int id, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/staffteam/{id}");
@@ -32,9 +41,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public async Task<UpsertResult<StaffTeam>> UpsertAsync(StaffTeam entity, CancellationToken cancelToken)
         {
+
             var result = new UpsertResult<StaffTeam>();
 
-            if (entity.OppStaffTeamID.HasValue && entity.OppStaffTeamID.Value > 0)
+            if (entity.StaffTeamId.HasValue && entity.StaffTeamId.Value > 0)
             {
                 result.Action = UpsertAction.Updated;
                 result.Data = await UpdateAsync(entity, cancelToken);
@@ -48,8 +58,6 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return result;
 
         }
-
-        #region CRUD
 
         public async Task<StaffTeam> CreateAsync(StaffTeam entity, CancellationToken cancelToken)
         {
@@ -70,7 +78,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<StaffTeam> UpdateAsync(StaffTeam entity, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportutnities/staffteam/{id}", Method.PUT);
-            request.AddUrlSegment("id", entity.OppStaffTeamID.ToString());
+            request.AddUrlSegment("id", entity.StaffTeamId.ToString());
             request.AddBody(entity);
 
             var response = await _client.ExecuteAsync<StaffTeam>(request, cancelToken);
@@ -86,15 +94,19 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             await _client.ExecuteAsync(request, cancelToken);
         }
 
-        public Task<Dictionary<string, object>> GetMetadataAync(MetadataScope scope, int id, CancellationToken cancellationToken)
+        #endregion
+
+        #region Subitems 
+
+        public async Task<List<StaffTeamRole>> GetStaffTeamRoleAsync(int StaffTeamId, CancellationToken cancelToken)
         {
-            return Task.FromResult(new Dictionary<string, object>());
+            var request = _client.NewRequest("opportunities/staffteam/staffteamroles/{id}");
+            request.AddUrlSegment("id", StaffTeamId.ToString());
+
+            var result = await _client.ExecuteAsync<List<StaffTeamRole>>(request, cancelToken);
+            return result.Data ?? new List<StaffTeamRole>();
         }
 
-        public Task<Dictionary<string, object>> PutMetadataAsync(MetadataScope scope, int entityId, Dictionary<String, object> data, CancellationToken cancellationToken)
-        {
-            return Task.FromResult(new Dictionary<string, object>());
-        }
 
         #endregion
 
@@ -116,6 +128,20 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, token);
 
             return results.Data;
+        }
+
+        #endregion
+
+        #region Metadata
+
+        public Task<Dictionary<string, object>> GetMetadataAync(MetadataScope scope, int id, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(new Dictionary<string, object>());
+        }
+
+        public Task<Dictionary<string, object>> PutMetadataAsync(MetadataScope scope, int entityId, Dictionary<String, object> data, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(new Dictionary<string, object>());
         }
 
         #endregion
