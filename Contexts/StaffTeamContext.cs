@@ -44,7 +44,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
             var result = new UpsertResult<StaffTeam>();
 
-            if (entity.StaffTeamId.HasValue && entity.StaffTeamId.Value > 0)
+            if (entity.OppStaffTeamID > 0)
             {
                 result.Action = UpsertAction.Updated;
                 result.Data = await UpdateAsync(entity, cancelToken);
@@ -78,7 +78,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<StaffTeam> UpdateAsync(StaffTeam entity, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportutnities/staffteam/{id}", Method.PUT);
-            request.AddUrlSegment("id", entity.StaffTeamId.ToString());
+            request.AddUrlSegment("id", entity.OppStaffTeamID.ToString());
             request.AddBody(entity);
 
             var response = await _client.ExecuteAsync<StaffTeam>(request, cancelToken);

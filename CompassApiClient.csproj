@@ -92,6 +92,8 @@
     <Compile Include="Models\OpportunityCompany.cs" />
     <Compile Include="Models\Personnel.cs" />
     <Compile Include="Models\Office.cs" />
+    <Compile Include="Models\PersonnelStatus.cs" />
+    <Compile Include="Models\PersonnelSummary.cs" />
     <Compile Include="Models\PracticeArea.cs" />
     <Compile Include="Models\PrimaryCategory.cs" />
     <Compile Include="Models\Project.cs" />
