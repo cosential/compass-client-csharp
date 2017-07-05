@@ -46,14 +46,14 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             throw new NotImplementedException();
         }
 
-        public Task<Dictionary<string, object>> GetMetadataAync(MetadataScope scope, int entityId, CancellationToken cancellationToken)
+        public Task<TM> GetMetadataAync<TM>(MetadataScope scope, int entityId, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Dictionary<string, object>> PutMetadataAsync(MetadataScope scope, int entityId, Dictionary<string, object> data, CancellationToken cancellationToken)
+        public Task<TM> PutMetadataAsync<TM>(MetadataScope scope, int entityId, TM data, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
-        }       
+        }
     }
 }
