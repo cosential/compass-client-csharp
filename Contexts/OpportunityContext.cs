@@ -194,6 +194,18 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             }
         }
 
+        public async Task<List<PrimaryCategory>> TryGetPrimaryCategoriesAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            try
+            {
+                return await GetPrimaryCategoriesAsync(opportunityId, cancelToken);
+            }
+            catch
+            {
+                return new List<PrimaryCategory>();
+            }
+        }
+
         public async Task<List<PrimaryCategory>> GetPrimaryCategoriesAsync(int opportunityId, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/{id}/primarycategories");
@@ -201,6 +213,18 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
             var result = await _client.ExecuteAsync<List<PrimaryCategory>>(request, cancelToken);
             return result.Data ?? new List<PrimaryCategory>();
+        }
+
+        public async Task<List<StaffTeam>> TryGetStaffTeamAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            try
+            {
+                return await GetStaffTeamAsync(opportunityId, cancelToken);
+            }
+            catch
+            {
+                return new List<StaffTeam>();
+            }
         }
 
         public async Task<List<StaffTeam>> GetStaffTeamAsync(int opportunityId, CancellationToken cancelToken)
@@ -212,6 +236,18 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return result.Data ?? new List<StaffTeam>();
         }
 
+        public async Task<List<SecondaryCategory>> TryGetSecondaryCategoriesAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            try
+            {
+                return await GetSecondaryCategoriesAsync(opportunityId, cancelToken);
+            }
+            catch
+            {
+                return new List<SecondaryCategory>();
+            }
+        }
+
         public async Task<List<SecondaryCategory>> GetSecondaryCategoriesAsync(int opportunityId, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/{id}/secondarycategories");
@@ -221,6 +257,18 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return result.Data ?? new List<SecondaryCategory>();
         }
 
+        public async Task<List<DeliveryMethod>> TryGetDeliveryMethodsAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            try
+            {
+                return await GetDeliveryMethodsAsync(opportunityId, cancelToken);
+            }
+            catch
+            {
+                return new List<DeliveryMethod>();
+            }
+        }
+
         public async Task<List<DeliveryMethod>> GetDeliveryMethodsAsync(int opportunityId, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/{id}/deliverymethod");
@@ -228,6 +276,18 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
             var result = await _client.ExecuteAsync<List<DeliveryMethod>>(request, cancelToken);
             return result.Data ?? new List<DeliveryMethod>();
+        }
+
+        public async Task<List<OpportunityCompany>> TryGetCompaniesAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            try
+            {
+                return await GetCompaniesAsync(opportunityId, cancelToken);
+            }
+            catch
+            {
+                return new List<OpportunityCompany>();
+            }
         }
 
         public async Task<List<OpportunityCompany>> GetCompaniesAsync(int opportunityId, CancellationToken cancelToken)

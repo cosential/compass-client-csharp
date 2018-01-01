@@ -59,8 +59,8 @@ namespace Cosential.Integrations.Compass.Client
             }
             catch (Exception ex)
             {
-                _log.Error($"Error attempting to deserialize response content to type [{typeof(T).FullName}]", ex);
-                return default(T);
+                _log.Warn($"Request to [{response.ResponseUri}] resulted in error attempting to deserialize response content to type [{typeof(T).FullName}]\n Content: `{response.Content}`", ex);
+                throw;
             }
         }
 

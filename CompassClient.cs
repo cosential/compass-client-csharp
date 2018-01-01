@@ -9,6 +9,7 @@ using Cosential.Integrations.Compass.Client.Contexts;
 using Cosential.Integrations.Compass.Client.Exceptions;
 using Cosential.Integrations.Compass.Client.Models;
 using Cosential.Integrations.Compass.Contexts;
+using log4net;
 using RestSharp;
 using RestSharp.Authenticators;
 
@@ -17,6 +18,7 @@ namespace Cosential.Integrations.Compass.Client
     public class CompassClient : IDisposable
     {
         private readonly RestClient _client;
+        private readonly ILog _log;
 
         public static readonly Uri DefaultUri = new Uri("https://compass.cosential.com/api");
         public readonly JsonSerializer Json;
@@ -60,6 +62,8 @@ namespace Cosential.Integrations.Compass.Client
         public CompassClient(int firmId, Guid apiKey, string username, string password, Uri host= null)
         {
             if (host == null) host = DefaultUri;
+
+            _log = LogManager.GetLogger(typeof(CompassClient));
 
             Json = new JsonSerializer();
 
@@ -128,42 +132,43 @@ namespace Cosential.Integrations.Compass.Client
 
         public IRestResponse Execute(RestRequest request)
         {
+            var ts = DateTime.Now;
             var res = _client.Execute(request);
+            //_log.Debug($"Call took [{DateTime.Now.Subtract(ts)}] to [{res.ResponseUri}]");
             ValidateResponse(res);
             return res;
         }
 
         public IRestResponse<T> Execute<T>(RestRequest request) where T : new()
         {
+            var ts = DateTime.Now;
             var res = _client.Execute<T>(request);
+            //_log.Debug($"Call took [{DateTime.Now.Subtract(ts)}] to [{res.ResponseUri}]");
             ValidateResponse(res);
             return res;
         }
 
         public async Task<IRestResponse<T>> ExecuteAsync<T>(RestRequest request, CancellationToken cancel)
         {
+            var ts = DateTime.Now;
             var res = await _client.ExecuteTaskAsync<T>(request, cancel);
+            //_log.Debug($"Call took [{DateTime.Now.Subtract(ts)}] to [{res.ResponseUri}]");
             ValidateResponse(res);
             return res;
         }
 
         public async Task<IRestResponse> ExecuteAsync(RestRequest request, CancellationToken cancel)
         {
+            var ts = DateTime.Now;
             var res = await _client.ExecuteTaskAsync(request, cancel);
+            //_log.Debug($"Call took [{DateTime.Now.Subtract(ts)}] to [{res.ResponseUri}]");
             ValidateResponse(res);
             return res;
         }
 
         private static void ValidateResponse(IRestResponse response)
         {
-            if (response.ErrorException != null) throw new HttpResponseException($"Exception in http response from [{response.ResponseUri}]", response.ErrorException);
-//            //Any success
-//            if ((int)response.StatusCode >= 200 && (int)response.StatusCode < 300) return;
-//
-//            //404 isn't always an error, sometimes we are checking for existence and 404 is valid
-//            if (response.StatusCode == HttpStatusCode.NotFound) return;
-//
-//            throw new ResponseStatusCodeException(response);
+            if (response.ErrorException != null || response.StatusCode == HttpStatusCode.InternalServerError) throw new ResponseStatusCodeException(response);
         }
 
         public void Dispose()
