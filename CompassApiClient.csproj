@@ -36,17 +36,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\CosentialSQLConnector\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\CosentialSQLConnector\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\CosentialSQLConnector\packages\RestSharp.105.2.3\lib\net46\RestSharp.dll</HintPath>
+    <Reference Include="RestSharp, Version=106.3.1.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>packages\RestSharp.106.3.1\lib\net452\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -62,6 +62,21 @@
     <Compile Include="Contexts\DivisionContext.cs" />
     <Compile Include="Contexts\ContactContext.cs" />
     <Compile Include="Contexts\ICompassContext.cs" />
+    <Compile Include="Models\PersonnelAwardSponsor.cs" />
+    <Compile Include="Models\PersonnelPresentationType.cs" />
+    <Compile Include="Models\PersonnelResumeType.cs" />
+    <Compile Include="Models\PersonnelSocial.cs" />
+    <Compile Include="Models\PersonnelPublication.cs" />
+    <Compile Include="Models\PersonnelContractorCategory.cs" />
+    <Compile Include="Models\PersonnelStaffRole.cs" />
+    <Compile Include="Models\PersonnelResumeIntroduction.cs" />
+    <Compile Include="Models\PersonnelPresentation.cs" />
+    <Compile Include="Models\PersonnelAward.cs" />
+    <Compile Include="Models\PersonnelSkill.cs" />
+    <Compile Include="Models\PersonnelTraining.cs" />
+    <Compile Include="Models\PersonnelRegistration.cs" />
+    <Compile Include="Models\PersonnelMembership.cs" />
+    <Compile Include="Models\PersonnelEducation.cs" />
     <Compile Include="Models\MetadataScope.cs" />
     <Compile Include="Contexts\OfficeContext.cs" />
     <Compile Include="Contexts\OfficeDivisionContext.cs" />

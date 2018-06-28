@@ -23,5 +23,6 @@ namespace Cosential.Integrations.Compass.Client
         public string OriginalImageEndpoint { get; set; }
         public string WebsiteImageEndpoint { get; set; }
         public string ThumbnailImageEndpoint { get; set; }
+        public bool PrimaryPhoto { get; set; }
     }
 }
