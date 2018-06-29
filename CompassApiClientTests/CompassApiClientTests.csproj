@@ -64,6 +64,7 @@
     <Compile Include="CompassClientTests.cs" />
     <Compile Include="Credentials.cs" />
     <Compile Include="PersonnelCompassClientTests.cs" />
+    <Compile Include="PersonnelCompassClientTestsForSubObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
