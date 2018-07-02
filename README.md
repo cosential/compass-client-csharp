@@ -13,5 +13,5 @@ Steps to run the sample tests:
 - Change the test method as per the requirement and run the sample test.
 
 Note (for PUT operations): *** The user should make two calls to the Compass:
-- First Call: GET the existing record at Cosential. Modify and set the properties of the Object as desired.
+- First Call: GET the existing record at Cosential. Modify and set the properties of the Object as desired. Make sure to set/apply the incoming values to the Object as well (else they will be wiped out).
 - Second Call: Send (PUT) the updated record to Cosential.
