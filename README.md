@@ -1,7 +1,7 @@
 # cosential-client-csharp
 Description: A Client library written in C# for Compass (Cosential's general purpose RESTful API).
 
-It is highly recommended to test the client on the UAT Environment before moving to PROD.
+It is highly recommended to test the library on the UAT Environment before moving to PROD.
 
 Please refer to the 'Contexts' folder under the namespace 'CompassApiClient' for CRUD operations on Objects & SubObjects.
 
