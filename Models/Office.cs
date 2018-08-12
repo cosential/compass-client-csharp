@@ -47,5 +47,6 @@ namespace Cosential.Integrations.Compass.Client.Models
         public decimal? FeeCIPercent { get; set; }
         public int? LaborDifferential { get; set; }
         public bool Available { get; set; }
+        public string ROW_VERSION { get; set; }
     }
 }

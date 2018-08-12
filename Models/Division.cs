@@ -36,5 +36,6 @@ namespace Cosential.Integrations.Compass.Client.Models
         public decimal? divisionSalesGoal { get; set; }
         public decimal? MarginPercentage { get; set; }
         public decimal? AssessmentPercentage { get; set; }
+        public string ROW_VERSION { get; set; }
     }
 }

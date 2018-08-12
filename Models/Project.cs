@@ -135,9 +135,6 @@ namespace Cosential.Integrations.Compass.Client.Models
         public bool isMarketingProject { get; set; }
         public bool isSubMarketingProject { get; set; }
         public string Role { get; set; }
-
-
+        public bool IsPublishableProject { get; set; }
     }
-
-
 }

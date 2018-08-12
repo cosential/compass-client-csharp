@@ -2,7 +2,7 @@ using System;
 
 namespace Cosential.Integrations.Compass.Client.Models
 {
-    public class PersonnelStaffRole
+    public class StaffRole
     {
         public int? StaffRoleId { get; set; }
         public string StaffRoleName { get; set; }

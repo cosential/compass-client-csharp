@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cosential.Integrations.Compass.Client.Models
 {
@@ -121,5 +116,14 @@ namespace Cosential.Integrations.Compass.Client.Models
         public string StageType { get; set; }
         public int? AutoNumber { get; set; }
         public DateTime? ShortListedDate { get; set; }
+        public string Note { get; set; }
+        public int? RedZoneScore { get; set; }
+        public string OpportunityLongText1 { get; set; }
+        public string OpportunityLongText2 { get; set; }
+        public string OpportunityLongText3 { get; set; }
+        public string OpportunityLongText4 { get; set; }
+        public string OpportunityLongText5 { get; set; }
+        public string approvalLevel { get; set; }
+        public string approvalStatus { get; set; }
     }
 }

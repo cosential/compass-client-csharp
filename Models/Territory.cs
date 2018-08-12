@@ -12,5 +12,6 @@ namespace Cosential.Integrations.Compass.Client.Models
         public string states { get; set; }
         public string FIPSCodes { get; set; }
         public bool available { get; set; }
+        public string ROW_VERSION { get; set; }
     }
 }
