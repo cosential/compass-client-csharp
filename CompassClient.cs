@@ -31,8 +31,9 @@ namespace Cosential.Integrations.Compass.Client
         public OfficeDivisionContext OfficeDivisionContext => new OfficeDivisionContext(this);
         public OpportunityContext OpportunityContext => new OpportunityContext(this);
         public ContactContext ContactContext => new ContactContext(this);
+        public ProjectContext ProjectContext => new ProjectContext(this);
 
-        public CompassClient(int firmId, Guid apiKey, string username, string password, Uri host= null)
+        public CompassClient(int firmId, Guid apiKey, string username, string password, Uri host = null)
         {
             if (host == null) host = DefaultUri;
 
@@ -41,7 +42,7 @@ namespace Cosential.Integrations.Compass.Client
             _client = new RestClient(host)
             {
                 Authenticator = new HttpBasicAuthenticator(username, password)
-                
+
             };
 
             _client.ClearHandlers();
@@ -50,7 +51,7 @@ namespace Cosential.Integrations.Compass.Client
             _client.AddDefaultHeader("x-compass-firm-id", firmId.ToString());
             _client.AddDefaultHeader("Accept", "application/json");
             _client.AddDefaultHeader("x-compass-show-error", "true");
-            
+
             _client.AddHandler("application/json", Json);
             _client.AddHandler("text/json", Json);
             _client.AddHandler("text/x-json", Json);
@@ -144,7 +145,7 @@ namespace Cosential.Integrations.Compass.Client
 
         public void Dispose()
         {
-            
+
         }
     }
 }
