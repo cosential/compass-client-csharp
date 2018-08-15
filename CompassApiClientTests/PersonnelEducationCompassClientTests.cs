@@ -14,20 +14,20 @@ using Cosential.Integrations.Compass.Client.Contexts;
 namespace Cosential.Integrations.Compass.Client.Tests
 {
     [TestClass()]
-    public class PersonnelCompassClientTestsForSubObject
+    public class PersonnelEducationCompassClientTests
     {
-        private readonly PersonnelSubObjectContext _client;
+        private readonly PersonnelContext _context;
 
-        public PersonnelCompassClientTestsForSubObject()
+        public PersonnelEducationCompassClientTests()
         {
-            _client = new PersonnelSubObjectContext(Credentials.FirmId, Credentials.ApiKey, Credentials.Username, Credentials.Password);
+            _context = new PersonnelContext(new CompassClient(Credentials.FirmId, Credentials.ApiKey, Credentials.Username, Credentials.Password));
         }
 
         [TestMethod()]
         public void CreateEducationRecord()
         {
             //Any valid Personnel ID to which the education would be associated
-            var _personnelId = 1063258;
+            var _personnelId = 1079654;
 
             var education = new PersonnelEducation
             {
@@ -38,7 +38,7 @@ namespace Cosential.Integrations.Compass.Client.Tests
                 SF330_DegreeInd = 0
             };
 
-            var result = _client.Create(_personnelId, education);
+            var result = _context.AddEducationToPersonnel(_personnelId, education);
             Assert.IsNotNull(result);
         }
     }

@@ -63,7 +63,6 @@
     <Compile Include="Contexts\ContactContext.cs" />
     <Compile Include="Contexts\ICompassContext.cs" />
     <Compile Include="Contexts\ProjectContext.cs" />
-    <Compile Include="Contexts\PersonnelSubObjectContext.cs" />
     <Compile Include="Models\ContactRole.cs" />
     <Compile Include="Models\ContactRoleType.cs" />
     <Compile Include="Models\ContractType.cs" />

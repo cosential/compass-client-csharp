@@ -226,7 +226,19 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             }
 
             return result;
+        }        
+
+        public UpsertResult<Personnel> UpsertByExternalId(Personnel personnel)
+        {
+            var found = GetByExternalId(personnel.ExternalId);
+            if (found != null) personnel.PersonnelId = found.PersonnelId;
+
+            return Upsert(personnel);
         }
+
+        #endregion
+
+        #region ASSOCIATE SUB-OBJECTS
 
         public List<Office> AddOfficeToPersonnel(int personnelId, string officeName)
         {
@@ -259,12 +271,43 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return results.Data;
         }
 
-        public UpsertResult<Personnel> UpsertByExternalId(Personnel personnel)
+        public IList<PersonnelEducation> Create(int personnelId, IEnumerable<PersonnelEducation> education)
         {
-            var found = GetByExternalId(personnel.ExternalId);
-            if (found != null) personnel.PersonnelId = found.PersonnelId;
+            var request = _client.NewRequest($"personnel/{personnelId}/education", Method.POST);
+            request.AddBody(education);
+            var results = _client.Execute<List<PersonnelEducation>>(request);
+            return results.Data;
+        }
 
-            return Upsert(personnel);
+        public PersonnelEducation AddEducationToPersonnel(int personnelId, PersonnelEducation education)
+        {
+            return Create(personnelId, new PersonnelEducation[] { education }).FirstOrDefault();
+        }
+
+        public PersonnelEducation Update(int personnelId, PersonnelEducation education)
+        {
+            var request = _client.NewRequest("personnel/{personnelId}/education/{DegreeId}", Method.PUT);
+            request.AddUrlSegment("personnelId", personnelId.ToString());
+            request.AddUrlSegment("DegreeId", education.DegreeId.ToString());
+            request.AddBody(education);
+
+            var results = _client.Execute<PersonnelEducation>(request);
+            return results.Data;
+        }
+
+        public void DeleteAllEducationRecords(int personnelId)
+        {
+            var request = _client.NewRequest($"personnel/{personnelId}/education", Method.DELETE);
+            _client.Execute<Personnel>(request);
+        }
+
+        public void DeleteEducationRecord(int personnelId, int degreeId)
+        {
+            var request = _client.NewRequest("personnel/{personnelId}/education/{degreeId}", Method.DELETE);
+            request.AddUrlSegment("personnelId", personnelId.ToString());
+            request.AddUrlSegment("degreeId", degreeId.ToString());
+
+            _client.Execute<Personnel>(request);
         }
 
         #endregion
