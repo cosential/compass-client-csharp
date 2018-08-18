@@ -4,5 +4,6 @@
     {
         public int? PracticeAreaID { get; set; }
         public string PracticeAreaName { get; set; }
+        public string PracticeAreaAcronym { get; set; }
     }
 }

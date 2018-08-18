@@ -43,7 +43,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         {
             var result = new UpsertResult<OfficeDivision>();
 
-            if (entity.OfficeDivisionID.HasValue && entity.OfficeDivisionID.Value > 0)
+            if (entity.OffDivID.HasValue && entity.OffDivID.Value > 0)
             {
                 result.Action = UpsertAction.Updated;
                 result.Data = await UpdateAsync(entity, cancelToken);
@@ -76,7 +76,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<OfficeDivision> UpdateAsync(OfficeDivision entity, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("firmorgs/officedivisions/{id}", Method.PUT);
-            request.AddUrlSegment("id", entity.OfficeDivisionID.ToString());
+            request.AddUrlSegment("id", entity.OffDivID.ToString());
             request.AddBody(entity);
 
             var response = await _client.ExecuteAsync<OfficeDivision>(request, cancelToken);
@@ -92,14 +92,14 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             await _client.ExecuteAsync(request, cancelToken);
         }
 
-        public Task<Dictionary<string, object>> GetMetadataAync(MetadataScope scope, int id, CancellationToken cancellationToken)
+        public Task<TM> GetMetadataAync<TM>(MetadataScope scope, int entityId, CancellationToken cancellationToken)
         {
-            return Task.FromResult(new Dictionary<string, object>());
+            return Task.FromResult(default(TM));
         }
 
-        public Task<Dictionary<string, object>> PutMetadataAsync(MetadataScope scope, int entityId, Dictionary<string, object> data, CancellationToken cancellationToken)
+        public Task<TM> PutMetadataAsync<TM>(MetadataScope scope, int entityId, TM data, CancellationToken cancellationToken)
         {
-            return Task.FromResult(new Dictionary<string, object>());
+            return Task.FromResult(default(TM));
         }
     }
 }

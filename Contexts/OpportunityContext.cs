@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
-using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using Cosential.Integrations.Compass.Client;
-using Cosential.Integrations.Compass.Client.Contexts;
 using Cosential.Integrations.Compass.Client.Models;
 using RestSharp;
 
@@ -198,6 +194,111 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             }
         }
 
+        public async Task<List<PrimaryCategory>> TryGetPrimaryCategoriesAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            try
+            {
+                return await GetPrimaryCategoriesAsync(opportunityId, cancelToken);
+            }
+            catch
+            {
+                return new List<PrimaryCategory>();
+            }
+        }
+
+        public async Task<List<PrimaryCategory>> GetPrimaryCategoriesAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/primarycategories");
+            request.AddUrlSegment("id", opportunityId.ToString());
+
+            var result = await _client.ExecuteAsync<List<PrimaryCategory>>(request, cancelToken);
+            return result.Data ?? new List<PrimaryCategory>();
+        }
+
+        public async Task<List<StaffTeam>> TryGetStaffTeamAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            try
+            {
+                return await GetStaffTeamAsync(opportunityId, cancelToken);
+            }
+            catch
+            {
+                return new List<StaffTeam>();
+            }
+        }
+
+        public async Task<List<StaffTeam>> GetStaffTeamAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/staffteam");
+            request.AddUrlSegment("id", opportunityId.ToString());
+
+            var result = await _client.ExecuteAsync<List<StaffTeam>>(request, cancelToken);
+            return result.Data ?? new List<StaffTeam>();
+        }
+
+        public async Task<List<SecondaryCategory>> TryGetSecondaryCategoriesAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            try
+            {
+                return await GetSecondaryCategoriesAsync(opportunityId, cancelToken);
+            }
+            catch
+            {
+                return new List<SecondaryCategory>();
+            }
+        }
+
+        public async Task<List<SecondaryCategory>> GetSecondaryCategoriesAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/secondarycategories");
+            request.AddUrlSegment("id", opportunityId.ToString());
+
+            var result = await _client.ExecuteAsync<List<SecondaryCategory>>(request, cancelToken);
+            return result.Data ?? new List<SecondaryCategory>();
+        }
+
+        public async Task<List<DeliveryMethod>> TryGetDeliveryMethodsAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            try
+            {
+                return await GetDeliveryMethodsAsync(opportunityId, cancelToken);
+            }
+            catch
+            {
+                return new List<DeliveryMethod>();
+            }
+        }
+
+        public async Task<List<DeliveryMethod>> GetDeliveryMethodsAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/deliverymethod");
+            request.AddUrlSegment("id", opportunityId.ToString());
+
+            var result = await _client.ExecuteAsync<List<DeliveryMethod>>(request, cancelToken);
+            return result.Data ?? new List<DeliveryMethod>();
+        }
+
+        public async Task<List<OpportunityCompany>> TryGetCompaniesAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            try
+            {
+                return await GetCompaniesAsync(opportunityId, cancelToken);
+            }
+            catch
+            {
+                return new List<OpportunityCompany>();
+            }
+        }
+
+        public async Task<List<OpportunityCompany>> GetCompaniesAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/companies");
+            request.AddUrlSegment("id", opportunityId.ToString());
+
+            var result = await _client.ExecuteAsync<List<OpportunityCompany>>(request, cancelToken);
+            return result.Data ?? new List<OpportunityCompany>();
+        }
+
         public List<Studio> GetStudios(int opportunityId)
         {
             return _client.GetSubItems<Studio>(PrimaryEntityType.Opportunity, opportunityId, "studios");
@@ -220,25 +321,25 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         #endregion
 
-        public async Task<Dictionary<string, object>> GetMetadataAync(MetadataScope scope, int id, CancellationToken cancellationToken)
+        public async Task<TM> GetMetadataAync<TM>(MetadataScope scope, int id, CancellationToken cancellationToken)
         {
             var request = _client.NewRequest("opportunities/{id}/metadata/{scope}");
             request.AddUrlSegment("id", id.ToString());
             request.AddUrlSegment("scope", scope.ToString());
 
-            var result = await _client.ExecuteAsync<Dictionary<string, object>>(request, cancellationToken);
-            return result.Data ?? new Dictionary<string, object>();
+            var result = await _client.ExecuteAsync<TM>(request, cancellationToken);
+            return result.Data;
         }
 
-        public async Task<Dictionary<string, object>> PutMetadataAsync(MetadataScope scope, int entityId, Dictionary<string, object> data, CancellationToken cancellationToken)
+        public async Task<TM> PutMetadataAsync<TM>(MetadataScope scope, int entityId, TM data, CancellationToken cancellationToken)
         {
             var request = _client.NewRequest("opportunities/{id}/metadata/{scope}", Method.PUT);
             request.AddUrlSegment("id", entityId.ToString());
             request.AddUrlSegment("scope", scope.ToString());
             request.AddBody(data);
 
-            var result = await _client.ExecuteAsync<Dictionary<string, object>>(request, cancellationToken);
-            return result.Data ?? new Dictionary<string, object>();
+            var result = await _client.ExecuteAsync<TM>(request, cancellationToken);
+            return result.Data;
         }
     }
 }

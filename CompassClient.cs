@@ -9,6 +9,7 @@ using Cosential.Integrations.Compass.Client.Contexts;
 using Cosential.Integrations.Compass.Client.Exceptions;
 using Cosential.Integrations.Compass.Client.Models;
 using Cosential.Integrations.Compass.Contexts;
+using log4net;
 using RestSharp;
 using RestSharp.Authenticators;
 
@@ -17,24 +18,52 @@ namespace Cosential.Integrations.Compass.Client
     public class CompassClient : IDisposable
     {
         private readonly RestClient _client;
+        private readonly ILog _log;
 
         public static readonly Uri DefaultUri = new Uri("https://compass.cosential.com/api");
         public readonly JsonSerializer Json;
 
-        public PersonnelContext PersonnelContext => new PersonnelContext(this);
-        public CompanyContext CompanyContext => new CompanyContext(this);
-        public OfficeContext OfficeContext => new OfficeContext(this);
-        public DivisionContext DivisionContext => new DivisionContext(this);
-        public StudioContext StudioContext => new StudioContext(this);
-        public TerritoryContext TerritoryContext => new TerritoryContext(this);
-        public PracticeAreaContext PracticeAreaContext => new PracticeAreaContext(this);
-        public OfficeDivisionContext OfficeDivisionContext => new OfficeDivisionContext(this);
-        public OpportunityContext OpportunityContext => new OpportunityContext(this);
-        public ContactContext ContactContext => new ContactContext(this);
+        private PersonnelContext _personnelContext;
+        public PersonnelContext PersonnelContext => _personnelContext ?? (_personnelContext = new PersonnelContext(this));
+
+        private CompanyContext _companyContext;
+        public CompanyContext CompanyContext => _companyContext ?? (_companyContext = new CompanyContext(this));
+
+        private OfficeContext _officeContext;
+        public OfficeContext OfficeContext => _officeContext ?? (_officeContext = new OfficeContext(this));
+
+        private DivisionContext _divisionContext;
+        public DivisionContext DivisionContext => _divisionContext ?? (_divisionContext = new DivisionContext(this));
+
+        private StudioContext _studioContext;
+        public StudioContext StudioContext => _studioContext ?? (_studioContext = new StudioContext(this));
+
+        private TerritoryContext _territoryContext;
+        public TerritoryContext TerritoryContext => _territoryContext ?? (_territoryContext = new TerritoryContext(this));
+
+        private PracticeAreaContext _practiceAreaContext;
+        public PracticeAreaContext PracticeAreaContext => _practiceAreaContext ?? (_practiceAreaContext = new PracticeAreaContext(this));
+
+        private OfficeDivisionContext _officeDivisionContext;
+        public OfficeDivisionContext OfficeDivisionContext => _officeDivisionContext ?? (_officeDivisionContext  = new OfficeDivisionContext(this));
+
+        private OpportunityContext _opportunityContext;
+        public OpportunityContext OpportunityContext => _opportunityContext ?? (_opportunityContext = new OpportunityContext(this));
+
+        private ContactContext _contactContext;
+        public ContactContext ContactContext => _contactContext ?? (_contactContext = new ContactContext(this));
+
+        private ProjectContext _projectContext;
+        public ProjectContext ProjectContext => _projectContext ?? (_projectContext = new ProjectContext(this));
+
+        private StaffTeamContext _staffTeamContext;
+        public StaffTeamContext StaffTeamContext => _staffTeamContext ?? (_staffTeamContext = new StaffTeamContext(this));
 
         public CompassClient(int firmId, Guid apiKey, string username, string password, Uri host= null)
         {
             if (host == null) host = DefaultUri;
+
+            _log = LogManager.GetLogger(typeof(CompassClient));
 
             Json = new JsonSerializer();
 
@@ -103,43 +132,43 @@ namespace Cosential.Integrations.Compass.Client
 
         public IRestResponse Execute(RestRequest request)
         {
+            var ts = DateTime.Now;
             var res = _client.Execute(request);
+            //_log.Debug($"Call took [{DateTime.Now.Subtract(ts)}] to [{res.ResponseUri}]");
             ValidateResponse(res);
             return res;
         }
 
         public IRestResponse<T> Execute<T>(RestRequest request) where T : new()
         {
+            var ts = DateTime.Now;
             var res = _client.Execute<T>(request);
+            //_log.Debug($"Call took [{DateTime.Now.Subtract(ts)}] to [{res.ResponseUri}]");
             ValidateResponse(res);
             return res;
         }
 
         public async Task<IRestResponse<T>> ExecuteAsync<T>(RestRequest request, CancellationToken cancel)
         {
+            var ts = DateTime.Now;
             var res = await _client.ExecuteTaskAsync<T>(request, cancel);
+            //_log.Debug($"Call took [{DateTime.Now.Subtract(ts)}] to [{res.ResponseUri}]");
             ValidateResponse(res);
             return res;
         }
 
         public async Task<IRestResponse> ExecuteAsync(RestRequest request, CancellationToken cancel)
         {
+            var ts = DateTime.Now;
             var res = await _client.ExecuteTaskAsync(request, cancel);
+            //_log.Debug($"Call took [{DateTime.Now.Subtract(ts)}] to [{res.ResponseUri}]");
             ValidateResponse(res);
             return res;
         }
 
         private static void ValidateResponse(IRestResponse response)
         {
-            if (response.ErrorException != null) throw new HttpResponseException($"Exception in http response from [{response.ResponseUri}]", response.ErrorException);
-
-            //Any success
-            if ((int)response.StatusCode >= 200 && (int)response.StatusCode < 300) return;
-
-            //404 isn't always an error, sometimes we are checking for existence and 404 is valid
-            if (response.StatusCode == HttpStatusCode.NotFound) return;
-
-            throw new ResponseStatusCodeException(response);
+            if (response.ErrorException != null || response.StatusCode == HttpStatusCode.InternalServerError) throw new ResponseStatusCodeException(response);
         }
 
         public void Dispose()
