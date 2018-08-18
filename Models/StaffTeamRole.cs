@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace Cosential.Integrations.Compass.Client.Models
 {
-    public class ContractType
+    public class StaffTeamRole
     {
-        public int? Id { get; set; }
-        public string Name { get; set; }
+
+        public int StaffRoleId { get; set; }
+        public string StaffRoleName { get; set; }
+        public string StaffRoleType { get; set; }
         public string Description { get; set; }
+        public decimal? HourlyRate { get; set; }
         public bool IsAvailable { get; set; }
-        public int? ContractTypeOrder { get; set; }
         public bool IsDeleted { get; set; }
-        public DateTime? CreateDate { get; set; }
-        public int? Old_ID { get; set; }
-        public string ROW_VERSION { get; set; }
+        public int? ExternalId { get; set; }
     }
 }

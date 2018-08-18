@@ -65,7 +65,6 @@
     <Compile Include="Contexts\ProjectContext.cs" />
     <Compile Include="Models\ContactRole.cs" />
     <Compile Include="Models\ContactRoleType.cs" />
-    <Compile Include="Models\ContractType.cs" />
     <Compile Include="Models\Email.cs" />
     <Compile Include="Models\PersonnelAwardSponsor.cs" />
     <Compile Include="Models\PersonnelPresentationType.cs" />
@@ -81,6 +80,10 @@
     <Compile Include="Models\PersonnelRegistration.cs" />
     <Compile Include="Models\PersonnelMembership.cs" />
     <Compile Include="Models\PersonnelEducation.cs" />
+    <Compile Include="Contexts\StaffTeamContext.cs" />
+    <Compile Include="Models\CompanyIdent.cs" />
+    <Compile Include="Models\ContractType.cs" />
+    <Compile Include="Models\DeliveryMethod.cs" />
     <Compile Include="Models\MetadataScope.cs" />
     <Compile Include="Contexts\OfficeContext.cs" />
     <Compile Include="Contexts\OfficeDivisionContext.cs" />
@@ -103,8 +106,11 @@
     <Compile Include="JsonSerializer.cs" />
     <Compile Include="Models\OfficeDivision.cs" />
     <Compile Include="Models\Opportunity.cs" />
+    <Compile Include="Models\OpportunityCompany.cs" />
     <Compile Include="Models\Personnel.cs" />
     <Compile Include="Models\Office.cs" />
+    <Compile Include="Models\PersonnelStatus.cs" />
+    <Compile Include="Models\PersonnelSummary.cs" />
     <Compile Include="Models\PracticeArea.cs" />
     <Compile Include="Models\PrimaryCategory.cs" />
     <Compile Include="Models\Project.cs" />
@@ -139,6 +145,9 @@
     <Compile Include="Models\Role.cs" />
     <Compile Include="Models\SecondaryCategory.cs" />
     <Compile Include="Models\StaffRole.cs" />
+    <Compile Include="Models\ProjectRoleType.cs" />
+    <Compile Include="Models\StaffTeam.cs" />
+    <Compile Include="Models\StaffTeamRole.cs" />
     <Compile Include="Models\Studio.cs" />
     <Compile Include="Models\Territory.cs" />
     <Compile Include="PersonnelCompassClient.cs" />

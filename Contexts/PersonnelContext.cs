@@ -157,25 +157,25 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return result.ResponseStatus == ResponseStatus.Completed;
         }
 
-        public async Task<Dictionary<string, object>> GetMetadataAync(MetadataScope scope, int id, CancellationToken cancellationToken)
+        public async Task<TM> GetMetadataAync<TM>(MetadataScope scope, int id, CancellationToken cancellationToken)
         {
             var request = _client.NewRequest("personnel/{id}/metadata/{scope}");
             request.AddUrlSegment("id", id.ToString());
             request.AddUrlSegment("scope", scope.ToString());
 
-            var result = await _client.ExecuteAsync<Dictionary<string, object>>(request, cancellationToken);
-            return result.Data ?? new Dictionary<string, object>();
+            var result = await _client.ExecuteAsync<TM>(request, cancellationToken);
+            return result.Data;
         }
 
-        public async Task<Dictionary<string, object>> PutMetadataAsync(MetadataScope scope, int entityId, Dictionary<string, object> data, CancellationToken cancellationToken)
+        public async Task<TM> PutMetadataAsync<TM>(MetadataScope scope, int entityId, TM data, CancellationToken cancellationToken)
         {
             var request = _client.NewRequest("personnel/{id}/metadata/{scope}", Method.PUT);
             request.AddUrlSegment("id", entityId.ToString());
             request.AddUrlSegment("scope", scope.ToString());
             request.AddBody(data);
 
-            var result = await _client.ExecuteAsync<Dictionary<string, object>>(request, cancellationToken);
-            return result.Data ?? new Dictionary<string, object>();
+            var result = await _client.ExecuteAsync<TM>(request, cancellationToken);
+            return result.Data;
         }
 
         #region SEARCH
