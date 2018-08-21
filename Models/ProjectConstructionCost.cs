@@ -16,11 +16,11 @@
         public decimal? OrigConstContract_PC { get; set; }
         public decimal? ModConstContract_PC { get; set; }
         public decimal? StdChangeOrd_PC { get; set; }
-        public int? GMPChangeOrd_count { get; set; }
+        public decimal? GMPChangeOrd_count { get; set; }
         public decimal? GMPChangeOrd_val { get; set; }
-        public int? PreconChangeOrd_count { get; set; }
+        public decimal? PreconChangeOrd_count { get; set; }
         public decimal? PreconChangeOrd_val { get; set; }
-        public int? StdChangeOrd_count { get; set; }
+        public decimal? StdChangeOrd_count { get; set; }
         public decimal? StdChangeOrd_val { get; set; }
         public string ChangeOrdComments { get; set; }
         public string ConstCostComments { get; set; }
@@ -30,13 +30,13 @@
         public decimal? ConsValueEngSav { get; set; }
         public float? ConsValueEngSavPercentage { get; set; }
         public decimal? TotalSavReturnedToOwner { get; set; }
-        public bool ConfidentialCost { get; set; }
+        public string ConfidentialCost { get; set; }
         public decimal? ModPreconst_AC { get; set; }
         public decimal? ModConstContract_AC { get; set; }
         public decimal? StdChangeOrd_AC { get; set; }
         public decimal? FinCont_AC { get; set; }
         public float? FinCostab_AC { get; set; }
-        public int? TotalChangeOrd_count { get; set; }
+        public decimal? TotalChangeOrd_count { get; set; }
         public decimal? TotalChangeOrd_val { get; set; }
         public string PreconInContract { get; set; }
     }

@@ -43,7 +43,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         {
             var result = new UpsertResult<OfficeDivision>();
 
-            if (entity.OffDivID.HasValue && entity.OffDivID.Value > 0)
+            if (entity.OfficeDivisionID.HasValue && entity.OfficeDivisionID.Value > 0)
             {
                 result.Action = UpsertAction.Updated;
                 result.Data = await UpdateAsync(entity, cancelToken);
@@ -76,7 +76,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<OfficeDivision> UpdateAsync(OfficeDivision entity, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("firmorgs/officedivisions/{id}", Method.PUT);
-            request.AddUrlSegment("id", entity.OffDivID.ToString());
+            request.AddUrlSegment("id", entity.OfficeDivisionID.ToString());
             request.AddBody(entity);
 
             var response = await _client.ExecuteAsync<OfficeDivision>(request, cancelToken);
