@@ -29,7 +29,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return task.Result;
         }
 
-        public async Task<StaffTeam> GetAsync(int id, CancellationToken cancelToken)
+        public async Task<StaffTeam> GetAsync(int id, CancellationToken cancelToken, int? parentId = null)
         {
             var request = _client.NewRequest("opportunities/staffteam/{id}");
             request.AddUrlSegment("id", id.ToString());
@@ -39,7 +39,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return results.Data;
         }
 
-        public async Task<UpsertResult<StaffTeam>> UpsertAsync(StaffTeam entity, CancellationToken cancelToken)
+        public async Task<UpsertResult<StaffTeam>> UpsertAsync(StaffTeam entity, CancellationToken cancelToken,
+            int? parentId = null)
         {
 
             var result = new UpsertResult<StaffTeam>();
@@ -59,7 +60,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         }
 
-        public async Task<StaffTeam> CreateAsync(StaffTeam entity, CancellationToken cancelToken)
+        public async Task<StaffTeam> CreateAsync(StaffTeam entity, CancellationToken cancelToken, int? parentId = null)
         {
             var staffTeams = await CreateAsync(new[] { entity }, cancelToken );
             return staffTeams.FirstOrDefault();
@@ -86,7 +87,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return response.Data;
         }
 
-        public async Task DeleteAsync(int id, CancellationToken cancelToken)
+        public async Task DeleteAsync(int id, CancellationToken cancelToken, int? parentId = null)
         {
             var request = _client.NewRequest("opportunities/staffteam/{id}", Method.DELETE);
             request.AddUrlSegment("id", id.ToString());
@@ -134,12 +135,14 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         #region Metadata
 
-        public Task<TM> GetMetadataAync<TM>(MetadataScope scope, int entityId, CancellationToken cancellationToken)
+        public Task<TM> GetMetadataAync<TM>(MetadataScope scope, int entityId, CancellationToken cancellationToken,
+            int? parentId = null)
         {
             return Task.FromResult(default(TM));
         }
 
-        public Task<TM> PutMetadataAsync<TM>(MetadataScope scope, int entityId, TM data, CancellationToken cancellationToken)
+        public Task<TM> PutMetadataAsync<TM>(MetadataScope scope, int entityId, TM data,
+            CancellationToken cancellationToken, int? parentId = null)
         {
             return Task.FromResult(default(TM));
         }

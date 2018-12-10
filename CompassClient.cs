@@ -29,6 +29,9 @@ namespace Cosential.Integrations.Compass.Client
         private CompanyContext _companyContext;
         public CompanyContext CompanyContext => _companyContext ?? (_companyContext = new CompanyContext(this));
 
+        private CompanyAddressContext _companyAddressContext;
+        public CompanyAddressContext CompanyAddressContext => _companyAddressContext ?? (_companyAddressContext = new CompanyAddressContext(this));
+
         private OfficeContext _officeContext;
         public OfficeContext OfficeContext => _officeContext ?? (_officeContext = new OfficeContext(this));
 

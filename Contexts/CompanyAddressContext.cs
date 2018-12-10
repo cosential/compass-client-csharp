@@ -2,82 +2,91 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
-using System.Runtime.Remoting.Messaging;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Cosential.Integrations.Compass.Client;
-using Cosential.Integrations.Compass.Client.Contexts;
 using Cosential.Integrations.Compass.Client.Models;
 using RestSharp;
 
-namespace Cosential.Integrations.Compass.Contexts
+namespace Cosential.Integrations.Compass.Client.Contexts
 {
-    public class CompanyContext : ICompassContext<Company>
+    public class CompanyAddressContext : ICompassContext<CompanyAddress>
     {
         private readonly CompassClient _client;
-        public CompanyContext(CompassClient client)
+        public CompanyAddressContext(CompassClient client)
         {
             _client = client;
         }
 
         #region CRUD
 
-        public Company Get(int companyId)
+        public CompanyAddress Get(int companyId, int addressId)
         {
-            var task = GetAsync(companyId, CancellationToken.None);
+            var task = GetAsync(addressId, CancellationToken.None, companyId);
             task.RunSynchronously();
             return task.Result;
         }
 
-        public async Task<Company> GetAsync(int companyId, CancellationToken cancelToken, int? parentId = null)
+        public async Task<CompanyAddress> GetAsync(int addressId, CancellationToken cancelToken, int? parentId = null)
         {
-            var request = _client.NewRequest("companies/{id}");
-            request.AddUrlSegment("id", companyId.ToString());
+            if(!parentId.HasValue) throw new ArgumentException("Parent id value is required to get company address.");
 
-            var results = await _client.ExecuteAsync<Company>(request, cancelToken);
+            var request = _client.NewRequest("companies/{id}/addresses/{addressId}");
+            request.AddUrlSegment("id", parentId.Value);
+            request.AddUrlSegment("addressId", addressId);
+
+            var results = await _client.ExecuteAsync<CompanyAddress>(request, cancelToken);
             return results.Data;
         }
 
-        public async Task<Company> UpdateAsync(Company entity, CancellationToken cancel)
+        // todo : remove parent id from signature
+        public async Task<CompanyAddress> UpdateAsync(CompanyAddress entity, CancellationToken cancel)
         {
-            var request = _client.NewRequest("companies/{id}", Method.PUT);
+            var request = _client.NewRequest("companies/{id}/addresses/{addressId}", Method.PUT);
             request.AddUrlSegment("id", entity.CompanyId.ToString());
+            request.AddUrlSegment("addressId", entity.AddressID);
             request.AddBody(entity);
 
-            var results = await _client.ExecuteAsync<Company>(request, cancel);
+            var results = await _client.ExecuteAsync<CompanyAddress>(request, cancel);
             return results.Data;
         }
 
         public async Task DeleteAsync(int id, CancellationToken cancel, int? parentId = null)
         {
-            var request = _client.NewRequest("companies/{id}", Method.DELETE);
-            request.AddUrlSegment("id", id.ToString());
-            
-            await _client.ExecuteAsync<Company>(request, cancel);
+            if(!parentId.HasValue) throw new ArgumentException("Parent Id is required to delete company addresss.");
+            var request = _client.NewRequest("companies/{id}/addresses/{AddressId}", Method.DELETE);
+            request.AddUrlSegment("id", id);
+            request.AddUrlSegment("AddressId", parentId.Value);
+
+            await _client.ExecuteAsync<CompanyAddress>(request, cancel);
         }
 
-        public async Task<Company> CreateAsync(Company entity, CancellationToken cancel, int? parentId = null)
+
+        public async Task<CompanyAddress> CreateAsync(CompanyAddress entity, CancellationToken cancel,
+            int? parentId = null)
         {
-            var result = await CreateAsync(new[] { entity }, cancel);
+            if (!parentId.HasValue) throw new ArgumentException("Parent id value is required to create company address.");
+
+            var result = await CreateAsync(new[] { entity }, cancel, parentId.Value);
             return result.FirstOrDefault();
         }
 
-        public async Task<IList<Company>> CreateAsync(IEnumerable<Company> entities, CancellationToken cancel)
+        public async Task<IList<CompanyAddress>> CreateAsync(IEnumerable<CompanyAddress> entities, CancellationToken cancel, int parentId)
         {
-            var request = _client.NewRequest("companies", Method.POST);
+            var request = _client.NewRequest("companies/{companyId}/addresses", Method.POST);
+            request.AddUrlSegment("companyId", parentId);
             request.AddBody(entities);
 
-            var results = await _client.ExecuteAsync<List<Company>>(request, cancel);
+            var results = await _client.ExecuteAsync<List<CompanyAddress>>(request, cancel);
             return results.Data;
         }
 
-        public async Task<UpsertResult<Company>> UpsertAsync(Company entity, CancellationToken cancelToken,
-            int? parentId = null)
+        public async Task<UpsertResult<CompanyAddress>> UpsertAsync(CompanyAddress entity,
+            CancellationToken cancelToken, int? parentId = null)
         {
-            var result = new UpsertResult<Company>();
+            var result = new UpsertResult<CompanyAddress>();
 
-            if (entity.CompanyId.HasValue && entity.CompanyId.Value > 0)
+            if (entity.AddressID > 0)
             {
                 result.Action = UpsertAction.Updated;
                 result.Data = await UpdateAsync(entity, cancelToken);
@@ -85,20 +94,20 @@ namespace Cosential.Integrations.Compass.Contexts
             else
             {
                 result.Action = UpsertAction.Created;
-                result.Data = await CreateAsync(entity, cancelToken);
+                result.Data = await CreateAsync(entity, cancelToken, parentId);
             }
 
             return result;
         }
 
-        public List<Company> List(int from, int size, bool full = true)
+        public List<CompanyAddress> List(int companyId, int from, int size)
         {
-            var request = _client.NewRequest("companies");
+            var request = _client.NewRequest("companies/{companyId}/addresses");
+            request.AddUrlSegment("companyId", companyId);
             request.AddQueryParameter("from", from.ToString());
             request.AddQueryParameter("size", size.ToString());
-            request.AddQueryParameter("full", full.ToString());
 
-            var results = _client.Execute<List<Company>>(request);
+            var results = _client.Execute<List<CompanyAddress>>(request);
             if (results.Data == null)
             {
                 Debug.Write(results.Content);
@@ -119,7 +128,7 @@ namespace Cosential.Integrations.Compass.Contexts
 
         public async Task<List<ChangeEvent>> GetChangesAsync(byte[] version, bool includeDeleted, CancellationToken cancel)
         {
-            var request = _client.NewRequest("companies/changes");
+            var request = _client.NewRequest("companies/addresses/changes");
             if (version != null) request.AddQueryParameter("version", Convert.ToBase64String(version));
             if (includeDeleted) request.AddQueryParameter("includeDeleted", true.ToString());
             var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, cancel);
@@ -130,25 +139,7 @@ namespace Cosential.Integrations.Compass.Contexts
 
         #region Subitems
 
-        public List<CompanyAddress> GetAddresses(int companyId)
-        {
-            return _client.GetSubItems<CompanyAddress>(PrimaryEntityType.Company, companyId, "addresses");
-        }
-
-        public List<CompanyType> GetTypes(int companyId)
-        {
-            return _client.GetSubItems<CompanyType>(PrimaryEntityType.Company, companyId, "companytypes");
-        }
-
-        public List<Studio> GetStudios(int companyId)
-        {
-            return _client.GetSubItems<Studio>(PrimaryEntityType.Company, companyId, "studios");
-        }
-
-        public List<PracticeArea> GetPracticeAreas(int companyId)
-        {
-            return _client.GetSubItems<PracticeArea>(PrimaryEntityType.Company, companyId, "practiceareas");
-        }
+       
 
         public async Task<TM> GetMetadataAync<TM>(MetadataScope scope, int id, CancellationToken cancellationToken,
             int? parentId = null)

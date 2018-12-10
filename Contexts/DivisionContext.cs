@@ -20,7 +20,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             _client = client;
         }
 
-        public async Task<Division> GetAsync(int id, CancellationToken cancelToken)
+        public async Task<Division> GetAsync(int id, CancellationToken cancelToken, int? parentId = null)
         {
             var request = _client.NewRequest($"firmorgs/divisions/{id}");
             var results = await _client.ExecuteAsync<Division>(request, cancelToken);
@@ -40,7 +40,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return results.Data;
         }
 
-        public async Task<UpsertResult<Division>> UpsertAsync( Division entity, CancellationToken cancelToken)
+        public async Task<UpsertResult<Division>> UpsertAsync(Division entity, CancellationToken cancelToken,
+            int? parentId = null)
         {
             var result = new UpsertResult<Division>();
 
@@ -58,7 +59,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return result;
         }
 
-        public async Task<Division> CreateAsync( Division entity, CancellationToken cancelToken)
+        public async Task<Division> CreateAsync(Division entity, CancellationToken cancelToken, int? parentId = null)
         {
             var divisions = await CreateAsync(new [] {entity}, cancelToken);
             return divisions.FirstOrDefault();
@@ -74,7 +75,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return response.Data;
         }
 
-        public async Task<Division> UpdateAsync( Division entity, CancellationToken cancelToken)
+        public async Task<Division> UpdateAsync(Division entity, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("firmorgs/divisions/{id}", Method.PUT);
                 request.AddUrlSegment("id", entity.DivisionID.ToString());
@@ -85,7 +86,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return response.Data;
         }
 
-        public async Task DeleteAsync( int id, CancellationToken cancelToken)
+        public async Task DeleteAsync(int id, CancellationToken cancelToken, int? parentId = null)
         {
             var request = _client.NewRequest("firmorgs/divisions/{id}", Method.DELETE);
                 request.AddUrlSegment("id", id.ToString());
@@ -93,12 +94,14 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             await _client.ExecuteAsync(request, cancelToken);
         }
 
-        public Task<TM> GetMetadataAync<TM>(MetadataScope scope, int entityId, CancellationToken cancellationToken)
+        public Task<TM> GetMetadataAync<TM>(MetadataScope scope, int entityId, CancellationToken cancellationToken,
+            int? parentId = null)
         {
             return Task.FromResult(default(TM));
         }
 
-        public Task<TM> PutMetadataAsync<TM>(MetadataScope scope, int entityId, TM data, CancellationToken cancellationToken)
+        public Task<TM> PutMetadataAsync<TM>(MetadataScope scope, int entityId, TM data,
+            CancellationToken cancellationToken, int? parentId = null)
         {
             return Task.FromResult(default(TM));
         }
