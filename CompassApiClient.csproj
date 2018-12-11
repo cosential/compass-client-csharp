@@ -60,6 +60,7 @@
     <Compile Include="ContactCompassClient.cs" />
     <Compile Include="Contexts\CompanyAddressContext.cs" />
     <Compile Include="Contexts\CompanyContext.cs" />
+    <Compile Include="Contexts\ContactAddressContext.cs" />
     <Compile Include="Contexts\DivisionContext.cs" />
     <Compile Include="Contexts\ContactContext.cs" />
     <Compile Include="Contexts\ICompassContext.cs" />

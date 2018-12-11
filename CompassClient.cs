@@ -56,6 +56,9 @@ namespace Cosential.Integrations.Compass.Client
         private ContactContext _contactContext;
         public ContactContext ContactContext => _contactContext ?? (_contactContext = new ContactContext(this));
 
+        private ContactAddressContext _contactAddressContext;
+        public ContactAddressContext ContactAddressContext => _contactAddressContext ?? (_contactAddressContext = new ContactAddressContext(this));
+
         private ProjectContext _projectContext;
         public ProjectContext ProjectContext => _projectContext ?? (_projectContext = new ProjectContext(this));
 
