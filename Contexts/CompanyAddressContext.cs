@@ -45,10 +45,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             var request = _client.NewRequest("companies/{id}/addresses/{addressId}", Method.PUT);
             request.AddUrlSegment("id", entity.CompanyId.ToString());
             request.AddUrlSegment("addressId", entity.AddressID);
-            request.AddBody(entity);
+            request.AddBody(new []{entity});
 
-            var results = await _client.ExecuteAsync<CompanyAddress>(request, cancel);
-            return results.Data;
+            var results = await _client.ExecuteAsync<List<CompanyAddress>>(request, cancel);
+            return results.Data.FirstOrDefault();
         }
 
         public async Task DeleteAsync(int id, CancellationToken cancel, int? parentId = null)
