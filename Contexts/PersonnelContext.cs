@@ -42,7 +42,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return Create(new[] { personnel }).FirstOrDefault();
         }
 
-        public async Task<Personnel> CreateAsync(Personnel personnel, CancellationToken cancel)
+        public async Task<Personnel> CreateAsync(Personnel personnel, CancellationToken cancel, int? parentId = null)
         {
             var result = await CreateAsync(new [] {personnel}, cancel);
             return result.FirstOrDefault();
@@ -57,7 +57,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return results.Data;
         }
 
-        public async Task<Personnel> GetAsync(int personnelId, CancellationToken cancelToken)
+        public async Task<Personnel> GetAsync(int personnelId, CancellationToken cancelToken, int? parentId = null)
         {
             var request = _client.NewRequest("personnel/{id}");
             request.AddUrlSegment("id", personnelId.ToString());
@@ -120,7 +120,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             var results = _client.Execute<Personnel>(request);
         }
 
-        public async Task DeleteAsync(int personnelId, CancellationToken cancelToken)
+        public async Task DeleteAsync(int personnelId, CancellationToken cancelToken, int? parentId = null)
         {
             var request = _client.NewRequest("personnel/{id}", Method.DELETE);
             request.AddUrlSegment("id", personnelId.ToString());
@@ -157,7 +157,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return result.ResponseStatus == ResponseStatus.Completed;
         }
 
-        public async Task<TM> GetMetadataAync<TM>(MetadataScope scope, int id, CancellationToken cancellationToken)
+        public async Task<TM> GetMetadataAync<TM>(MetadataScope scope, int id, CancellationToken cancellationToken,
+            int? parentId = null)
         {
             var request = _client.NewRequest("personnel/{id}/metadata/{scope}");
             request.AddUrlSegment("id", id.ToString());
@@ -167,7 +168,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return result.Data;
         }
 
-        public async Task<TM> PutMetadataAsync<TM>(MetadataScope scope, int entityId, TM data, CancellationToken cancellationToken)
+        public async Task<TM> PutMetadataAsync<TM>(MetadataScope scope, int entityId, TM data,
+            CancellationToken cancellationToken, int? parentId = null)
         {
             var request = _client.NewRequest("personnel/{id}/metadata/{scope}", Method.PUT);
             request.AddUrlSegment("id", entityId.ToString());
@@ -210,7 +212,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             };
         }
 
-        public async Task<UpsertResult<Personnel>> UpsertAsync(Personnel personnel, CancellationToken cancel)
+        public async Task<UpsertResult<Personnel>> UpsertAsync(Personnel personnel, CancellationToken cancel,
+            int? parentId = null)
         {
             var result = new UpsertResult<Personnel>();
 

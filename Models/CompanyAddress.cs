@@ -33,5 +33,7 @@ namespace Cosential.Integrations.Compass.Client.Models
         public string CongressDistrict { get; set; }
         public string CarrierRoute { get; set; }
         public string OfficeSecPhone { get; set; }
+        public string ROW_VERSION { get; set; }
+
     }
 }
