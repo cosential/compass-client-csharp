@@ -151,6 +151,7 @@
     <Compile Include="Models\StaffTeam.cs" />
     <Compile Include="Models\StaffTeamRole.cs" />
     <Compile Include="Models\Studio.cs" />
+    <Compile Include="Models\SubmittalType.cs" />
     <Compile Include="Models\Territory.cs" />
     <Compile Include="PersonnelCompassClient.cs" />
     <Compile Include="Models\PersonnelImageMetadata.cs" />

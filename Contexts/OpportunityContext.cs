@@ -128,6 +128,28 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
 
         #region Subitems
+
+        public async Task<List<SubmittalType>> GetSubmittalTypeAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/submittaltype");
+            request.AddUrlSegment("id", opportunityId.ToString());
+
+            var result = await _client.ExecuteAsync<List<SubmittalType>>(request, cancelToken);
+            return result.Data ?? new List<SubmittalType>();
+        }
+
+        public async Task<List<SubmittalType>> TryGetSubmittalTypeAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            try
+            {
+                return await GetSubmittalTypeAsync(opportunityId, cancelToken);
+            }
+            catch 
+            {
+                return new List<SubmittalType>();
+            }
+        }
+
         public List<Office> GetOffices(int opportunityId)
         {
             return _client.GetSubItems<Office>(PrimaryEntityType.Opportunity, opportunityId, "offices");
@@ -320,6 +342,21 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return _client.GetSubItems<Territory>(PrimaryEntityType.Opportunity, opportunityId, "territories");
         }
 
+        public async Task RemoveSubmittalType(int opportunityId, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/submittaltype", Method.DELETE);
+            request.AddUrlSegment("id", opportunityId.ToString());
+            await _client.ExecuteAsync(request, cancelToken);
+        }
+
+        public async Task UpdateSubmittalType(int opportunityId, SubmittalType submittalType, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/submittaltype", Method.POST);
+            request.AddUrlSegment("id", opportunityId.ToString());
+            request.AddBody(new List<SubmittalType> {submittalType});
+            await _client.ExecuteAsync(request, cancelToken);
+        }
+
         #endregion
 
         public async Task<TM> GetMetadataAync<TM>(MetadataScope scope, int id, CancellationToken cancellationToken,
@@ -344,5 +381,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             var result = await _client.ExecuteAsync<TM>(request, cancellationToken);
             return result.Data;
         }
+
+       
     }
 }
