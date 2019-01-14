@@ -134,7 +134,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             request.AddUrlSegment("id", opportunityId.ToString());
 
             var result = await _client.ExecuteAsync<OppRole>(request, cancelToken);
-            return result.Data ?? new OppRole();
+            return result.Data; 
         }
 
         public async Task<OppRole> TryGetRoleAsync(int opportunityId, CancellationToken cancelToken)
@@ -145,7 +145,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             }
             catch
             {
-                return new OppRole();
+                return null; 
             }
         }
         public List<Office> GetOffices(int opportunityId)
@@ -351,7 +351,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         {
             var request = _client.NewRequest("opportunities/{id}/role", Method.POST);
             request.AddUrlSegment("id", opportunityId.ToString());
-            request.AddBody(new List<OppRole> { role });
+            request.AddBody(role);
             await _client.ExecuteAsync(request, cancelToken);
         }
 
