@@ -68,6 +68,7 @@
     <Compile Include="Models\ContactRole.cs" />
     <Compile Include="Models\ContactRoleType.cs" />
     <Compile Include="Models\Email.cs" />
+    <Compile Include="Models\OppRole.cs" />
     <Compile Include="Models\PersonnelAwardSponsor.cs" />
     <Compile Include="Models\PersonnelPresentationType.cs" />
     <Compile Include="Models\PersonnelResumeType.cs" />
