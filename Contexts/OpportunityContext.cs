@@ -128,6 +128,26 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
 
         #region Subitems
+        public async Task<OppRole> GetRoleAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/role");
+            request.AddUrlSegment("id", opportunityId.ToString());
+
+            var result = await _client.ExecuteAsync<OppRole>(request, cancelToken);
+            return result.Data; 
+        }
+
+        public async Task<OppRole> TryGetRoleAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            try
+            {
+                return await GetRoleAsync(opportunityId, cancelToken);
+            }
+            catch
+            {
+                return null; 
+            }
+        }
         public List<Office> GetOffices(int opportunityId)
         {
             return _client.GetSubItems<Office>(PrimaryEntityType.Opportunity, opportunityId, "offices");
@@ -318,6 +338,21 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public List<Territory> GetTerritories(int opportunityId)
         {
             return _client.GetSubItems<Territory>(PrimaryEntityType.Opportunity, opportunityId, "territories");
+        }
+
+        public async Task RemoveRole(int opportunityId, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/role", Method.DELETE);
+            request.AddUrlSegment("id", opportunityId.ToString());
+            await _client.ExecuteAsync(request, cancelToken);
+        }
+
+        public async Task UpdateRole(int opportunityId, OppRole role, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/role", Method.POST);
+            request.AddUrlSegment("id", opportunityId.ToString());
+            request.AddBody(role);
+            await _client.ExecuteAsync(request, cancelToken);
         }
 
         #endregion
