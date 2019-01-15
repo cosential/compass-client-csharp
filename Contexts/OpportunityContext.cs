@@ -128,6 +128,49 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
 
         #region Subitems
+
+        public async Task<SubmittalType> GetSubmittalTypeAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/submittaltype");
+            request.AddUrlSegment("id", opportunityId.ToString());
+
+            var result = await _client.ExecuteAsync<SubmittalType>(request, cancelToken);
+            return result.Data;
+        }
+
+        public async Task<SubmittalType> TryGetSubmittalTypeAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            try
+            {
+                return await GetSubmittalTypeAsync(opportunityId, cancelToken);
+            }
+            catch 
+            {
+                return null;
+            }
+        }
+
+        public async Task<Sf330ProfileCode> GetSf330ProfileCode(int opportunityId, CancellationToken cancellationToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/Sf330ProfileCode");
+            request.AddUrlSegment("id", opportunityId.ToString());
+            var result = await _client.ExecuteAsync<Sf330ProfileCode>(request, cancellationToken);
+            return result.Data;
+        }
+
+        public async Task<Sf330ProfileCode> TryGetSf330ProfileCode(int opportunityId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                return await GetSf330ProfileCode(opportunityId, cancellationToken);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+
         public async Task<OppRole> GetRoleAsync(int opportunityId, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/{id}/role");
@@ -148,6 +191,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
                 return null; 
             }
         }
+
         public List<Office> GetOffices(int opportunityId)
         {
             return _client.GetSubItems<Office>(PrimaryEntityType.Opportunity, opportunityId, "offices");
@@ -340,10 +384,40 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return _client.GetSubItems<Territory>(PrimaryEntityType.Opportunity, opportunityId, "territories");
         }
 
+        public async Task RemoveSubmittalType(int opportunityId, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/submittaltype", Method.DELETE);
+            request.AddUrlSegment("id", opportunityId.ToString());
+            await _client.ExecuteAsync(request, cancelToken);
+        }
         public async Task RemoveRole(int opportunityId, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/{id}/role", Method.DELETE);
             request.AddUrlSegment("id", opportunityId.ToString());
+            await _client.ExecuteAsync(request, cancelToken);
+        }
+
+        public async Task UpdateSubmittalType(int opportunityId, SubmittalType submittalType, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/submittaltype", Method.POST);
+            request.AddUrlSegment("id", opportunityId.ToString());
+            // This seems odd but this endpoint does require a list of the item.  
+            request.AddBody(new List<SubmittalType> {submittalType});
+            await _client.ExecuteAsync(request, cancelToken);
+        }
+
+        public async Task RemoveSf330ProfileCode(int opportunityId, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/Sf330ProfileCode", Method.DELETE);
+            request.AddUrlSegment("id", opportunityId.ToString());
+            await _client.ExecuteAsync(request, cancelToken);
+        }
+
+        public async Task UpdateSf330ProfileCode(int opportunityId, Sf330ProfileCode sf330ProfileCode, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/Sf330ProfileCode", Method.POST);
+            request.AddUrlSegment("id", opportunityId.ToString());
+            request.AddBody(sf330ProfileCode);
             await _client.ExecuteAsync(request, cancelToken);
         }
 
@@ -379,5 +453,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             var result = await _client.ExecuteAsync<TM>(request, cancellationToken);
             return result.Data;
         }
+
+       
     }
 }
