@@ -28,7 +28,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return task.Result;
         }
 
-        public async Task<Opportunity> GetAsync(int opportunityId, CancellationToken cancelToken)
+        public async Task<Opportunity> GetAsync(int opportunityId, CancellationToken cancelToken, int? parentId = null)
         {
             var request = _client.NewRequest("opportunities/{id}");
             request.AddUrlSegment("id", opportunityId.ToString());
@@ -47,7 +47,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return results.Data;
         }
 
-        public async Task DeleteAsync(int id, CancellationToken cancel)
+        public async Task DeleteAsync(int id, CancellationToken cancel, int? parentId = null)
         {
             var request = _client.NewRequest("opportunities/{id}", Method.DELETE);
             request.AddUrlSegment("id", id.ToString());
@@ -55,7 +55,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             await _client.ExecuteAsync<Opportunity>(request, cancel);
         }
 
-        public async Task<Opportunity> CreateAsync(Opportunity entity, CancellationToken cancel)
+        public async Task<Opportunity> CreateAsync(Opportunity entity, CancellationToken cancel, int? parentId = null)
         {
             var result = await CreateAsync(new[] { entity }, cancel);
             return result.FirstOrDefault();
@@ -70,7 +70,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return results.Data;
         }
 
-        public async Task<UpsertResult<Opportunity>> UpsertAsync(Opportunity entity, CancellationToken cancelToken)
+        public async Task<UpsertResult<Opportunity>> UpsertAsync(Opportunity entity, CancellationToken cancelToken,
+            int? parentId = null)
         {
             var result = new UpsertResult<Opportunity>();
 
@@ -127,6 +128,70 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
 
         #region Subitems
+
+        public async Task<SubmittalType> GetSubmittalTypeAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/submittaltype");
+            request.AddUrlSegment("id", opportunityId.ToString());
+
+            var result = await _client.ExecuteAsync<SubmittalType>(request, cancelToken);
+            return result.Data;
+        }
+
+        public async Task<SubmittalType> TryGetSubmittalTypeAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            try
+            {
+                return await GetSubmittalTypeAsync(opportunityId, cancelToken);
+            }
+            catch 
+            {
+                return null;
+            }
+        }
+
+        public async Task<Sf330ProfileCode> GetSf330ProfileCode(int opportunityId, CancellationToken cancellationToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/Sf330ProfileCode");
+            request.AddUrlSegment("id", opportunityId.ToString());
+            var result = await _client.ExecuteAsync<Sf330ProfileCode>(request, cancellationToken);
+            return result.Data;
+        }
+
+        public async Task<Sf330ProfileCode> TryGetSf330ProfileCode(int opportunityId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                return await GetSf330ProfileCode(opportunityId, cancellationToken);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+
+        public async Task<OppRole> GetRoleAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/role");
+            request.AddUrlSegment("id", opportunityId.ToString());
+
+            var result = await _client.ExecuteAsync<OppRole>(request, cancelToken);
+            return result.Data; 
+        }
+
+        public async Task<OppRole> TryGetRoleAsync(int opportunityId, CancellationToken cancelToken)
+        {
+            try
+            {
+                return await GetRoleAsync(opportunityId, cancelToken);
+            }
+            catch
+            {
+                return null; 
+            }
+        }
+
         public List<Office> GetOffices(int opportunityId)
         {
             return _client.GetSubItems<Office>(PrimaryEntityType.Opportunity, opportunityId, "offices");
@@ -319,9 +384,55 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return _client.GetSubItems<Territory>(PrimaryEntityType.Opportunity, opportunityId, "territories");
         }
 
+        public async Task RemoveSubmittalType(int opportunityId, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/submittaltype", Method.DELETE);
+            request.AddUrlSegment("id", opportunityId.ToString());
+            await _client.ExecuteAsync(request, cancelToken);
+        }
+        public async Task RemoveRole(int opportunityId, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/role", Method.DELETE);
+            request.AddUrlSegment("id", opportunityId.ToString());
+            await _client.ExecuteAsync(request, cancelToken);
+        }
+
+        public async Task UpdateSubmittalType(int opportunityId, SubmittalType submittalType, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/submittaltype", Method.POST);
+            request.AddUrlSegment("id", opportunityId.ToString());
+            // This seems odd but this endpoint does require a list of the item.  
+            request.AddBody(new List<SubmittalType> {submittalType});
+            await _client.ExecuteAsync(request, cancelToken);
+        }
+
+        public async Task RemoveSf330ProfileCode(int opportunityId, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/Sf330ProfileCode", Method.DELETE);
+            request.AddUrlSegment("id", opportunityId.ToString());
+            await _client.ExecuteAsync(request, cancelToken);
+        }
+
+        public async Task UpdateSf330ProfileCode(int opportunityId, Sf330ProfileCode sf330ProfileCode, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/Sf330ProfileCode", Method.POST);
+            request.AddUrlSegment("id", opportunityId.ToString());
+            request.AddBody(sf330ProfileCode);
+            await _client.ExecuteAsync(request, cancelToken);
+        }
+
+        public async Task UpdateRole(int opportunityId, OppRole role, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/role", Method.POST);
+            request.AddUrlSegment("id", opportunityId.ToString());
+            request.AddBody(role);
+            await _client.ExecuteAsync(request, cancelToken);
+        }
+
         #endregion
 
-        public async Task<TM> GetMetadataAync<TM>(MetadataScope scope, int id, CancellationToken cancellationToken)
+        public async Task<TM> GetMetadataAync<TM>(MetadataScope scope, int id, CancellationToken cancellationToken,
+            int? parentId = null)
         {
             var request = _client.NewRequest("opportunities/{id}/metadata/{scope}");
             request.AddUrlSegment("id", id.ToString());
@@ -331,7 +442,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return result.Data;
         }
 
-        public async Task<TM> PutMetadataAsync<TM>(MetadataScope scope, int entityId, TM data, CancellationToken cancellationToken)
+        public async Task<TM> PutMetadataAsync<TM>(MetadataScope scope, int entityId, TM data,
+            CancellationToken cancellationToken, int? parentId = null)
         {
             var request = _client.NewRequest("opportunities/{id}/metadata/{scope}", Method.PUT);
             request.AddUrlSegment("id", entityId.ToString());
@@ -341,5 +453,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             var result = await _client.ExecuteAsync<TM>(request, cancellationToken);
             return result.Data;
         }
+
+       
     }
 }

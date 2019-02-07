@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Cosential.Integrations.Compass.Client.Models
 {
@@ -16,6 +18,7 @@ namespace Cosential.Integrations.Compass.Client.Models
     {
         public int AddressID { get; set; }
         public int ContactId { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
         public ContactAddressType AddressType { get; set; }
         public bool DefaultInd { get; set; }
         public DateTime? CreateDate { get; set; }
@@ -34,5 +37,7 @@ namespace Cosential.Integrations.Compass.Client.Models
         public string Pager { get; set; }
         public string Other { get; set; }
         public string County { get; set; }
+        public string PhoneExt { get; set; }
+        public string ROW_VERSION { get; set; }
     }
 }
