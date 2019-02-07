@@ -61,10 +61,12 @@
     <Compile Include="Contexts\CompanyAddressContext.cs" />
     <Compile Include="Contexts\CompanyContext.cs" />
     <Compile Include="Contexts\ContactAddressContext.cs" />
+    <Compile Include="Contexts\ContextConfig.cs" />
     <Compile Include="Contexts\DivisionContext.cs" />
     <Compile Include="Contexts\ContactContext.cs" />
     <Compile Include="Contexts\ICompassContext.cs" />
     <Compile Include="Contexts\ProjectContext.cs" />
+    <Compile Include="Contexts\ValueListContext.cs" />
     <Compile Include="Models\ContactRole.cs" />
     <Compile Include="Models\ContactRoleType.cs" />
     <Compile Include="Models\Email.cs" />

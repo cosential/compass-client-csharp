@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Cosential.Integrations.Compass.Client.Contexts;
 using Cosential.Integrations.Compass.Client.Exceptions;
 using Cosential.Integrations.Compass.Client.Models;
+using Cosential.Integrations.Compass.Client.Models.Interfaces;
 using Cosential.Integrations.Compass.Contexts;
 using log4net;
 using RestSharp;
@@ -64,6 +65,11 @@ namespace Cosential.Integrations.Compass.Client
 
         private StaffTeamContext _staffTeamContext;
         public StaffTeamContext StaffTeamContext => _staffTeamContext ?? (_staffTeamContext = new StaffTeamContext(this));
+
+        public ValueListContext<T> GetValueListContext<T>() where T : IValueList
+        {
+            return new ValueListContext<T>(this);
+        }
 
         public CompassClient(int firmId, Guid apiKey, string username, string password, Uri host = null)
         {
