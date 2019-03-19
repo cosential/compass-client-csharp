@@ -68,6 +68,7 @@
     <Compile Include="Contexts\ContactContext.cs" />
     <Compile Include="Contexts\ICompassContext.cs" />
     <Compile Include="Contexts\ProjectContext.cs" />
+    <Compile Include="Contexts\StageContext.cs" />
     <Compile Include="Contexts\ValueListContext.cs" />
     <Compile Include="Exceptions\EndpointDoesNotSupportActionException.cs" />
     <Compile Include="Models\ContactRole.cs" />
@@ -158,6 +159,7 @@
     <Compile Include="Models\ProjectRoleType.cs" />
     <Compile Include="Models\StaffTeam.cs" />
     <Compile Include="Models\StaffTeamRole.cs" />
+    <Compile Include="Models\Stage.cs" />
     <Compile Include="Models\Studio.cs" />
     <Compile Include="Models\SubmittalType.cs" />
     <Compile Include="Models\Territory.cs" />

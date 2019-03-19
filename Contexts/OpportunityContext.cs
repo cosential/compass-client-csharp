@@ -129,6 +129,13 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         #region Subitems
 
+        public async Task<Stage> GetStagesAsync(CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/stage");
+            var result = await _client.ExecuteAsync<Stage>(request, cancelToken);
+            return result.Data;
+        }
+
         public async Task<SubmittalType> GetSubmittalTypeAsync(int opportunityId, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/{id}/submittaltype");
