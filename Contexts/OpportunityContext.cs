@@ -136,6 +136,16 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return result.Data;
         }
 
+        public async Task<Stage> SetStageAsync(int opportunityId, int stageId, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/stage", Method.PUT);
+            request.AddUrlSegment("id", opportunityId.ToString());
+            request.AddJsonBody(new Stage{ StageID = stageId });
+
+            var result = await _client.ExecuteAsync<Stage>(request, cancelToken);
+            return result.Data;
+        }
+
         public async Task<SubmittalType> GetSubmittalTypeAsync(int opportunityId, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/{id}/submittaltype");
