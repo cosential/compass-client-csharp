@@ -54,6 +54,9 @@ namespace Cosential.Integrations.Compass.Client
         private OpportunityContext _opportunityContext;
         public OpportunityContext OpportunityContext => _opportunityContext ?? (_opportunityContext = new OpportunityContext(this));
 
+        private StageContext _stageContext;
+        public StageContext StageContext => _stageContext ?? (_stageContext = new StageContext(this));
+
         private ContactContext _contactContext;
         public ContactContext ContactContext => _contactContext ?? (_contactContext = new ContactContext(this));
 
