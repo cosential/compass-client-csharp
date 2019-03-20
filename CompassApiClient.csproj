@@ -39,10 +39,10 @@
       <HintPath>packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\cosential-sql-connector\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="RestSharp, Version=106.5.4.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
-      <HintPath>packages\RestSharp.106.5.4\lib\net452\RestSharp.dll</HintPath>
+    <Reference Include="RestSharp, Version=106.6.9.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>packages\RestSharp.106.6.9\lib\net452\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -55,6 +55,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\CompassPathAttribute.cs" />
+    <Compile Include="Attributes\EndpointType.cs" />
+    <Compile Include="Attributes\Utility.cs" />
     <Compile Include="CompanyCompassClient.cs" />
     <Compile Include="CompassClient.cs" />
     <Compile Include="ContactCompassClient.cs" />
@@ -65,9 +68,13 @@
     <Compile Include="Contexts\ContactContext.cs" />
     <Compile Include="Contexts\ICompassContext.cs" />
     <Compile Include="Contexts\ProjectContext.cs" />
+    <Compile Include="Contexts\StageContext.cs" />
+    <Compile Include="Contexts\ValueListContext.cs" />
+    <Compile Include="Exceptions\EndpointDoesNotSupportActionException.cs" />
     <Compile Include="Models\ContactRole.cs" />
     <Compile Include="Models\ContactRoleType.cs" />
     <Compile Include="Models\Email.cs" />
+    <Compile Include="Models\Interfaces\IValueList.cs" />
     <Compile Include="Models\OppRole.cs" />
     <Compile Include="Models\PersonnelAwardSponsor.cs" />
     <Compile Include="Models\PersonnelPresentationType.cs" />
@@ -152,6 +159,7 @@
     <Compile Include="Models\ProjectRoleType.cs" />
     <Compile Include="Models\StaffTeam.cs" />
     <Compile Include="Models\StaffTeamRole.cs" />
+    <Compile Include="Models\Stage.cs" />
     <Compile Include="Models\Studio.cs" />
     <Compile Include="Models\SubmittalType.cs" />
     <Compile Include="Models\Territory.cs" />
