@@ -106,7 +106,9 @@ namespace Cosential.Integrations.Compass.Client.Contexts
                 request.AddQueryParameter("size", size.ToString());
 
                 var results = await _client.ExecuteAsync<List<T>>(request, cancelToken);
-                var sanityCheck = results.Data.First();
+                var sanityCheck = results.Data.FirstOrDefault();
+
+                if (!results.Data.Any()) break;
 
                 // If the top result is already in our return set then the endpoint doesn't have
                 // paging and we need to exit and move on.
