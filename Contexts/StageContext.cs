@@ -34,9 +34,9 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             var request = _client.NewRequest("opportunities/stage/{id}");
             request.AddUrlSegment("id", id.ToString());
 
-            var results = await _client.ExecuteAsync<Stage>(request, cancelToken);
+            var results = await _client.ExecuteAsync<List<Stage>>(request, cancelToken);
 
-            return results.Data;
+            return results.Data.FirstOrDefault();
         }
 
         public async Task<UpsertResult<Stage>> UpsertAsync(Stage entity, CancellationToken cancelToken,
@@ -82,9 +82,9 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             request.AddUrlSegment("id", entity.StageID.ToString());
             request.AddJsonBody(entity);
 
-            var response = await _client.ExecuteAsync<Stage>(request, cancelToken);
+            var response = await _client.ExecuteAsync<List<Stage>>(request, cancelToken);
 
-            return response.Data;
+            return response.Data.FirstOrDefault();
         }
 
         public async Task DeleteAsync(int id, CancellationToken cancelToken, int? parentId = null)
