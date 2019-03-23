@@ -318,6 +318,25 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return result.Data ?? new List<StaffTeam>();
         }
 
+        public async Task<List<StaffTeam>> PostStaffTeamAsync(int opportunityId, IEnumerable<StaffTeam> staffteam, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/staffteam", Method.POST);
+            request.AddUrlSegment("id", opportunityId.ToString());
+            request.AddJsonBody(staffteam);
+
+            var result = await _client.ExecuteAsync<List<StaffTeam>>(request, cancelToken);
+            return result.Data ?? new List<StaffTeam>();
+        }
+
+        public async Task RemoveStaffTeamAsync(int opportunityId, long staffTeamId, CancellationToken cancelToken)
+        {
+            var request = _client.NewRequest("opportunities/{id}/staffteam/{stid}", Method.DELETE);
+            request.AddUrlSegment("id", opportunityId.ToString());
+            request.AddUrlSegment("stid", staffTeamId.ToString());
+            
+            await _client.ExecuteAsync(request, cancelToken);
+        }
+
         public async Task<List<SecondaryCategory>> TryGetSecondaryCategoriesAsync(int opportunityId, CancellationToken cancelToken)
         {
             try
