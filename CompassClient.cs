@@ -69,6 +69,9 @@ namespace Cosential.Integrations.Compass.Client
         private StaffTeamContext _staffTeamContext;
         public StaffTeamContext StaffTeamContext => _staffTeamContext ?? (_staffTeamContext = new StaffTeamContext(this));
 
+        private OpportunityCompetitorContext _opportunityCompetitorContext;
+        public OpportunityCompetitorContext OpportunityCompetitorContext => _opportunityCompetitorContext ?? (_opportunityCompetitorContext = new OpportunityCompetitorContext(this));
+
         public ValueListContext<T> GetValueListContext<T>() where T : IValueList
         {
             return new ValueListContext<T>(this);
