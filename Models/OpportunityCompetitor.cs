@@ -13,8 +13,7 @@ namespace Cosential.Integrations.Compass.Client.Models
         public int CompanyID { get; set; }
         public string Company { get; set; }
         public int FirmId { get; set; }
-        public int ThreatLevel { get; set; }
-        public int StatusID { get; set; }
+        public string ThreatLevel { get; set; }
         public string Comments { get; set; }
         public System.DateTime ModifiedDate { get; set; }
         public string StatusName { get; set; }
