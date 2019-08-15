@@ -117,7 +117,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<List<ChangeEvent>> GetChangesAsync(byte[] rowVersion, bool includeDeleted, CancellationToken token)
         {
             var request = _client.NewRequest("opportunities/stage/changes");
-            request.AddQueryParameter("includeDeleted", true.ToString());
+            request.AddQueryParameter("version", Convert.ToBase64String(rowVersion));
+            if (includeDeleted) request.AddQueryParameter("includeDeleted", true.ToString());
 
             var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, token);
 
