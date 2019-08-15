@@ -67,6 +67,8 @@
     <Compile Include="Contexts\DivisionContext.cs" />
     <Compile Include="Contexts\ContactContext.cs" />
     <Compile Include="Contexts\ICompassContext.cs" />
+    <Compile Include="Contexts\OpportunityCompetitorContext.cs" />
+    <Compile Include="Contexts\OpportunityRevenueProjectionContext.cs" />
     <Compile Include="Contexts\ProjectContext.cs" />
     <Compile Include="Contexts\StageContext.cs" />
     <Compile Include="Contexts\ValueListContext.cs" />
@@ -75,6 +77,8 @@
     <Compile Include="Models\ContactRoleType.cs" />
     <Compile Include="Models\Email.cs" />
     <Compile Include="Models\Interfaces\IValueList.cs" />
+    <Compile Include="Models\OpportunityCompetitor.cs" />
+    <Compile Include="Models\OpportunityRevenueProjection.cs" />
     <Compile Include="Models\OppRole.cs" />
     <Compile Include="Models\PersonnelAwardSponsor.cs" />
     <Compile Include="Models\PersonnelPresentationType.cs" />

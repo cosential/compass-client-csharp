@@ -54,6 +54,9 @@ namespace Cosential.Integrations.Compass.Client
         private OpportunityContext _opportunityContext;
         public OpportunityContext OpportunityContext => _opportunityContext ?? (_opportunityContext = new OpportunityContext(this));
 
+        private StageContext _stageContext;
+        public StageContext StageContext => _stageContext ?? (_stageContext = new StageContext(this));
+
         private ContactContext _contactContext;
         public ContactContext ContactContext => _contactContext ?? (_contactContext = new ContactContext(this));
 
@@ -65,6 +68,13 @@ namespace Cosential.Integrations.Compass.Client
 
         private StaffTeamContext _staffTeamContext;
         public StaffTeamContext StaffTeamContext => _staffTeamContext ?? (_staffTeamContext = new StaffTeamContext(this));
+
+        private OpportunityCompetitorContext _opportunityCompetitorContext;
+        public OpportunityCompetitorContext OpportunityCompetitorContext => _opportunityCompetitorContext ?? (_opportunityCompetitorContext = new OpportunityCompetitorContext(this));
+
+        private OpportunityRevenueProjectionContext _opportunityRevenueProjectionContext;
+        public OpportunityRevenueProjectionContext OpportunityRevenueProjectionContext => _opportunityRevenueProjectionContext ?? (_opportunityRevenueProjectionContext = new OpportunityRevenueProjectionContext(this));
+
 
         public ValueListContext<T> GetValueListContext<T>() where T : IValueList
         {

@@ -112,6 +112,7 @@ namespace Cosential.Integrations.Compass.Client.Models
         public decimal? GrossMarginPercent { get; set; }
         public int? MasterOpportunityId { get; set; }
         public string OppTypeDescription { get; set; }
+        public int? StageId { get; set; }
         public string Stage { get; set; }
         public string StageType { get; set; }
         public int? AutoNumber { get; set; }
