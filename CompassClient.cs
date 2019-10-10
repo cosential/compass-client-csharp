@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Cosential.Integrations.Compass.Client.Contexts;
 using Cosential.Integrations.Compass.Client.Exceptions;
 using Cosential.Integrations.Compass.Client.Models;
+using Cosential.Integrations.Compass.Client.Models.Interfaces;
 using Cosential.Integrations.Compass.Contexts;
 using log4net;
 using RestSharp;
@@ -53,6 +54,9 @@ namespace Cosential.Integrations.Compass.Client
         private OpportunityContext _opportunityContext;
         public OpportunityContext OpportunityContext => _opportunityContext ?? (_opportunityContext = new OpportunityContext(this));
 
+        private StageContext _stageContext;
+        public StageContext StageContext => _stageContext ?? (_stageContext = new StageContext(this));
+
         private ContactContext _contactContext;
         public ContactContext ContactContext => _contactContext ?? (_contactContext = new ContactContext(this));
 
@@ -64,6 +68,18 @@ namespace Cosential.Integrations.Compass.Client
 
         private StaffTeamContext _staffTeamContext;
         public StaffTeamContext StaffTeamContext => _staffTeamContext ?? (_staffTeamContext = new StaffTeamContext(this));
+
+        private OpportunityCompetitorContext _opportunityCompetitorContext;
+        public OpportunityCompetitorContext OpportunityCompetitorContext => _opportunityCompetitorContext ?? (_opportunityCompetitorContext = new OpportunityCompetitorContext(this));
+
+        private OpportunityRevenueProjectionContext _opportunityRevenueProjectionContext;
+        public OpportunityRevenueProjectionContext OpportunityRevenueProjectionContext => _opportunityRevenueProjectionContext ?? (_opportunityRevenueProjectionContext = new OpportunityRevenueProjectionContext(this));
+
+
+        public ValueListContext<T> GetValueListContext<T>() where T : IValueList
+        {
+            return new ValueListContext<T>(this);
+        }
 
         public CompassClient(int firmId, Guid apiKey, string username, string password, Uri host = null)
         {

@@ -68,7 +68,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public async Task<List<StaffTeam>> CreateAsync(IEnumerable<StaffTeam> entities, CancellationToken cancelToken)
         {
-            var request = _client.NewRequest("opportuntiies/staffteam", Method.POST);
+            var request = _client.NewRequest("opportunities/staffteam", Method.POST);
             request.AddBody(entities);
 
             var response = await _client.ExecuteAsync<List<StaffTeam>>(request, cancelToken);
@@ -78,7 +78,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public async Task<StaffTeam> UpdateAsync(StaffTeam entity, CancellationToken cancelToken)
         {
-            var request = _client.NewRequest("opportutnities/staffteam/{id}", Method.PUT);
+            var request = _client.NewRequest("opportunities/staffteam/{id}", Method.PUT);
             request.AddUrlSegment("id", entity.OppStaffTeamID.ToString());
             request.AddBody(entity);
 
@@ -87,7 +87,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return response.Data;
         }
 
-        public async Task DeleteAsync(int id, CancellationToken cancelToken, int? parentId = null)
+        public async Task DeleteAsync(long id, CancellationToken cancelToken, int? parentId = null)
         {
             var request = _client.NewRequest("opportunities/staffteam/{id}", Method.DELETE);
             request.AddUrlSegment("id", id.ToString());
@@ -145,6 +145,11 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             CancellationToken cancellationToken, int? parentId = null)
         {
             return Task.FromResult(default(TM));
+        }
+
+        public Task DeleteAsync(int id, CancellationToken cancelToken, int? parentId = null)
+        {
+            return DeleteAsync((long)id, cancelToken, parentId);
         }
 
         #endregion
