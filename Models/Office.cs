@@ -46,7 +46,7 @@ namespace Cosential.Integrations.Compass.Client.Models
         public int? SelfPerformHours { get; set; }
         public decimal? FeeCIPercent { get; set; }
         public int? LaborDifferential { get; set; }
-        public bool Available { get; set; }
+        public bool? Available { get; set; }
         public string ROW_VERSION { get; set; }
     }
 }

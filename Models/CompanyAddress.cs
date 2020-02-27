@@ -12,7 +12,7 @@ namespace Cosential.Integrations.Compass.Client.Models
         public string AddressTypeName { get; set; }
         public bool DefaultInd { get; set; }
         public int CompanyId { get; set; }
-        public DateTime? createdate { get; set; }
+        public DateTime createdate { get; set; }
         public string Address1 { get; set; }
         public string Address2 { get; set; }
         public string Address3 { get; set; }
@@ -33,7 +33,8 @@ namespace Cosential.Integrations.Compass.Client.Models
         public string CongressDistrict { get; set; }
         public string CarrierRoute { get; set; }
         public string OfficeSecPhone { get; set; }
-        public string ROW_VERSION { get; set; }
+        //CO-6297 changed from string to byte[] to match Compass model
+        public byte[] ROW_VERSION { get; set; }
 
     }
 }
