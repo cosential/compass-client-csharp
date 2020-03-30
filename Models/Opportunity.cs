@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Cosential.Integrations.Compass.Client.Models
 {
@@ -7,8 +8,10 @@ namespace Cosential.Integrations.Compass.Client.Models
 
         public Opportunity()
         {
-
+            this.Offices = new HashSet<Office>();
+           
         }
+
 
         public int? OpportunityId { get; set; }
         public int? ClientId { get; set; }
@@ -126,5 +129,7 @@ namespace Cosential.Integrations.Compass.Client.Models
         public string OpportunityLongText5 { get; set; }
         public string approvalLevel { get; set; }
         public string approvalStatus { get; set; }
+        public virtual ICollection<Office> Offices { get; set; }
+
     }
 }
