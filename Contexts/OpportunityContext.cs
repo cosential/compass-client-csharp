@@ -61,6 +61,13 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             return result.FirstOrDefault();
         }
 
+        public async Task<IList<ClientType>> TryGetClientTypesAsync(int oppId, CancellationToken cancellationToken)
+        {
+            var request = _client.NewRequest($"opportunities/{oppId}/clienttypes");
+            var results = await _client.ExecuteAsync<List<ClientType>>(request, cancellationToken);
+            return results.Data;
+        }
+
         public async Task<IList<Opportunity>> CreateAsync(IEnumerable<Opportunity> entities, CancellationToken cancel)
         {
             var request = _client.NewRequest("opportunities", Method.POST);
@@ -431,6 +438,12 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             var request = _client.NewRequest("opportunities/{id}/role", Method.DELETE);
             request.AddUrlSegment("id", opportunityId.ToString());
             await _client.ExecuteAsync(request, cancelToken);
+        }
+
+        public async Task RemoveClientTypeAsync(int opportunityId, int clientTypeId, CancellationToken cancel)
+        {
+            var request = _client.NewRequest($"opportunities/{opportunityId}/clientypes/{clientTypeId}", Method.DELETE);
+            await _client.ExecuteAsync(request, cancel);
         }
 
         public async Task UpdateSubmittalType(int opportunityId, SubmittalType submittalType, CancellationToken cancelToken)
