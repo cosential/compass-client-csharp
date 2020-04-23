@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using Newtonsoft.Json;
 using RestSharp;
 
 namespace Cosential.Integrations.Compass.Client.Exceptions
@@ -15,27 +17,31 @@ namespace Cosential.Integrations.Compass.Client.Exceptions
         {
         }
 
-        public ResponseStatusCodeException(IRestResponse response) : base(BuildCurl(response), response.ErrorException)
+        public ResponseStatusCodeException(IRestResponse response, IRestClient client) : base(BuildCurl(response, client), response.ErrorException)
         {
             StatusCode = response.StatusCode;
             ResponseContent = response.Content;
         }
 
-        public static string BuildCurl(IRestResponse response)
+        public static string BuildCurl(IRestResponse response, IRestClient client)
         {
             var sb = new StringBuilder();
 
-            sb.Append($"**API REQUEST FAILED**:\ncurl -X {response.Request.Method}");
+            sb.Append($"**API REQUEST**:\ncurl -X {response.Request.Method}");
 
-            foreach (var h in response.Request.Parameters)
+            var p = new List<Parameter>();
+            p.AddRange(client.DefaultParameters);
+            p.AddRange(response.Request.Parameters);
+
+            foreach (var h in p)
             {
                 switch (h.Type)
                 {
                     case ParameterType.HttpHeader:
-                        sb.Append($" -H \"{h.Name}: {h.Value}\"");
+                        sb.Append($" --header \"{h.Name}: {h.Value}\"");
                         break;
                     case ParameterType.RequestBody:
-                        sb.Append($" -d '{h.Value}'".Replace(Environment.NewLine, ""));
+                        sb.Append($" --data-raw '{response.Request.JsonSerializer.Serialize(h.Value)}'".Replace(Environment.NewLine, ""));
                         break;
                     case ParameterType.QueryString:
                         break;

@@ -154,7 +154,7 @@ namespace Cosential.Integrations.Compass.Client
 
         public IRestResponse Execute(RestRequest request)
         {
-            var ts = DateTime.Now;
+            //var ts = DateTime.Now;
             var res = _client.Execute(request);
             //_log.Debug($"Call took [{DateTime.Now.Subtract(ts)}] to [{res.ResponseUri}]");
             ValidateResponse(res);
@@ -163,7 +163,7 @@ namespace Cosential.Integrations.Compass.Client
 
         public IRestResponse<T> Execute<T>(RestRequest request) where T : new()
         {
-            var ts = DateTime.Now;
+            //var ts = DateTime.Now;
             var res = _client.Execute<T>(request);
             //_log.Debug($"Call took [{DateTime.Now.Subtract(ts)}] to [{res.ResponseUri}]");
             ValidateResponse(res);
@@ -172,7 +172,7 @@ namespace Cosential.Integrations.Compass.Client
 
         public async Task<IRestResponse<T>> ExecuteAsync<T>(RestRequest request, CancellationToken cancel)
         {
-            var ts = DateTime.Now;
+            //var ts = DateTime.Now;
             var res = await _client.ExecuteTaskAsync<T>(request, cancel);
             //_log.Debug($"Call took [{DateTime.Now.Subtract(ts)}] to [{res.ResponseUri}]");
             ValidateResponse(res);
@@ -181,16 +181,18 @@ namespace Cosential.Integrations.Compass.Client
 
         public async Task<IRestResponse> ExecuteAsync(RestRequest request, CancellationToken cancel)
         {
-            var ts = DateTime.Now;
+            //var ts = DateTime.Now;
             var res = await _client.ExecuteTaskAsync(request, cancel);
             //_log.Debug($"Call took [{DateTime.Now.Subtract(ts)}] to [{res.ResponseUri}]");
             ValidateResponse(res);
             return res;
         }
 
-        private static void ValidateResponse(IRestResponse response)
+        private void ValidateResponse(IRestResponse response)
         {
-            if (response.ErrorException != null || response.StatusCode == HttpStatusCode.InternalServerError) throw new ResponseStatusCodeException(response);
+            _log.Debug(ResponseStatusCodeException.BuildCurl(response, _client));
+            if (response.ErrorException != null || response.StatusCode == HttpStatusCode.InternalServerError)
+                throw new ResponseStatusCodeException(response, _client);
         }
 
         public void Dispose()
