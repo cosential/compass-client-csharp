@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompassApiClient", "CompassApiClient.csproj", "{A3B7432D-76D1-400A-B5DE-2E420E884EC9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompassApiClientTests", "CompassApiClientTests\CompassApiClientTests.csproj", "{71E6F95C-4E0D-43AB-8C23-DBA0A9F41FEB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCompassClient", "..\TestCompassClient\TestCompassClient.csproj", "{8D198C14-45D5-4D4B-BA68-565B6A4C36C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,8 +23,15 @@ Global
 		{71E6F95C-4E0D-43AB-8C23-DBA0A9F41FEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71E6F95C-4E0D-43AB-8C23-DBA0A9F41FEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71E6F95C-4E0D-43AB-8C23-DBA0A9F41FEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D198C14-45D5-4D4B-BA68-565B6A4C36C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D198C14-45D5-4D4B-BA68-565B6A4C36C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D198C14-45D5-4D4B-BA68-565B6A4C36C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D198C14-45D5-4D4B-BA68-565B6A4C36C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2410EB25-D6B9-48A9-899E-A985896DFE0B}
 	EndGlobalSection
 EndGlobal
