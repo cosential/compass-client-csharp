@@ -1,21 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
+using System.Runtime.Serialization;
 using System.Text;
-using Newtonsoft.Json;
 using RestSharp;
 
 namespace Cosential.Integrations.Compass.Client.Exceptions
 {
     [Serializable]
-    internal class ResponseStatusCodeException : Exception
+    public class ResponseStatusCodeException : Exception
     {
         public HttpStatusCode StatusCode { get; }
         public string ResponseContent { get; }
         public ResponseStatusCodeException()
         {
         }
+
+        public ResponseStatusCodeException(string message):base(message)
+        {
+        }
+
+        public ResponseStatusCodeException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+
+        protected ResponseStatusCodeException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 
         public ResponseStatusCodeException(IRestResponse response, IRestClient client) : base(BuildCurl(response, client), response.ErrorException)
         {
@@ -25,6 +34,9 @@ namespace Cosential.Integrations.Compass.Client.Exceptions
 
         public static string BuildCurl(IRestResponse response, IRestClient client)
         {
+            if(client == null) throw new ArgumentNullException(nameof(client));
+            if(response == null) throw new ArgumentNullException(nameof(response));
+            
             var sb = new StringBuilder();
 
             sb.Append($"**API REQUEST**:\ncurl -X {response.Request.Method}");
@@ -52,7 +64,7 @@ namespace Cosential.Integrations.Compass.Client.Exceptions
                     case ParameterType.UrlSegment:
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException();
+                        throw new ArgumentOutOfRangeException($"Recieved unknown HTTP parameter type of {h.Type}.");
                 }
             }
 

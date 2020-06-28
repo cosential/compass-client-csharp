@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         private const int RefreshValue = 10;
         // ReSharper disable once StaticMemberInGenericType
         // In this case we do want each different type to have
-        // and independant count.
+        // and independent count.
         private static int _changeRequestCount;
 
         private static bool IsFullRefresh()
@@ -43,7 +44,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
                 request.AddQueryParameter("Version", Convert.ToBase64String(rowVersion));
                 request.AddQueryParameter("includeDeleted", includeDeleted.ToString());
 
-                var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, token);
+                var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, token).ConfigureAwait(false);
 
                 events = results.Data;
             } else if (_config.HasEndpoint(EndpointType.GetMany))
@@ -57,10 +58,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
                 {
                     // If we didn't get the last number of the set stored then
                     // we default to just processing the whole value list and on 
-                    // the next pass the rowversion will have the correct value.
+                    // the next pass the row_version will have the correct value.
                 }
 
-                var rows = await GetAsync(includeDeleted, token);
+                var rows = await GetAsync(includeDeleted, token).ConfigureAwait(false);
                 events = rows.Where(z=>((int)z.PrimaryKey) > lastNumberSeen)
                     .Select(
                         x => new ChangeEvent
@@ -86,7 +87,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
             var request = _client.NewRequest(_config.Get);
             request.AddUrlSegment("id", id);
-            var results = await  _client.ExecuteAsync<T>(request, cancelToken);
+            var results = await  _client.ExecuteAsync<T>(request, cancelToken).ConfigureAwait(false);
 
             return results.Data;
         }
@@ -102,10 +103,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             {
                 var request = _client.NewRequest(_config.GetMany);
                 request.AddQueryParameter("includeDeleted", inlcudeDeleted.ToString());
-                request.AddQueryParameter("from", from.ToString());
-                request.AddQueryParameter("size", size.ToString());
+                request.AddQueryParameter("from", from.ToString(CultureInfo.InvariantCulture));
+                request.AddQueryParameter("size", size.ToString(CultureInfo.InvariantCulture));
 
-                var results = await _client.ExecuteAsync<List<T>>(request, cancelToken);
+                var results = await _client.ExecuteAsync<List<T>>(request, cancelToken).ConfigureAwait(false);
                 var sanityCheck = results.Data.FirstOrDefault();
 
                 if (!results.Data.Any()) break;
@@ -130,12 +131,12 @@ namespace Cosential.Integrations.Compass.Client.Contexts
                 if (entity.PrimaryKey != null && ((int)entity.PrimaryKey) != 0)
                 {
                     result.Action = UpsertAction.Updated;
-                    result.Data = await UpdateAsync(entity, cancelToken);
+                    result.Data = await UpdateAsync(entity, cancelToken).ConfigureAwait(false);
                 }
                 else
                 {
                     result.Action = UpsertAction.Created;
-                    result.Data = await CreateAsync(entity, cancelToken);
+                    result.Data = await CreateAsync(entity, cancelToken).ConfigureAwait(false);
                 }
             }
             catch (EndpointDoesNotSupportActionException e)
@@ -153,16 +154,16 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             if (_config.HasEndpoint(EndpointType.Create))
             {
                 var request = _client.NewRequest(_config.Create, Method.POST);
-                request.AddBody(entity);
+                request.AddJsonBody(entity);
 
-                var response = await _client.ExecuteAsync<T>(request, cancelToken);
+                var response = await _client.ExecuteAsync<T>(request, cancelToken).ConfigureAwait(false);
 
                 result = response.Data;
             }
             else if (_config.HasEndpoint(EndpointType.CreateMany))
             {
                 var list = new List<T> {entity};
-                var request = await CreateAsync(list, cancelToken);
+                var request = await CreateAsync(list, cancelToken).ConfigureAwait(false);
                 result = request.First();
             }
             else
@@ -179,9 +180,9 @@ namespace Cosential.Integrations.Compass.Client.Contexts
                 throw new EndpointDoesNotSupportActionException($"The compass endpoint for {typeof(T).Name} does not support {EndpointType.CreateMany}.");
 
             var request = _client.NewRequest(_config.CreateMany, Method.POST);
-            request.AddBody(entities);
+            request.AddJsonBody(entities);
 
-            var response = await _client.ExecuteAsync<List<T>>(request, cancelToken);
+            var response = await _client.ExecuteAsync<List<T>>(request, cancelToken).ConfigureAwait(false);
 
             return response.Data;
         }
@@ -193,9 +194,9 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
             var request = _client.NewRequest(_config.Update, Method.PUT);
             request.AddUrlSegment("id", entity.PrimaryKey);
-            request.AddBody(entity);
+            request.AddJsonBody(entity);
 
-            var response = await _client.ExecuteAsync<T>(request, cancelToken);
+            var response = await _client.ExecuteAsync<T>(request, cancelToken).ConfigureAwait(false);
 
             return response.Data;
         }
@@ -207,7 +208,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
             var request = _client.NewRequest(_config.Delete, Method.DELETE);
             request.AddUrlSegment("id", id);
-            await _client.ExecuteAsync(request, cancelToken);
+            await _client.ExecuteAsync(request, cancelToken).ConfigureAwait(false);
         }
 
         public Task<TM> GetMetadataAync<TM>(MetadataScope scope, int entityId, CancellationToken cancellationToken, int? parentId = null)

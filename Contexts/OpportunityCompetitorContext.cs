@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -35,10 +36,11 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             request.AddUrlSegment("id", parentId.Value);
             request.AddUrlSegment("competitorId", competitorId);
 
-            var results = await _client.ExecuteAsync<OpportunityCompetitor>(request, cancelToken);
+            var results = await _client.ExecuteAsync<OpportunityCompetitor>(request, cancelToken).ConfigureAwait(false);
             return results.Data;
         }
 
+        #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public async Task<OpportunityCompetitor> UpdateAsync(OpportunityCompetitor entity, CancellationToken cancel)
         {
             throw new NotImplementedException();
@@ -56,7 +58,15 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             throw new NotImplementedException(); 
         }
 
+        #pragma warning disable CA1068
+        [Obsolete("Use public async Task<IList<OpportunityCompetitor>> CreateAsync(IEnumerable<OpportunityCompetitor> entities, int parentId, CancellationToken cancel)", false)]
         public async Task<IList<OpportunityCompetitor>> CreateAsync(IEnumerable<OpportunityCompetitor> entities, CancellationToken cancel, int parentId)
+        {
+            throw new NotImplementedException();
+        }
+        #pragma warning restore CA1068
+
+        public async Task<IList<OpportunityCompetitor>> CreateAsync(IEnumerable<OpportunityCompetitor> entities, int parentId, CancellationToken cancel)
         {
             throw new NotImplementedException();
         }
@@ -66,13 +76,14 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         {
             throw new NotImplementedException();
         }
+        #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 
         public List<OpportunityCompetitor> List(int opportunityId, int from, int size)
         {
             var request = _client.NewRequest("opportunities/{opportunityId}/competition");
             request.AddUrlSegment("contactId", opportunityId);
-            request.AddQueryParameter("from", from.ToString());
-            request.AddQueryParameter("size", size.ToString());
+            request.AddQueryParameter("from", from.ToString(CultureInfo.InvariantCulture));
+            request.AddQueryParameter("size", size.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<List<OpportunityCompetitor>>(request);
             if (results.Data == null)
@@ -98,7 +109,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             var request = _client.NewRequest("opportunities/competition/changes");
             if (version != null) request.AddQueryParameter("version", Convert.ToBase64String(version));
             if (includeDeleted) request.AddQueryParameter("includeDeleted", true.ToString());
-            var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, cancel);
+            var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, cancel).ConfigureAwait(false);
             return results.Data;
         }
 
@@ -107,10 +118,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             int? parentId = null)
         {
             var request = _client.NewRequest("opportunities/{id}/metadata/{scope}");
-            request.AddUrlSegment("id", id.ToString());
+            request.AddUrlSegment("id", id.ToString(CultureInfo.InvariantCulture));
             request.AddUrlSegment("scope", scope.ToString());
 
-            var result = await _client.ExecuteAsync<TM>(request, cancellationToken);
+            var result = await _client.ExecuteAsync<TM>(request, cancellationToken).ConfigureAwait(false);
             return result.Data;
         }
 
@@ -118,11 +129,11 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             CancellationToken cancellationToken, int? parentId = null)
         {
             var request = _client.NewRequest("opportunities/{id}/metadata/{scope}", Method.PUT);
-            request.AddUrlSegment("id", entityId.ToString());
+            request.AddUrlSegment("id", entityId.ToString(CultureInfo.InvariantCulture));
             request.AddUrlSegment("scope", scope.ToString());
-            request.AddBody(data);
+            request.AddJsonBody(data);
 
-            var result = await _client.ExecuteAsync<TM>(request, cancellationToken);
+            var result = await _client.ExecuteAsync<TM>(request, cancellationToken).ConfigureAwait(false);
             return result.Data;
         }
 

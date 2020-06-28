@@ -5,9 +5,11 @@ namespace Cosential.Integrations.Compass.Client.Attributes
 {
     public static class Utility
     {
-        public static CompassPathAttribute GetCompassPaths(this Type t) 
+        public static CompassPathAttribute GetCompassPaths(this Type type) 
         {
-            return t.GetCustomAttributes(typeof(CompassPathAttribute), true)
+            if (type == null) throw new ArgumentNullException(nameof(type));
+
+            return type.GetCustomAttributes(typeof(CompassPathAttribute), true)
                 .FirstOrDefault() as CompassPathAttribute;
         }
     }

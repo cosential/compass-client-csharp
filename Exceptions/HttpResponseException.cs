@@ -5,29 +5,32 @@ using RestSharp;
 namespace Cosential.Integrations.Compass.Client
 {
     [Serializable]
-    internal class HttpResponseException : Exception
+    public class HttpResponseException : Exception
     {
-        private IRestResponse response;
-
         public HttpResponseException()
         {
         }
 
         public HttpResponseException(string message) : base(message)
         {
+            Message = message;
         }
 
-        public HttpResponseException(IRestResponse response) : base($"{response.Request.Method} to [{response.ResponseUri}] resulted in error", response.ErrorException)
+        public HttpResponseException(IRestResponse response) : base(string.Empty, response?.ErrorException)
         {
-            this.response = response;
+            Message = response != null ? $"{response.Request.Method} to [{response.ResponseUri}] resulted in error" : "A response was not returned and the method and uri where not captured.";
         }
 
         public HttpResponseException(string message, Exception innerException) : base(message, innerException)
         {
+            Message = message;
         }
 
         protected HttpResponseException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
+
+        public override string Message { get; }
+        
     }
 }

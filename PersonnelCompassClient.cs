@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using Cosential.Integrations.Compass.Client.Models;
@@ -19,7 +20,7 @@ namespace Cosential.Integrations.Compass.Client
         public IList<Personnel> Create(IEnumerable<Personnel> personnel)
         {
             var request = NewRequest("personnel", Method.POST);
-            request.AddBody(personnel);
+            request.AddJsonBody(personnel);
 
             var results = Execute<List<Personnel>>(request);
             return results.Data;
@@ -33,7 +34,7 @@ namespace Cosential.Integrations.Compass.Client
         public Personnel Get(int personnelId)
         {
             var request = NewRequest("personnel/{id}");
-            request.AddUrlSegment("id", personnelId.ToString());
+            request.AddUrlSegment("id", personnelId.ToString(CultureInfo.InvariantCulture));
 
             var results = Execute<Personnel>(request);
             return results.Data;
@@ -42,8 +43,8 @@ namespace Cosential.Integrations.Compass.Client
         public IList<Personnel> List(int from, int take)
         {
             var request = NewRequest("personnel");
-            request.AddQueryParameter("from", from.ToString());
-            request.AddQueryParameter("take", take.ToString());
+            request.AddQueryParameter("from", from.ToString(CultureInfo.InvariantCulture));
+            request.AddQueryParameter("take", take.ToString(CultureInfo.InvariantCulture));
 
             var results = Execute<List<Personnel>>(request);
             return results.Data;
@@ -51,9 +52,10 @@ namespace Cosential.Integrations.Compass.Client
 
         public Personnel Update(Personnel personnel)
         {
+            if (personnel == null) throw new ArgumentNullException(nameof(personnel));
             var request = NewRequest("personnel/{id}", Method.PUT);
             request.AddUrlSegment("id", personnel.PersonnelId.ToString());
-            request.AddBody(personnel);
+            request.AddJsonBody(personnel);
 
             var results = Execute<Personnel>(request);
             return results.Data;
@@ -62,17 +64,19 @@ namespace Cosential.Integrations.Compass.Client
         public void Delete(int personnelId)
         {
             var request = NewRequest("personnel/{id}", Method.DELETE);
-            request.AddUrlSegment("id", personnelId.ToString());
+            request.AddUrlSegment("id", personnelId.ToString(CultureInfo.InvariantCulture));
 
-            var results = Execute<Personnel>(request);
+            Execute<Personnel>(request);
         }
 
         #endregion
 
         public IEnumerable<PersonnelImageMetadata> GetPersonnelImageData(Personnel personnel)
         {
+            if(personnel == null) throw new ArgumentNullException(nameof(personnel));
+            if (!personnel.PersonnelId.HasValue) throw new ArgumentException("Personnel ID can not be null.");
             var request = NewRequest("personnel/{id}/images");
-            request.AddUrlSegment("id", personnel.PersonnelId.ToString());
+            request.AddUrlSegment("id", personnel.PersonnelId.Value.ToString(CultureInfo.InvariantCulture));
             var result = Execute<List<PersonnelImageMetadata>>(request);
             return result.Data;
         }
@@ -84,6 +88,8 @@ namespace Cosential.Integrations.Compass.Client
 
         public bool UploadImage(Personnel personnel, string photoUrl)
         {
+            if (personnel == null) throw new ArgumentNullException(nameof(personnel));
+
             if (string.IsNullOrWhiteSpace(photoUrl) || HasImage(personnel)) return false;
 
             var request = NewRequest("/images/personnel/{id}", Method.POST);
@@ -102,8 +108,8 @@ namespace Cosential.Integrations.Compass.Client
         {
             var request = new RestRequest("personnel/search");
             request.AddQueryParameter("q", query);
-            request.AddQueryParameter("from", from.ToString());
-            request.AddQueryParameter("take", take.ToString());
+            request.AddQueryParameter("from", from.ToString(CultureInfo.InvariantCulture));
+            request.AddQueryParameter("take", take.ToString(CultureInfo.InvariantCulture));
 
             var results = Execute<List<Personnel>>(request);
             return results.Data;
@@ -121,6 +127,7 @@ namespace Cosential.Integrations.Compass.Client
 
         public UpsertResult<Personnel> Upsert(Personnel personnel)
         {
+            if (personnel == null) throw new ArgumentNullException(nameof(personnel));
             return new UpsertResult<Personnel>
             {
                 Action = (personnel.PersonnelId.HasValue && personnel.PersonnelId.Value > 0) ? UpsertAction.Updated : UpsertAction.Created,
@@ -146,7 +153,7 @@ namespace Cosential.Integrations.Compass.Client
             {
                 //Add new office
                 var addOfficeRequest = NewRequest($"firmorgs/offices", Method.POST);
-                addOfficeRequest.AddBody(new List<Office> {new Office {OfficeName = officeName}});
+                addOfficeRequest.AddJsonBody(new List<Office> {new Office {OfficeName = officeName}});
                 var addOfficeResponse = Execute<List<Office>>(addOfficeRequest);
                 if (addOfficeResponse.Data.Any()) data.Add(addOfficeResponse.Data.First());
                 else throw new Exception($"Could not find or create an office named {officeName} in Cosential");
@@ -154,13 +161,14 @@ namespace Cosential.Integrations.Compass.Client
 
             //Associate the office to the personnel
             var request = NewRequest($"personnel/{personnelId}/offices", Method.POST);
-            request.AddBody(data);
+            request.AddJsonBody(data);
             var results = Execute<List<Office>>(request);
             return results.Data;
         }
 
         public UpsertResult<Personnel> UpsertByExternalId(Personnel personnel)
         {
+            if (personnel == null) throw new ArgumentNullException(nameof(personnel));
             var found = GetByExternalId(personnel.ExternalId);
             if (found != null) personnel.PersonnelId = found.PersonnelId;
 

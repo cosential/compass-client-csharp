@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -22,7 +23,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<Personnel> Create(IEnumerable<Personnel> personnel)
         {
             var request = _client.NewRequest("personnel", Method.POST);
-            request.AddBody(personnel);
+            request.AddJsonBody(personnel);
 
             var results = _client.Execute<List<Personnel>>(request);
             return results.Data;
@@ -31,9 +32,9 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<IList<Personnel>> CreateAsync(IEnumerable<Personnel> personnel, CancellationToken cancel)
         {
             var request = _client.NewRequest("personnel", Method.POST);
-            request.AddBody(personnel);
+            request.AddJsonBody(personnel);
 
-            var results = await _client.ExecuteAsync<List<Personnel>>(request, cancel);
+            var results = await _client.ExecuteAsync<List<Personnel>>(request, cancel).ConfigureAwait(false);
             return results.Data;
         }
 
@@ -44,14 +45,14 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public async Task<Personnel> CreateAsync(Personnel personnel, CancellationToken cancel, int? parentId = null)
         {
-            var result = await CreateAsync(new [] {personnel}, cancel);
+            var result = await CreateAsync(new [] {personnel}, cancel).ConfigureAwait(false);
             return result.FirstOrDefault();
         }
 
         public Personnel Get(int personnelId)
         {
             var request = _client.NewRequest("personnel/{id}");
-            request.AddUrlSegment("id", personnelId.ToString());
+            request.AddUrlSegment("id", personnelId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<Personnel>(request);
             return results.Data;
@@ -60,17 +61,17 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<Personnel> GetAsync(int personnelId, CancellationToken cancelToken, int? parentId = null)
         {
             var request = _client.NewRequest("personnel/{id}");
-            request.AddUrlSegment("id", personnelId.ToString());
+            request.AddUrlSegment("id", personnelId.ToString(CultureInfo.InvariantCulture));
 
-            var results = await _client.ExecuteAsync<Personnel>(request, cancelToken);
+            var results = await _client.ExecuteAsync<Personnel>(request, cancelToken).ConfigureAwait(false);
             return results.Data;
         }
 
         public IList<Personnel> List(int from, int take)
         {
             var request = _client.NewRequest("personnel");
-            request.AddQueryParameter("from", from.ToString());
-            request.AddQueryParameter("take", take.ToString());
+            request.AddQueryParameter("from", from.ToString(CultureInfo.InvariantCulture));
+            request.AddQueryParameter("take", take.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<List<Personnel>>(request);
             return results.Data;
@@ -88,15 +89,16 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             var request = _client.NewRequest("personnel/changes");
             if (version != null) request.AddQueryParameter("version", Convert.ToBase64String(version));
             if (includeDeleted) request.AddQueryParameter("includeDeleted", true.ToString());
-            var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, cancel);
+            var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, cancel).ConfigureAwait(false);
             return results.Data;
         }
 
         public Personnel Update(Personnel personnel)
         {
+            if (personnel == null) throw new ArgumentNullException(nameof(personnel));
             var request = _client.NewRequest("personnel/{id}", Method.PUT);
             request.AddUrlSegment("id", personnel.PersonnelId.ToString());
-            request.AddBody(personnel);
+            request.AddJsonBody(personnel);
 
             var results = _client.Execute<Personnel>(request);
             return results.Data;
@@ -104,18 +106,19 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public async Task<Personnel> UpdateAsync(Personnel personnel, CancellationToken cancel)
         {
+            if (personnel == null) throw new ArgumentNullException(nameof(personnel));
             var request = _client.NewRequest("personnel/{id}", Method.PUT);
             request.AddUrlSegment("id", personnel.PersonnelId.ToString());
-            request.AddBody(personnel);
+            request.AddJsonBody(personnel);
 
-            var results = await _client.ExecuteAsync<Personnel>(request, cancel);
+            var results = await _client.ExecuteAsync<Personnel>(request, cancel).ConfigureAwait(false);
             return results.Data;
         }
 
         public void Delete(int personnelId)
         {
             var request = _client.NewRequest("personnel/{id}", Method.DELETE);
-            request.AddUrlSegment("id", personnelId.ToString());
+            request.AddUrlSegment("id", personnelId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<Personnel>(request);
         }
@@ -123,15 +126,17 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task DeleteAsync(int personnelId, CancellationToken cancelToken, int? parentId = null)
         {
             var request = _client.NewRequest("personnel/{id}", Method.DELETE);
-            request.AddUrlSegment("id", personnelId.ToString());
+            request.AddUrlSegment("id", personnelId.ToString(CultureInfo.InvariantCulture));
 
-            await _client.ExecuteAsync(request, cancelToken);
+            await _client.ExecuteAsync(request, cancelToken).ConfigureAwait(false);
         }
 
         #endregion
 
         public IEnumerable<PersonnelImageMetadata> GetPersonnelImageData(Personnel personnel)
         {
+            if(personnel == null) throw new ArgumentNullException(nameof(personnel));
+
             var request = _client.NewRequest("personnel/{id}/images");
             request.AddUrlSegment("id", personnel.PersonnelId.ToString());
             var result = _client.Execute<List<PersonnelImageMetadata>>(request);
@@ -145,6 +150,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public bool UploadImage(Personnel personnel, string photoUrl)
         {
+            if(personnel == null) throw new ArgumentNullException(nameof(personnel));
             if (string.IsNullOrWhiteSpace(photoUrl) || HasImage(personnel)) return false;
 
             var request = _client.NewRequest("/images/personnel/{id}", Method.POST);
@@ -161,10 +167,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             int? parentId = null)
         {
             var request = _client.NewRequest("personnel/{id}/metadata/{scope}");
-            request.AddUrlSegment("id", id.ToString());
+            request.AddUrlSegment("id", id.ToString(CultureInfo.InvariantCulture));
             request.AddUrlSegment("scope", scope.ToString());
 
-            var result = await _client.ExecuteAsync<TM>(request, cancellationToken);
+            var result = await _client.ExecuteAsync<TM>(request, cancellationToken).ConfigureAwait(false);
             return result.Data;
         }
 
@@ -172,11 +178,11 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             CancellationToken cancellationToken, int? parentId = null)
         {
             var request = _client.NewRequest("personnel/{id}/metadata/{scope}", Method.PUT);
-            request.AddUrlSegment("id", entityId.ToString());
+            request.AddUrlSegment("id", entityId.ToString(CultureInfo.InvariantCulture));
             request.AddUrlSegment("scope", scope.ToString());
-            request.AddBody(data);
+            request.AddJsonBody(data);
 
-            var result = await _client.ExecuteAsync<TM>(request, cancellationToken);
+            var result = await _client.ExecuteAsync<TM>(request, cancellationToken).ConfigureAwait(false);
             return result.Data;
         }
 
@@ -186,8 +192,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         {
             var request = _client.NewRequest("personnel/search");
             request.AddQueryParameter("q", query);
-            request.AddQueryParameter("from", from.ToString());
-            request.AddQueryParameter("take", take.ToString());
+            request.AddQueryParameter("from", from.ToString(CultureInfo.InvariantCulture));
+            request.AddQueryParameter("take", take.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<List<Personnel>>(request);
             return results.Data;
@@ -205,6 +211,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public UpsertResult<Personnel> Upsert(Personnel personnel)
         {
+            if (personnel == null) throw new ArgumentNullException(nameof(personnel));
             return new UpsertResult<Personnel>
             {
                 Action = (personnel.PersonnelId.HasValue && personnel.PersonnelId.Value > 0) ? UpsertAction.Updated : UpsertAction.Created,
@@ -215,17 +222,18 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<UpsertResult<Personnel>> UpsertAsync(Personnel personnel, CancellationToken cancel,
             int? parentId = null)
         {
+            if (personnel == null) throw new ArgumentNullException(nameof(personnel));
             var result = new UpsertResult<Personnel>();
 
             if (personnel.PersonnelId.HasValue && personnel.PersonnelId.Value > 0)
             {
                 result.Action = UpsertAction.Updated;
-                result.Data = await UpdateAsync(personnel, cancel);
+                result.Data = await UpdateAsync(personnel, cancel).ConfigureAwait(false);
             }
             else
             {
                 result.Action = UpsertAction.Created;
-                result.Data = await CreateAsync(personnel, cancel);
+                result.Data = await CreateAsync(personnel, cancel).ConfigureAwait(false);
             }
 
             return result;
@@ -233,6 +241,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public UpsertResult<Personnel> UpsertByExternalId(Personnel personnel)
         {
+            if (personnel == null) throw new ArgumentNullException(nameof(personnel));
             var found = GetByExternalId(personnel.ExternalId);
             if (found != null) personnel.PersonnelId = found.PersonnelId;
 
@@ -261,7 +270,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             {
                 //Add new office
                 var addOfficeRequest = _client.NewRequest($"firmorgs/offices", Method.POST);
-                addOfficeRequest.AddBody(new List<Office> { new Office { OfficeName = officeName } });
+                addOfficeRequest.AddJsonBody(new List<Office> { new Office { OfficeName = officeName } });
                 var addOfficeResponse = _client.Execute<List<Office>>(addOfficeRequest);
                 if (addOfficeResponse.Data.Any()) data.Add(addOfficeResponse.Data.First());
                 else throw new Exception($"Could not find or create an office named {officeName} in Cosential");
@@ -269,7 +278,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
             //Associate the office to the personnel
             var request = _client.NewRequest($"personnel/{personnelId}/offices", Method.POST);
-            request.AddBody(data);
+            request.AddJsonBody(data);
             var results = _client.Execute<List<Office>>(request);
             return results.Data;
         }
@@ -277,7 +286,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<PersonnelEducation> Create(int personnelId, IEnumerable<PersonnelEducation> education)
         {
             var request = _client.NewRequest($"personnel/{personnelId}/education", Method.POST);
-            request.AddBody(education);
+            request.AddJsonBody(education);
             var results = _client.Execute<List<PersonnelEducation>>(request);
             return results.Data;
         }
@@ -289,10 +298,11 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public PersonnelEducation Update(int personnelId, PersonnelEducation education)
         {
+            if (education == null) throw new ArgumentNullException(nameof(education));
             var request = _client.NewRequest("personnel/{personnelId}/education/{DegreeId}", Method.PUT);
-            request.AddUrlSegment("personnelId", personnelId.ToString());
+            request.AddUrlSegment("personnelId", personnelId.ToString(CultureInfo.InvariantCulture));
             request.AddUrlSegment("DegreeId", education.DegreeId.ToString());
-            request.AddBody(education);
+            request.AddJsonBody(education);
 
             var results = _client.Execute<PersonnelEducation>(request);
             return results.Data;
@@ -307,8 +317,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public void DeleteEducationRecord(int personnelId, int degreeId)
         {
             var request = _client.NewRequest("personnel/{personnelId}/education/{degreeId}", Method.DELETE);
-            request.AddUrlSegment("personnelId", personnelId.ToString());
-            request.AddUrlSegment("degreeId", degreeId.ToString());
+            request.AddUrlSegment("personnelId", personnelId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("degreeId", degreeId.ToString(CultureInfo.InvariantCulture));
 
             _client.Execute<Personnel>(request);
         }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+// ReSharper disable InconsistentNaming
 
 namespace Cosential.Integrations.Compass.Client.Models
 {
