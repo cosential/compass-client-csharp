@@ -1,0 +1,7 @@
+﻿[*.cs]
+
+# CA1707: Remove the underscores from member name Cosential.Integrations.Compass.Client.Models.CompanyAddress.ROW_VERSION.
+dotnet_diagnostic.CA1707.severity = none
+
+# CA1054: Uri parameters should not be strings
+dotnet_diagnostic.CA1054.severity = none

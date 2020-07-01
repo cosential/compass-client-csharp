@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,40 +32,41 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<Opportunity> GetAsync(int opportunityId, CancellationToken cancelToken, int? parentId = null)
         {
             var request = _client.NewRequest("opportunities/{id}");
-            request.AddUrlSegment("id", opportunityId.ToString());
+            request.AddUrlSegment("id", opportunityId.ToString(CultureInfo.InvariantCulture));
 
-            var results = await _client.ExecuteAsync<Opportunity>(request, cancelToken);
+            var results = await _client.ExecuteAsync<Opportunity>(request, cancelToken).ConfigureAwait(false);
             return results.Data;
         }
 
         public async Task<Opportunity> UpdateAsync(Opportunity entity, CancellationToken cancel)
         {
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
             var request = _client.NewRequest("opportunities/{id}", Method.PUT);
             request.AddUrlSegment("id", entity.OpportunityId.ToString());
-            request.AddBody(entity);
+            request.AddJsonBody(entity);
 
-            var results = await _client.ExecuteAsync<Opportunity>(request, cancel);
+            var results = await _client.ExecuteAsync<Opportunity>(request, cancel).ConfigureAwait(false);
             return results.Data;
         }
 
         public async Task DeleteAsync(int id, CancellationToken cancel, int? parentId = null)
         {
             var request = _client.NewRequest("opportunities/{id}", Method.DELETE);
-            request.AddUrlSegment("id", id.ToString());
+            request.AddUrlSegment("id", id.ToString(CultureInfo.InvariantCulture));
 
-            await _client.ExecuteAsync<Opportunity>(request, cancel);
+            await _client.ExecuteAsync<Opportunity>(request, cancel).ConfigureAwait(false);
         }
 
         public async Task<Opportunity> CreateAsync(Opportunity entity, CancellationToken cancel, int? parentId = null)
         {
-            var result = await CreateAsync(new[] { entity }, cancel);
+            var result = await CreateAsync(new[] { entity }, cancel).ConfigureAwait(false);
             return result.FirstOrDefault();
         }
 
         public async Task<IList<ClientType>> TryGetClientTypesAsync(int oppId, CancellationToken cancellationToken)
         {
             var request = _client.NewRequest($"opportunities/{oppId}/clienttypes");
-            var results = await _client.ExecuteAsync<List<ClientType>>(request, cancellationToken);
+            var results = await _client.ExecuteAsync<List<ClientType>>(request, cancellationToken).ConfigureAwait(false);
             return results.Data;
         }
 
@@ -72,32 +74,33 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         {
             var request = _client.NewRequest($"opportunities/{oppId}/clienttypes", Method.POST);
             request.AddJsonBody(new[] { new { Id = ctId} });
-            await _client.ExecuteAsync(request, cancellationToken);
+            await _client.ExecuteAsync(request, cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<IList<Opportunity>> CreateAsync(IEnumerable<Opportunity> entities, CancellationToken cancel)
         {
             var request = _client.NewRequest("opportunities", Method.POST);
-            request.AddBody(entities);
+            request.AddJsonBody(entities);
 
-            var results = await _client.ExecuteAsync<List<Opportunity>>(request, cancel);
+            var results = await _client.ExecuteAsync<List<Opportunity>>(request, cancel).ConfigureAwait(false);
             return results.Data;
         }
 
         public async Task<UpsertResult<Opportunity>> UpsertAsync(Opportunity entity, CancellationToken cancelToken,
             int? parentId = null)
         {
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
             var result = new UpsertResult<Opportunity>();
 
             if (entity.OpportunityId.HasValue && entity.OpportunityId.Value > 0)
             {
                 result.Action = UpsertAction.Updated;
-                result.Data = await UpdateAsync(entity, cancelToken);
+                result.Data = await UpdateAsync(entity, cancelToken).ConfigureAwait(false);
             }
             else
             {
                 result.Action = UpsertAction.Created;
-                result.Data = await CreateAsync(entity, cancelToken);
+                result.Data = await CreateAsync(entity, cancelToken).ConfigureAwait(false);
             }
 
             return result;
@@ -106,8 +109,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public List<Opportunity> List(int from, int size, bool full = true)
         {
             var request = _client.NewRequest("opportunities", Method.GET);
-            request.AddQueryParameter("from", from.ToString());
-            request.AddQueryParameter("size", size.ToString());
+            request.AddQueryParameter("from", from.ToString(CultureInfo.InvariantCulture));
+            request.AddQueryParameter("size", size.ToString(CultureInfo.InvariantCulture));
             request.AddQueryParameter("full", full.ToString());
 
             var results = _client.Execute<List<Opportunity>>(request);
@@ -134,7 +137,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             var request = _client.NewRequest("opportunities/changes");
             if (version != null) request.AddQueryParameter("version", Convert.ToBase64String(version));
             if (includeDeleted) request.AddQueryParameter("includeDeleted", true.ToString());
-            var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, cancel);
+            var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, cancel).ConfigureAwait(false);
             return results.Data;
         }
 
@@ -146,26 +149,26 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<Stage> GetStagesAsync(CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/stage");
-            var result = await _client.ExecuteAsync<Stage>(request, cancelToken);
+            var result = await _client.ExecuteAsync<Stage>(request, cancelToken).ConfigureAwait(false);
             return result.Data;
         }
 
         public async Task<Stage> SetStageAsync(int opportunityId, int stageId, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/{id}/stage", Method.PUT);
-            request.AddUrlSegment("id", opportunityId.ToString());
+            request.AddUrlSegment("id", opportunityId.ToString(CultureInfo.InvariantCulture));
             request.AddJsonBody(new Stage{ StageID = stageId });
 
-            var result = await _client.ExecuteAsync<Stage>(request, cancelToken);
+            var result = await _client.ExecuteAsync<Stage>(request, cancelToken).ConfigureAwait(false);
             return result.Data;
         }
 
         public async Task<SubmittalType> GetSubmittalTypeAsync(int opportunityId, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/{id}/submittaltype");
-            request.AddUrlSegment("id", opportunityId.ToString());
+            request.AddUrlSegment("id", opportunityId.ToString(CultureInfo.InvariantCulture));
 
-            var result = await _client.ExecuteAsync<SubmittalType>(request, cancelToken);
+            var result = await _client.ExecuteAsync<SubmittalType>(request, cancelToken).ConfigureAwait(false);
             return result.Data;
         }
 
@@ -173,7 +176,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         {
             try
             {
-                return await GetSubmittalTypeAsync(opportunityId, cancelToken);
+                return await GetSubmittalTypeAsync(opportunityId, cancelToken).ConfigureAwait(false);
             }
             catch 
             {
@@ -184,8 +187,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<Sf330ProfileCode> GetSf330ProfileCode(int opportunityId, CancellationToken cancellationToken)
         {
             var request = _client.NewRequest("opportunities/{id}/Sf330ProfileCode");
-            request.AddUrlSegment("id", opportunityId.ToString());
-            var result = await _client.ExecuteAsync<Sf330ProfileCode>(request, cancellationToken);
+            request.AddUrlSegment("id", opportunityId.ToString(CultureInfo.InvariantCulture));
+            var result = await _client.ExecuteAsync<Sf330ProfileCode>(request, cancellationToken).ConfigureAwait(false);
             return result.Data;
         }
 
@@ -193,7 +196,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         {
             try
             {
-                return await GetSf330ProfileCode(opportunityId, cancellationToken);
+                return await GetSf330ProfileCode(opportunityId, cancellationToken).ConfigureAwait(false);
             }
             catch
             {
@@ -205,9 +208,9 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<OppRole> GetRoleAsync(int opportunityId, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/{id}/role");
-            request.AddUrlSegment("id", opportunityId.ToString());
+            request.AddUrlSegment("id", opportunityId.ToString(CultureInfo.InvariantCulture));
 
-            var result = await _client.ExecuteAsync<OppRole>(request, cancelToken);
+            var result = await _client.ExecuteAsync<OppRole>(request, cancelToken).ConfigureAwait(false);
             return result.Data; 
         }
 
@@ -215,7 +218,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         {
             try
             {
-                return await GetRoleAsync(opportunityId, cancelToken);
+                return await GetRoleAsync(opportunityId, cancelToken).ConfigureAwait(false);
             }
             catch
             {
@@ -230,29 +233,27 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public async Task<List<int>> GetFirmOrgIdListAsync(FirmOrg firmorg, int opportunityId, CancellationToken cancel)
         {
-            var fc = new FirmOrgContext();
-
             var request = _client.NewRequest("opportunities/{id}/{firmorg}");
-            request.AddUrlSegment("id", opportunityId.ToString());
+            request.AddUrlSegment("id", opportunityId.ToString(CultureInfo.InvariantCulture));
             request.AddUrlSegment("firmorg", firmorg.ToString());
-            request.AddQueryParameter("fields", fc.GetPrimaryKeyName(firmorg));
+            request.AddQueryParameter("fields", FirmOrgContext.GetPrimaryKeyName(firmorg));
 
             switch (firmorg)
             {
                 case FirmOrg.Offices:
-                    var officeResponse = await _client.ExecuteAsync<List<Office>>(request, cancel);
+                    var officeResponse = await _client.ExecuteAsync<List<Office>>(request, cancel).ConfigureAwait(false);
                     return officeResponse.Data.Where(x => x.OfficeID.HasValue).Select(x => x.OfficeID.Value).ToList();
                 case FirmOrg.Divisions:
-                    var divisionResponse = await _client.ExecuteAsync<List<Division>>(request, cancel);
+                    var divisionResponse = await _client.ExecuteAsync<List<Division>>(request, cancel).ConfigureAwait(false);
                     return divisionResponse.Data.Where(x => x.DivisionID.HasValue).Select(x => x.DivisionID.Value).ToList();
                 case FirmOrg.Studios:
-                    var studioResponse = await _client.ExecuteAsync<List<Studio>>(request, cancel);
+                    var studioResponse = await _client.ExecuteAsync<List<Studio>>(request, cancel).ConfigureAwait(false);
                     return studioResponse.Data.Where(x => x.StudioID.HasValue).Select(x => x.StudioID.Value).ToList();
                 case FirmOrg.PracticeAreas:
-                    var practiceAreasResponse = await _client.ExecuteAsync<List<PracticeArea>>(request, cancel);
+                    var practiceAreasResponse = await _client.ExecuteAsync<List<PracticeArea>>(request, cancel).ConfigureAwait(false);
                     return practiceAreasResponse.Data.Where(x => x.PracticeAreaID.HasValue).Select(x => x.PracticeAreaID.Value).ToList();
                 case FirmOrg.Territories:
-                    var territoryResponse = await _client.ExecuteAsync<List<Territory>>(request, cancel);
+                    var territoryResponse = await _client.ExecuteAsync<List<Territory>>(request, cancel).ConfigureAwait(false);
                     return territoryResponse.Data.Where(x => x.TerritoryID.HasValue).Select(x => x.TerritoryID.Value).ToList();
                 default:
                     throw new ArgumentOutOfRangeException(nameof(firmorg), firmorg, null);
@@ -263,30 +264,28 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public async Task SetFirmOrgIdListAsync(FirmOrg firmorg, int opportunityId, List<int> idList, CancellationToken cancel)
         {
-            var oldIdList = await GetFirmOrgIdListAsync(firmorg, opportunityId, cancel);
+            var oldIdList = await GetFirmOrgIdListAsync(firmorg, opportunityId, cancel).ConfigureAwait(false);
             var removeIdList = oldIdList.Where(i => !idList.Contains(i)).ToList();
             var addIdList = idList.Where(i => !oldIdList.Contains(i)).ToList();
 
             foreach (var i in removeIdList)
             {
                 var request = _client.NewRequest("opportunities/{id}/{firmorg}/{oid}", Method.DELETE);
-                request.AddUrlSegment("id", opportunityId.ToString());
+                request.AddUrlSegment("id", opportunityId.ToString(CultureInfo.InvariantCulture));
                 request.AddUrlSegment("firmorg", firmorg.ToString());
-                request.AddUrlSegment("oid", i.ToString());
-                await _client.ExecuteAsync(request, cancel);
+                request.AddUrlSegment("oid", i.ToString(CultureInfo.InvariantCulture));
+                await _client.ExecuteAsync(request, cancel).ConfigureAwait(false);
             }
 
             if (addIdList.Any())
             {
-                var fc = new FirmOrgContext();
-
                 var request = _client.NewRequest("opportunities/{id}/{firmorg}", Method.POST);
-                request.AddUrlSegment("id", opportunityId.ToString());
+                request.AddUrlSegment("id", opportunityId.ToString(CultureInfo.InvariantCulture));
                 request.AddUrlSegment("firmorg", firmorg.ToString());
-                request.AddBody(addIdList.Select(
-                    i => new Dictionary<string, int> {{fc.GetPrimaryKeyName(firmorg), i}}));
+                request.AddJsonBody(addIdList.Select(
+                    i => new Dictionary<string, int> {{ FirmOrgContext.GetPrimaryKeyName(firmorg), i}}));
 
-                await _client.ExecuteAsync(request, cancel);
+                await _client.ExecuteAsync(request, cancel).ConfigureAwait(false);
             }
         }
 
@@ -294,7 +293,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         {
             try
             {
-                return await GetPrimaryCategoriesAsync(opportunityId, cancelToken);
+                return await GetPrimaryCategoriesAsync(opportunityId, cancelToken).ConfigureAwait(false);
             }
             catch
             {
@@ -305,9 +304,9 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<List<PrimaryCategory>> GetPrimaryCategoriesAsync(int opportunityId, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/{id}/primarycategories");
-            request.AddUrlSegment("id", opportunityId.ToString());
+            request.AddUrlSegment("id", opportunityId.ToString(CultureInfo.InvariantCulture));
 
-            var result = await _client.ExecuteAsync<List<PrimaryCategory>>(request, cancelToken);
+            var result = await _client.ExecuteAsync<List<PrimaryCategory>>(request, cancelToken).ConfigureAwait(false);
             return result.Data ?? new List<PrimaryCategory>();
         }
 
@@ -315,7 +314,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         {
             try
             {
-                return await GetStaffTeamAsync(opportunityId, cancelToken);
+                return await GetStaffTeamAsync(opportunityId, cancelToken).ConfigureAwait(false);
             }
             catch
             {
@@ -326,36 +325,36 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<List<StaffTeam>> GetStaffTeamAsync(int opportunityId, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/{id}/staffteam");
-            request.AddUrlSegment("id", opportunityId.ToString());
+            request.AddUrlSegment("id", opportunityId.ToString(CultureInfo.InvariantCulture));
 
-            var result = await _client.ExecuteAsync<List<StaffTeam>>(request, cancelToken);
+            var result = await _client.ExecuteAsync<List<StaffTeam>>(request, cancelToken).ConfigureAwait(false);
             return result.Data ?? new List<StaffTeam>();
         }
 
         public async Task<List<StaffTeam>> PostStaffTeamAsync(int opportunityId, IEnumerable<StaffTeam> staffteam, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/{id}/staffteam", Method.POST);
-            request.AddUrlSegment("id", opportunityId.ToString());
+            request.AddUrlSegment("id", opportunityId.ToString(CultureInfo.InvariantCulture));
             request.AddJsonBody(staffteam);
 
-            var result = await _client.ExecuteAsync<List<StaffTeam>>(request, cancelToken);
+            var result = await _client.ExecuteAsync<List<StaffTeam>>(request, cancelToken).ConfigureAwait(false);
             return result.Data ?? new List<StaffTeam>();
         }
 
         public async Task RemoveStaffTeamAsync(int opportunityId, long staffTeamId, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/{id}/staffteam/{stid}", Method.DELETE);
-            request.AddUrlSegment("id", opportunityId.ToString());
-            request.AddUrlSegment("stid", staffTeamId.ToString());
+            request.AddUrlSegment("id", opportunityId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("stid", staffTeamId.ToString(CultureInfo.InvariantCulture));
             
-            await _client.ExecuteAsync(request, cancelToken);
+            await _client.ExecuteAsync(request, cancelToken).ConfigureAwait(false);
         }
 
         public async Task<List<SecondaryCategory>> TryGetSecondaryCategoriesAsync(int opportunityId, CancellationToken cancelToken)
         {
             try
             {
-                return await GetSecondaryCategoriesAsync(opportunityId, cancelToken);
+                return await GetSecondaryCategoriesAsync(opportunityId, cancelToken).ConfigureAwait(false);
             }
             catch
             {
@@ -366,9 +365,9 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<List<SecondaryCategory>> GetSecondaryCategoriesAsync(int opportunityId, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/{id}/secondarycategories");
-            request.AddUrlSegment("id", opportunityId.ToString());
+            request.AddUrlSegment("id", opportunityId.ToString(CultureInfo.InvariantCulture));
 
-            var result = await _client.ExecuteAsync<List<SecondaryCategory>>(request, cancelToken);
+            var result = await _client.ExecuteAsync<List<SecondaryCategory>>(request, cancelToken).ConfigureAwait(false);
             return result.Data ?? new List<SecondaryCategory>();
         }
 
@@ -376,7 +375,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         {
             try
             {
-                return await GetDeliveryMethodsAsync(opportunityId, cancelToken);
+                return await GetDeliveryMethodsAsync(opportunityId, cancelToken).ConfigureAwait(false);
             }
             catch
             {
@@ -387,9 +386,9 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<List<DeliveryMethod>> GetDeliveryMethodsAsync(int opportunityId, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/{id}/deliverymethod");
-            request.AddUrlSegment("id", opportunityId.ToString());
+            request.AddUrlSegment("id", opportunityId.ToString(CultureInfo.InvariantCulture));
 
-            var result = await _client.ExecuteAsync<List<DeliveryMethod>>(request, cancelToken);
+            var result = await _client.ExecuteAsync<List<DeliveryMethod>>(request, cancelToken).ConfigureAwait(false);
             return result.Data ?? new List<DeliveryMethod>();
         }
 
@@ -397,7 +396,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         {
             try
             {
-                return await GetCompaniesAsync(opportunityId, cancelToken);
+                return await GetCompaniesAsync(opportunityId, cancelToken).ConfigureAwait(false);
             }
             catch
             {
@@ -408,9 +407,9 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<List<OpportunityCompany>> GetCompaniesAsync(int opportunityId, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/{id}/companies");
-            request.AddUrlSegment("id", opportunityId.ToString());
+            request.AddUrlSegment("id", opportunityId.ToString(CultureInfo.InvariantCulture));
 
-            var result = await _client.ExecuteAsync<List<OpportunityCompany>>(request, cancelToken);
+            var result = await _client.ExecuteAsync<List<OpportunityCompany>>(request, cancelToken).ConfigureAwait(false);
             return result.Data ?? new List<OpportunityCompany>();
         }
 
@@ -437,52 +436,52 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task RemoveSubmittalType(int opportunityId, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/{id}/submittaltype", Method.DELETE);
-            request.AddUrlSegment("id", opportunityId.ToString());
-            await _client.ExecuteAsync(request, cancelToken);
+            request.AddUrlSegment("id", opportunityId.ToString(CultureInfo.InvariantCulture));
+            await _client.ExecuteAsync(request, cancelToken).ConfigureAwait(false);
         }
         public async Task RemoveRole(int opportunityId, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/{id}/role", Method.DELETE);
-            request.AddUrlSegment("id", opportunityId.ToString());
-            await _client.ExecuteAsync(request, cancelToken);
+            request.AddUrlSegment("id", opportunityId.ToString(CultureInfo.InvariantCulture));
+            await _client.ExecuteAsync(request, cancelToken).ConfigureAwait(false);
         }
 
         public async Task RemoveClientTypeAsync(int opportunityId, int clientTypeId, CancellationToken cancel)
         {
             var request = _client.NewRequest($"opportunities/{opportunityId}/clienttypes/{clientTypeId}", Method.DELETE);
-            await _client.ExecuteAsync(request, cancel);
+            await _client.ExecuteAsync(request, cancel).ConfigureAwait(false);
         }
 
         public async Task UpdateSubmittalType(int opportunityId, SubmittalType submittalType, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/{id}/submittaltype", Method.POST);
-            request.AddUrlSegment("id", opportunityId.ToString());
+            request.AddUrlSegment("id", opportunityId.ToString(CultureInfo.InvariantCulture));
             // This seems odd but this endpoint does require a list of the item.  
-            request.AddBody(new List<SubmittalType> {submittalType});
-            await _client.ExecuteAsync(request, cancelToken);
+            request.AddJsonBody(new List<SubmittalType> {submittalType});
+            await _client.ExecuteAsync(request, cancelToken).ConfigureAwait(false);
         }
 
         public async Task RemoveSf330ProfileCode(int opportunityId, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/{id}/Sf330ProfileCode", Method.DELETE);
-            request.AddUrlSegment("id", opportunityId.ToString());
-            await _client.ExecuteAsync(request, cancelToken);
+            request.AddUrlSegment("id", opportunityId.ToString(CultureInfo.InvariantCulture));
+            await _client.ExecuteAsync(request, cancelToken).ConfigureAwait(false);
         }
 
         public async Task UpdateSf330ProfileCode(int opportunityId, Sf330ProfileCode sf330ProfileCode, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/{id}/Sf330ProfileCode", Method.POST);
-            request.AddUrlSegment("id", opportunityId.ToString());
-            request.AddBody(sf330ProfileCode);
-            await _client.ExecuteAsync(request, cancelToken);
+            request.AddUrlSegment("id", opportunityId.ToString(CultureInfo.InvariantCulture));
+            request.AddJsonBody(sf330ProfileCode);
+            await _client.ExecuteAsync(request, cancelToken).ConfigureAwait(false);
         }
 
         public async Task UpdateRole(int opportunityId, OppRole role, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/{id}/role", Method.POST);
-            request.AddUrlSegment("id", opportunityId.ToString());
-            request.AddBody(role);
-            await _client.ExecuteAsync(request, cancelToken);
+            request.AddUrlSegment("id", opportunityId.ToString(CultureInfo.InvariantCulture));
+            request.AddJsonBody(role);
+            await _client.ExecuteAsync(request, cancelToken).ConfigureAwait(false);
         }
 
         #endregion
@@ -491,10 +490,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             int? parentId = null)
         {
             var request = _client.NewRequest("opportunities/{id}/metadata/{scope}");
-            request.AddUrlSegment("id", id.ToString());
+            request.AddUrlSegment("id", id.ToString(CultureInfo.InvariantCulture));
             request.AddUrlSegment("scope", scope.ToString());
 
-            var result = await _client.ExecuteAsync<TM>(request, cancellationToken);
+            var result = await _client.ExecuteAsync<TM>(request, cancellationToken).ConfigureAwait(false);
             return result.Data;
         }
 
@@ -502,11 +501,11 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             CancellationToken cancellationToken, int? parentId = null)
         {
             var request = _client.NewRequest("opportunities/{id}/metadata/{scope}", Method.PUT);
-            request.AddUrlSegment("id", entityId.ToString());
+            request.AddUrlSegment("id", entityId.ToString(CultureInfo.InvariantCulture));
             request.AddUrlSegment("scope", scope.ToString());
-            request.AddBody(data);
+            request.AddJsonBody(data);
 
-            var result = await _client.ExecuteAsync<TM>(request, cancellationToken);
+            var result = await _client.ExecuteAsync<TM>(request, cancellationToken).ConfigureAwait(false);
             return result.Data;
         }
     }

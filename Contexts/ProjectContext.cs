@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<Project> Create(IEnumerable<Project> project)
         {
             var request = _client.NewRequest("projects", Method.POST);
-            request.AddBody(project);
+            request.AddJsonBody(project);
 
             var results = _client.Execute<List<Project>>(request);
             return results.Data;
@@ -30,9 +31,9 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<IList<Project>> CreateAsync(IEnumerable<Project> project, CancellationToken cancel)
         {
             var request = _client.NewRequest("projects", Method.POST);
-            request.AddBody(project);
+            request.AddJsonBody(project);
 
-            var results = await _client.ExecuteAsync<List<Project>>(request, cancel);
+            var results = await _client.ExecuteAsync<List<Project>>(request, cancel).ConfigureAwait(false);
             return results.Data;
         }
 
@@ -43,14 +44,14 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public async Task<Project> CreateAsync(Project project, CancellationToken cancel, int? parentId = null)
         {
-            var result = await CreateAsync(new[] { project }, cancel);
+            var result = await CreateAsync(new[] { project }, cancel).ConfigureAwait(false);
             return result.FirstOrDefault();
         }
 
         public Project Get(int projectId)
         {
             var request = _client.NewRequest("projects/{id}");
-            request.AddUrlSegment("id", projectId.ToString());
+            request.AddUrlSegment("id", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<Project>(request);
             return results.Data;
@@ -59,17 +60,17 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<Project> GetAsync(int projectId, CancellationToken cancelToken, int? parentId = null)
         {
             var request = _client.NewRequest("projects/{id}");
-            request.AddUrlSegment("id", projectId.ToString());
+            request.AddUrlSegment("id", projectId.ToString(CultureInfo.InvariantCulture));
 
-            var results = await _client.ExecuteAsync<Project>(request, cancelToken);
+            var results = await _client.ExecuteAsync<Project>(request, cancelToken).ConfigureAwait(false);
             return results.Data;
         }
 
         public IList<Project> List(int from, int take)
         {
             var request = _client.NewRequest("projects");
-            request.AddQueryParameter("from", from.ToString());
-            request.AddQueryParameter("take", take.ToString());
+            request.AddQueryParameter("from", from.ToString(CultureInfo.InvariantCulture));
+            request.AddQueryParameter("take", take.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<List<Project>>(request);
             return results.Data;
@@ -87,15 +88,16 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             var request = _client.NewRequest("projects/changes");
             if (version != null) request.AddQueryParameter("version", Convert.ToBase64String(version));
             if (includeDeleted) request.AddQueryParameter("includeDeleted", true.ToString());
-            var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, cancel);
+            var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, cancel).ConfigureAwait(false);
             return results.Data;
         }
 
         public Project Update(Project project)
         {
+            if (project == null) throw new ArgumentNullException(nameof(project));
             var request = _client.NewRequest("projects/{id}", Method.PUT);
             request.AddUrlSegment("id", project.ProjectId.ToString());
-            request.AddBody(project);
+            request.AddJsonBody(project);
 
             var results = _client.Execute<Project>(request);
             return results.Data;
@@ -103,18 +105,19 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public async Task<Project> UpdateAsync(Project project, CancellationToken cancel)
         {
+            if (project == null) throw new ArgumentNullException(nameof(project));
             var request = _client.NewRequest("projects/{id}", Method.PUT);
             request.AddUrlSegment("id", project.ProjectId.ToString());
-            request.AddBody(project);
+            request.AddJsonBody(project);
 
-            var results = await _client.ExecuteAsync<Project>(request, cancel);
+            var results = await _client.ExecuteAsync<Project>(request, cancel).ConfigureAwait(false);
             return results.Data;
         }
 
         public void Delete(int projectId)
         {
             var request = _client.NewRequest("projects/{id}", Method.DELETE);
-            request.AddUrlSegment("id", projectId.ToString());
+            request.AddUrlSegment("id", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<Project>(request);
         }
@@ -122,9 +125,9 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task DeleteAsync(int projectId, CancellationToken cancelToken, int? parentId = null)
         {
             var request = _client.NewRequest("projects/{id}", Method.DELETE);
-            request.AddUrlSegment("id", projectId.ToString());
+            request.AddUrlSegment("id", projectId.ToString(CultureInfo.InvariantCulture));
 
-            await _client.ExecuteAsync(request, cancelToken);
+            await _client.ExecuteAsync(request, cancelToken).ConfigureAwait(false);
         }
 
         #endregion
@@ -132,6 +135,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         #region PROJECT IMAGES
         public IEnumerable<ProjectImageMetadata> GetProjectImageData(Project project)
         {
+            if (project == null) throw new ArgumentNullException(nameof(project));
             var request = _client.NewRequest("projects/{id}/images");
             request.AddUrlSegment("id", project.ProjectId.ToString());
             var result = _client.Execute<List<ProjectImageMetadata>>(request);
@@ -145,6 +149,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public bool UploadImage(Project project, string photoUrl)
         {
+            if (project == null) throw new ArgumentNullException(nameof(project));
+
             if (string.IsNullOrWhiteSpace(photoUrl) || HasImage(project)) return false;
 
             var request = _client.NewRequest("/images/projects/{id}", Method.POST);
@@ -163,10 +169,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             CancellationToken cancellationToken, int? parentId = null)
         {
             var request = _client.NewRequest("projects/{id}/metadata/{scope}");
-            request.AddUrlSegment("id", entityId.ToString());
+            request.AddUrlSegment("id", entityId.ToString(CultureInfo.InvariantCulture));
             request.AddUrlSegment("scope", scope.ToString());
 
-            var result = await _client.ExecuteAsync<TM>(request, cancellationToken);
+            var result = await _client.ExecuteAsync<TM>(request, cancellationToken).ConfigureAwait(false);
             return result.Data;
         }
 
@@ -174,11 +180,11 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             CancellationToken cancellationToken, int? parentId = null)
         {
             var request = _client.NewRequest("projects/{id}/metadata/{scope}", Method.PUT);
-            request.AddUrlSegment("id", entityId.ToString());
+            request.AddUrlSegment("id", entityId.ToString(CultureInfo.InvariantCulture));
             request.AddUrlSegment("scope", scope.ToString());
-            request.AddBody(data);
+            request.AddJsonBody(data);
 
-            var result = await _client.ExecuteAsync<TM>(request, cancellationToken);
+            var result = await _client.ExecuteAsync<TM>(request, cancellationToken).ConfigureAwait(false);
             return result.Data;
         }
 
@@ -188,8 +194,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         {
             var request = _client.NewRequest("projects/search");
             request.AddQueryParameter("q", textToSearch);
-            request.AddQueryParameter("from", from.ToString());
-            request.AddQueryParameter("take", take.ToString());
+            request.AddQueryParameter("from", from.ToString(CultureInfo.InvariantCulture));
+            request.AddQueryParameter("take", take.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<List<Project>>(request);
             return results.Data;
@@ -207,6 +213,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public UpsertResult<Project> Upsert(Project project)
         {
+            if (project == null) throw new ArgumentNullException(nameof(project));
             return new UpsertResult<Project>
             {
                 Action = (project.ProjectId.HasValue && project.ProjectId.Value > 0) ? UpsertAction.Updated : UpsertAction.Created,
@@ -217,17 +224,18 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<UpsertResult<Project>> UpsertAsync(Project project, CancellationToken cancel,
             int? parentId = null)
         {
+            if (project == null) throw new ArgumentNullException(nameof(project));
             var result = new UpsertResult<Project>();
 
             if (project.ProjectId.HasValue && project.ProjectId.Value > 0)
             {
                 result.Action = UpsertAction.Updated;
-                result.Data = await UpdateAsync(project, cancel);
+                result.Data = await UpdateAsync(project, cancel).ConfigureAwait(false);
             }
             else
             {
                 result.Action = UpsertAction.Created;
-                result.Data = await CreateAsync(project, cancel);
+                result.Data = await CreateAsync(project, cancel).ConfigureAwait(false);
             }
 
             return result;
@@ -235,6 +243,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public UpsertResult<Project> UpsertByProjectNumber(Project project)
         {
+            if (project == null) throw new ArgumentNullException(nameof(project));
             var found = GetByProjectNumber(project.ProjectNumber);
             if (found != null) project.ProjectId = found.ProjectId;
 
@@ -264,7 +273,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             {
                 //Add new office
                 var addOfficeRequest = _client.NewRequest($"firmorgs/offices", Method.POST);
-                addOfficeRequest.AddBody(new List<Office> { new Office { OfficeName = officeName } });
+                addOfficeRequest.AddJsonBody(new List<Office> { new Office { OfficeName = officeName } });
                 var addOfficeResponse = _client.Execute<List<Office>>(addOfficeRequest);
                 if (addOfficeResponse.Data.Any()) data.Add(addOfficeResponse.Data.First());
                 else throw new Exception($"Could not find or create an office named {officeName} in Cosential");
@@ -272,7 +281,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
             //Associate the office to the project
             var request = _client.NewRequest($"projects/{projectId}/offices", Method.POST);
-            request.AddBody(data);
+            request.AddJsonBody(data);
             var results = _client.Execute<List<Office>>(request);
             return results.Data;
         }
@@ -293,7 +302,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<ProjectConstructionCost> GetConstructionCost(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/constructioncosts");
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<List<ProjectConstructionCost>>(request);
             return results.Data;
@@ -306,8 +315,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public ProjectConstructionCost AddConstructioCostToProject(int projectId, ProjectConstructionCost projectConstructionCost)
         {
             var request = _client.NewRequest("projects/{projectId}/constructioncosts", Method.POST);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddBody(projectConstructionCost);
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddJsonBody(projectConstructionCost);
 
             var results = _client.Execute<ProjectConstructionCost>(request);
             return results.Data;
@@ -317,8 +326,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public void DeleteConstructionCost(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/constructioncosts", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddBody(new ProjectConstructionCost { });
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddJsonBody(new ProjectConstructionCost { });
             _client.Execute(request);
         }
 
@@ -339,7 +348,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<PrimaryCategory> GetPrimaryCategories(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/primarycategories");
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<List<PrimaryCategory>>(request);
             return results.Data;
@@ -349,8 +358,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public PrimaryCategory GetPrimaryCategory(int projectId, int primaryCategoryId)
         {
             var request = _client.NewRequest("projects/{projectId}/primarycategories/{primaryCategoryId}");
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("primaryCategoryId", primaryCategoryId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("primaryCategoryId", primaryCategoryId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<PrimaryCategory>(request);
             return results.Data;
@@ -375,7 +384,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             {
                 //Add new primary category
                 var addCategoryRequest = _client.NewRequest("/projects/primarycategories", Method.POST);
-                addCategoryRequest.AddBody(new List<PrimaryCategory> { new PrimaryCategory { CategoryName = categoryName } });
+                addCategoryRequest.AddJsonBody(new List<PrimaryCategory> { new PrimaryCategory { CategoryName = categoryName } });
                 var addCategoryResponse = _client.Execute<List<PrimaryCategory>>(addCategoryRequest);
                 if (addCategoryResponse.Data.Any()) data.Add(addCategoryResponse.Data.First());
                 else throw new Exception($"Could not find or create a primary category named {categoryName} in Cosential");
@@ -383,7 +392,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
             //Associate the primary category to the project
             var request = _client.NewRequest($"projects/{projectId}/primarycategories", Method.POST);
-            request.AddBody(data);
+            request.AddJsonBody(data);
             var results = _client.Execute<List<PrimaryCategory>>(request);
             return results.Data;
         }
@@ -391,9 +400,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         ///<summary>Deletes primary category for a project.</summary>
         public void DeletePrimaryCategory(int projectId, string primaryCategoryId)
         {
+            if (primaryCategoryId == null) throw new ArgumentNullException(nameof(primaryCategoryId));
             var request = _client.NewRequest("projects/{projectId}/primarycategories/{primaryCategoryId}", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("primaryCategoryId", primaryCategoryId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("primaryCategoryId", primaryCategoryId);
             _client.Execute(request);
         }
 
@@ -401,7 +411,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public void DeletePrimaryCategories(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/primarycategories", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
             _client.Execute(request);
         }
 
@@ -422,7 +432,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<SecondaryCategory> GetSecondaryCategories(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/secondarycategories");
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<List<SecondaryCategory>>(request);
             return results.Data;
@@ -432,8 +442,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public SecondaryCategory GetSecondaryCategory(int projectId, int secondaryCategoryId)
         {
             var request = _client.NewRequest("projects/{projectId}/secondarycategories/{secondaryCategoryId}");
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("secondaryCategoryId", secondaryCategoryId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("secondaryCategoryId", secondaryCategoryId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<SecondaryCategory>(request);
             return results.Data;
@@ -458,7 +468,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             {
                 //Add new secondary category
                 var addCategoryRequest = _client.NewRequest("/projects/secondarycategories", Method.POST);
-                addCategoryRequest.AddBody(new List<SecondaryCategory> { new SecondaryCategory { SecondaryCategoryName = categoryName } });
+                addCategoryRequest.AddJsonBody(new List<SecondaryCategory> { new SecondaryCategory { SecondaryCategoryName = categoryName } });
                 var addCategoryResponse = _client.Execute<List<SecondaryCategory>>(addCategoryRequest);
                 if (addCategoryResponse.Data.Any()) data.Add(addCategoryResponse.Data.First());
                 else throw new Exception($"Could not find or create a secondary category named {categoryName} in Cosential");
@@ -466,7 +476,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
             //Associate the secondary category to the project
             var request = _client.NewRequest($"projects/{projectId}/secondarycategories", Method.POST);
-            request.AddBody(data);
+            request.AddJsonBody(data);
             var results = _client.Execute<List<SecondaryCategory>>(request);
             return results.Data;
         }
@@ -474,9 +484,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         ///<summary>Deletes secondary category for a project.</summary>
         public void DeleteSecondaryCategory(int projectId, string secondaryCategoryId)
         {
+            if (secondaryCategoryId == null) throw new ArgumentNullException(nameof(secondaryCategoryId));
             var request = _client.NewRequest("projects/{projectId}/secondarycategories/{secondaryCategoryId}", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("secondaryCategoryId", secondaryCategoryId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("secondaryCategoryId", secondaryCategoryId);
             _client.Execute(request);
         }
 
@@ -484,7 +495,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public void DeleteSecondaryCategories(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/secondarycategories", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
             _client.Execute(request);
         }
 
@@ -505,7 +516,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<ProjectServiceType> GetServiceTypes(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/servicetypes");
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<List<ProjectServiceType>>(request);
             return results.Data;
@@ -515,8 +526,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public ProjectServiceType GetServiceType(int projectId, int serviceTypeId)
         {
             var request = _client.NewRequest("projects/{projectId}/servicetypes/{serviceTypeId}");
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("serviceTypeId", serviceTypeId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("serviceTypeId", serviceTypeId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<ProjectServiceType>(request);
             return results.Data;
@@ -541,7 +552,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             {
                 //Add new service type
                 var addRequest = _client.NewRequest("/projects/servicetypes", Method.POST);
-                addRequest.AddBody(new List<ProjectServiceType> { new ProjectServiceType { ServiceTypeName = serviceTypeName } });
+                addRequest.AddJsonBody(new List<ProjectServiceType> { new ProjectServiceType { ServiceTypeName = serviceTypeName } });
                 var addResponse = _client.Execute<List<ProjectServiceType>>(addRequest);
                 if (addResponse.Data.Any()) data.Add(addResponse.Data.First());
                 else throw new Exception($"Could not find or create a service type named {serviceTypeName} in Cosential");
@@ -549,7 +560,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
             //Associate the service type to the project
             var request = _client.NewRequest($"projects/{projectId}/servicetypes", Method.POST);
-            request.AddBody(data);
+            request.AddJsonBody(data);
             var results = _client.Execute<List<ProjectServiceType>>(request);
             return results.Data;
         }
@@ -557,9 +568,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         ///<summary>Deletes service type for a project.</summary>
         public void DeleteServiceType(int projectId, string serviceTypeId)
         {
+            if (serviceTypeId == null) throw new ArgumentNullException(nameof(serviceTypeId));
             var request = _client.NewRequest("projects/{projectId}/servicetypes/{serviceTypeId}", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("serviceTypeId", serviceTypeId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("serviceTypeId", serviceTypeId);
             _client.Execute(request);
         }
 
@@ -567,7 +579,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public void DeleteServiceTypes(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/servicetypes", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
             _client.Execute(request);
         }
 
@@ -588,7 +600,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<ContractType> GetContractTypes(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/contracttypes");
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<List<ContractType>>(request);
             return results.Data;
@@ -598,8 +610,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public ContractType GetContractType(int projectId, int contractTypeId)
         {
             var request = _client.NewRequest("projects/{projectId}/contracttypes/{contractTypeId}");
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("contractTypeId", contractTypeId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("contractTypeId", contractTypeId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<ContractType>(request);
             return results.Data;
@@ -624,7 +636,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             {
                 //Add new contract type
                 var addRequest = _client.NewRequest("/projects/contracttypes", Method.POST);
-                addRequest.AddBody(new List<ContractType> { new ContractType { Name = contractTypeName } });
+                addRequest.AddJsonBody(new List<ContractType> { new ContractType { Name = contractTypeName } });
                 var addResponse = _client.Execute<List<ContractType>>(addRequest);
                 if (addResponse.Data.Any()) data.Add(addResponse.Data.First());
                 else throw new Exception($"Could not find or create a contract type named {contractTypeName} in Cosential");
@@ -632,7 +644,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
             //Associate the contract type to the project
             var request = _client.NewRequest($"projects/{projectId}/contracttypes", Method.POST);
-            request.AddBody(data);
+            request.AddJsonBody(data);
             var results = _client.Execute<List<ContractType>>(request);
             return results.Data;
         }
@@ -640,9 +652,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         ///<summary>Deletes contract type for a project.</summary>
         public void DeleteContractType(int projectId, string contractTypeId)
         {
+            if (contractTypeId == null) throw new ArgumentNullException(nameof(contractTypeId));
             var request = _client.NewRequest("projects/{projectId}/contracttypes/{contractTypeId}", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("contractTypeId", contractTypeId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("contractTypeId", contractTypeId);
             _client.Execute(request);
         }
 
@@ -650,7 +663,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public void DeleteContractTypes(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/contracttypes", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
             _client.Execute(request);
         }
 
@@ -671,7 +684,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<CallLog> AddCallLog(List<CallLog> callLogs)
         {
             var request = _client.NewRequest("calllogs", Method.POST);
-            request.AddBody(callLogs);
+            request.AddJsonBody(callLogs);
 
             var results = _client.Execute<List<CallLog>>(request);
             return results.Data;
@@ -680,6 +693,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         ///<summary>Deletes a call log.</summary>
         public void DeleteCallLog(string callLogId)
         {
+            if (callLogId == null) throw new ArgumentNullException(nameof(callLogId));
             var request = _client.NewRequest("calllogs/{callLogId}", Method.DELETE);
             request.AddUrlSegment("callLogId", callLogId.ToString());
             _client.Execute(request);
@@ -693,7 +707,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<ProjectOwnerClient> GetOwnerClients(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/ownerclient");
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<List<ProjectOwnerClient>>(request);
             return results.Data;
@@ -703,8 +717,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public ProjectOwnerClient GetOwnerClient(int projectId, int ownerClientId)
         {
             var request = _client.NewRequest("projects/{projectId}/ownerclient/{ownerClientId}");
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("ownerClientId", ownerClientId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("ownerClientId", ownerClientId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<ProjectOwnerClient>(request);
             return results.Data;
@@ -714,8 +728,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<ProjectOwnerClient> AddOwnerClientsToProject(int projectId, List<ProjectOwnerClient> ownerClients)
         {
             var request = _client.NewRequest("projects/{projectId}/ownerclient", Method.POST);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddBody(ownerClients);
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddJsonBody(ownerClients);
 
             var results = _client.Execute<List<ProjectOwnerClient>>(request);
             return results.Data;
@@ -724,9 +738,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         ///<summary>Deletes owner client (company) for a project.</summary>
         public void DeleteOwnerClient(int projectId, string ownerClientId)
         {
+            if (ownerClientId == null) throw new ArgumentNullException(nameof(ownerClientId));
             var request = _client.NewRequest("projects/{projectId}/ownerclient/{ownerClientId}", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("ownerClientId", ownerClientId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("ownerClientId", ownerClientId);
             _client.Execute(request);
         }
 
@@ -734,7 +749,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public void DeleteOwnerClients(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/ownerclient", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
             _client.Execute(request);
         }
 
@@ -746,7 +761,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<ProjectOwnerClientContact> GetOwnerClientContacts(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/ownerclientcontacts");
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<List<ProjectOwnerClientContact>>(request);
             return results.Data;
@@ -756,8 +771,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public ProjectOwnerClientContact GetOwnerClientContact(int projectId, int ownerClientContactId)
         {
             var request = _client.NewRequest("projects/{projectId}/ownerclientcontacts/{ownerClientContactId}");
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("ownerClientContactId", ownerClientContactId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("ownerClientContactId", ownerClientContactId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<ProjectOwnerClientContact>(request);
             return results.Data;
@@ -767,8 +782,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<ProjectOwnerClientContact> AddOwnerClientContactsToProject(int projectId, List<ProjectOwnerClientContact> ownerClientContacts)
         {
             var request = _client.NewRequest("projects/{projectId}/ownerclientcontacts", Method.POST);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddBody(ownerClientContacts);
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddJsonBody(ownerClientContacts);
 
             var results = _client.Execute<List<ProjectOwnerClientContact>>(request);
             return results.Data;
@@ -777,9 +792,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         ///<summary>Deletes owner client contact for a project.</summary>
         public void DeleteOwnerClientContact(int projectId, string ownerClientContactId)
         {
+            if (ownerClientContactId == null) throw new ArgumentNullException(nameof(ownerClientContactId));
             var request = _client.NewRequest("projects/{projectId}/ownerclientcontacts/{ownerClientContactId}", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("ownerClientContactId", ownerClientContactId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("ownerClientContactId", ownerClientContactId);
             _client.Execute(request);
         }
 
@@ -787,7 +803,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public void DeleteOwnerClientContacts(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/ownerclientcontacts", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
             _client.Execute(request);
         }
 
@@ -799,7 +815,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<ProjectDescription> GetDescriptions(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/descriptions");
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<List<ProjectDescription>>(request);
             return results.Data;
@@ -809,8 +825,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public ProjectDescription GetDescription(int projectId, int descriptionId)
         {
             var request = _client.NewRequest("projects/{projectId}/descriptions/{descriptionId}");
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("descriptionId", descriptionId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("descriptionId", descriptionId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<ProjectDescription>(request);
             return results.Data;
@@ -820,8 +836,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<ProjectDescription> AddDescriptionsToProject(int projectId, List<ProjectDescription> descriptions)
         {
             var request = _client.NewRequest("projects/{projectId}/descriptions", Method.POST);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddBody(descriptions);
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddJsonBody(descriptions);
 
             var results = _client.Execute<List<ProjectDescription>>(request);
             return results.Data;
@@ -830,9 +846,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         ///<summary>Deletes description for a project.</summary>
         public void DeleteDescription(int projectId, string descriptionId)
         {
+            if (descriptionId == null) throw new ArgumentNullException(nameof(descriptionId));
             var request = _client.NewRequest("projects/{projectId}/descriptions/{descriptionId}", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("descriptionId", descriptionId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("descriptionId", descriptionId);
             _client.Execute(request);
         }
 
@@ -840,7 +857,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public void DeleteDescriptions(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/descriptions", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
             _client.Execute(request);
         }
 
@@ -861,7 +878,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public Role GetRole(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/role");
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<Role>(request);
             return results.Data;
@@ -886,7 +903,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             {
                 //Add new role
                 var addRequest = _client.NewRequest("/projects/role", Method.POST);
-                addRequest.AddBody(new List<Role> { new Role { RoleName = roleName } });
+                addRequest.AddJsonBody(new List<Role> { new Role { RoleName = roleName } });
                 var addResponse = _client.Execute<List<Role>>(addRequest);
                 if (addResponse.Data.Any()) data.Add(addResponse.Data.First());
                 else throw new Exception($"Could not find or create a contract type named {roleName} in Cosential");
@@ -894,7 +911,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
             //Associate the role to the project
             var request = _client.NewRequest($"projects/{projectId}/role", Method.POST);
-            request.AddBody(data);
+            request.AddJsonBody(data);
             var results = _client.Execute<List<Role>>(request);
             return results.Data;
         }
@@ -903,7 +920,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public void DeleteRole(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/role", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
             _client.Execute(request);
         }
 
@@ -915,7 +932,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<ProjectChangeOrder> GetChangeOrders(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/changeorders");
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<List<ProjectChangeOrder>>(request);
             return results.Data;
@@ -925,8 +942,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public ProjectChangeOrder GetChangeOrder(int projectId, int changeOrderId)
         {
             var request = _client.NewRequest("projects/{projectId}/changeorders/{changeOrderId}");
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("changeOrderId", changeOrderId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("changeOrderId", changeOrderId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<ProjectChangeOrder>(request);
             return results.Data;
@@ -936,8 +953,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<ProjectChangeOrder> AddChangeOrdersToProject(int projectId, List<ProjectChangeOrder> changeOrders)
         {
             var request = _client.NewRequest("projects/{projectId}/changeorders", Method.POST);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddBody(changeOrders);
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddJsonBody(changeOrders);
 
             var results = _client.Execute<List<ProjectChangeOrder>>(request);
             return results.Data;
@@ -946,8 +963,9 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         ///<summary>Deletes change order for a project.</summary>
         public void DeleteChangeOrder(int projectId, string changeOrderId)
         {
+            if (changeOrderId == null) throw new ArgumentNullException(nameof(changeOrderId));
             var request = _client.NewRequest("projects/{projectId}/changeorders/{changeOrderId}", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
             request.AddUrlSegment("changeOrderId", changeOrderId.ToString());
             _client.Execute(request);
         }
@@ -956,7 +974,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public void DeleteChangeOrders(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/changeorders", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
             _client.Execute(request);
         }
 
@@ -968,7 +986,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<ProjectInvoice> GetInvoices(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/invoices");
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<List<ProjectInvoice>>(request);
             return results.Data;
@@ -978,8 +996,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public ProjectInvoice GetInvoice(int projectId, int invoiceId)
         {
             var request = _client.NewRequest("projects/{projectId}/invoices/{invoiceId}");
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("invoiceId", invoiceId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("invoiceId", invoiceId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<ProjectInvoice>(request);
             return results.Data;
@@ -989,8 +1007,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<ProjectInvoice> AddInvoicesToProject(int projectId, List<ProjectInvoice> invoices)
         {
             var request = _client.NewRequest("projects/{projectId}/invoices", Method.POST);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddBody(invoices);
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddJsonBody(invoices);
 
             var results = _client.Execute<List<ProjectInvoice>>(request);
             return results.Data;
@@ -999,9 +1017,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         ///<summary>Deletes invoice for a project.</summary>
         public void DeleteInvoice(int projectId, string invoiceId)
         {
+            if (invoiceId == null) throw new ArgumentNullException(nameof(invoiceId));
             var request = _client.NewRequest("projects/{projectId}/invoices/{invoiceId}", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("invoiceId", invoiceId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("invoiceId", invoiceId);
             _client.Execute(request);
         }
 
@@ -1009,7 +1028,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public void DeleteInvoices(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/invoices", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
             _client.Execute(request);
         }
 
@@ -1021,7 +1040,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public Opportunity GetOpportunity(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/opportunity");
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<Opportunity>(request);
             return results.Data;
@@ -1031,8 +1050,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public Opportunity AddOpportunityToProject(int projectId, Opportunity opportunity)
         {
             var request = _client.NewRequest("projects/{projectId}/opportunity", Method.POST);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddBody(opportunity);
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddJsonBody(opportunity);
 
             var results = _client.Execute<Opportunity>(request);
             return results.Data;
@@ -1042,7 +1061,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public void DeleteOpportunity(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/opportunity", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
             _client.Execute(request);
         }
 
@@ -1054,7 +1073,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<ProjectStaffTeam> GetStaffTeam(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/staffteam");
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<List<ProjectStaffTeam>>(request);
             return results.Data;
@@ -1064,8 +1083,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public ProjectStaffTeam GetStaffTeam(int projectId, int staffTeamId)
         {
             var request = _client.NewRequest("projects/{projectId}/staffteam/{staffTeamId}");
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("staffTeamId", staffTeamId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("staffTeamId", staffTeamId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<ProjectStaffTeam>(request);
             return results.Data;
@@ -1075,8 +1094,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<ProjectStaffTeam> AddStaffTeamToProject(int projectId, List<ProjectStaffTeam> staffTeamMembers)
         {
             var request = _client.NewRequest("projects/{projectId}/staffteam", Method.POST);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddBody(staffTeamMembers);
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddJsonBody(staffTeamMembers);
 
             var results = _client.Execute<List<ProjectStaffTeam>>(request);
             return results.Data;
@@ -1085,9 +1104,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         ///<summary>Deletes staff team member for a project.</summary>
         public void DeleteStaffTeam(int projectId, string staffTeamId)
         {
+            if (staffTeamId == null) throw new ArgumentNullException(nameof(staffTeamId));
             var request = _client.NewRequest("projects/{projectId}/staffteam/{staffTeamId}", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("staffTeamId", staffTeamId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("staffTeamId", staffTeamId);
             _client.Execute(request);
         }
 
@@ -1095,7 +1115,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public void DeleteStaffTeam(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/staffteam", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
             _client.Execute(request);
         }
 
@@ -1116,7 +1136,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public ProjectFinancialStatus GetFinancialStatus(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/projectfinancialstatus");
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<ProjectFinancialStatus>(request);
             return results.Data;
@@ -1141,7 +1161,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             {
                 //Add new financial status
                 var addRequest = _client.NewRequest("/projects/projectfinancialstatus", Method.POST);
-                addRequest.AddBody(new List<ProjectFinancialStatus> { new ProjectFinancialStatus { Name = statusName } });
+                addRequest.AddJsonBody(new List<ProjectFinancialStatus> { new ProjectFinancialStatus { Name = statusName } });
                 var addResponse = _client.Execute<List<ProjectFinancialStatus>>(addRequest);
                 if (addResponse.Data.Any()) data.Add(addResponse.Data.First());
                 else throw new Exception($"Could not find or create a contract type named {statusName} in Cosential");
@@ -1149,7 +1169,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
             //Associate the financial status to the project
             var request = _client.NewRequest($"projects/{projectId}/projectfinancialstatus", Method.POST);
-            request.AddBody(data);
+            request.AddJsonBody(data);
             var results = _client.Execute<List<ProjectFinancialStatus>>(request);
             return results.Data;
         }
@@ -1158,7 +1178,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public void DeleteFinancialStatus(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/projectfinancialstatus", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
             _client.Execute(request);
         }
 
@@ -1179,7 +1199,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public ProjectStatus GetProjectStatus(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/status");
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<ProjectStatus>(request);
             return results.Data;
@@ -1204,7 +1224,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             {
                 //Add new project status
                 var addRequest = _client.NewRequest("/projects/status", Method.POST);
-                addRequest.AddBody(new List<ProjectStatus> { new ProjectStatus { Name = status } });
+                addRequest.AddJsonBody(new List<ProjectStatus> { new ProjectStatus { Name = status } });
                 var addResponse = _client.Execute<List<ProjectStatus>>(addRequest);
                 if (addResponse.Data.Any()) data.Add(addResponse.Data.First());
                 else throw new Exception($"Could not find or create a contract type named {status} in Cosential");
@@ -1212,7 +1232,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
             //Associate the project status to the project
             var request = _client.NewRequest($"projects/{projectId}/status", Method.POST);
-            request.AddBody(data);
+            request.AddJsonBody(data);
             var results = _client.Execute<List<ProjectStatus>>(request);
             return results.Data;
         }
@@ -1220,9 +1240,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         ///<summary>Deletes status for a project.</summary>
         public void DeleteStatus(int projectId, string statusId)
         {
+            if (statusId == null) throw new ArgumentNullException(nameof(statusId));
             var request = _client.NewRequest("projects/{projectId}/status/{statusId}", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("statusId", statusId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("statusId", statusId);
             _client.Execute(request);
         }
 
@@ -1230,7 +1251,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public void DeleteStatus(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/status", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
             _client.Execute(request);
         }
 
@@ -1251,7 +1272,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public ProjectLeed GetLeed(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/leed");
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<ProjectLeed>(request);
             return results.Data;
@@ -1261,8 +1282,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public ProjectLeed AddLeedToProject(int projectId, ProjectLeed leed)
         {
             var request = _client.NewRequest("projects/{projectId}/leed", Method.POST);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddBody(leed);
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddJsonBody(leed);
 
             var results = _client.Execute<ProjectLeed>(request);
             return results.Data;
@@ -1272,7 +1293,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public void DeleteLeed(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/leed", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
             _client.Execute(request);
         }
 
@@ -1293,7 +1314,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public ProjectConstructionSchedule GetConstructionSchedule(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/constructionschedule");
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<ProjectConstructionSchedule>(request);
             return results.Data;
@@ -1303,8 +1324,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public ProjectConstructionSchedule AddConstructionScheduleToProject(int projectId, ProjectConstructionSchedule constructionSchedule)
         {
             var request = _client.NewRequest("projects/{projectId}/constructionschedule", Method.POST);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddBody(constructionSchedule);
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddJsonBody(constructionSchedule);
 
             var results = _client.Execute<ProjectConstructionSchedule>(request);
             return results.Data;
@@ -1314,8 +1335,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public void DeleteConstructionSchedule(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/constructionschedule", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddBody(new ProjectConstructionSchedule { });
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddJsonBody(new ProjectConstructionSchedule { });
             _client.Execute(request);
         }
 
@@ -1336,7 +1357,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<ProjectRank> GetRank(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/projectrank");
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<List<ProjectRank>>(request);
             return results.Data;
@@ -1346,8 +1367,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public ProjectRank GetRank(int projectId, int rankId)
         {
             var request = _client.NewRequest("projects/{projectId}/projectrank/{rankId}");
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("rankId", rankId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("rankId", rankId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<ProjectRank>(request);
             return results.Data;
@@ -1372,7 +1393,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             {
                 //Add new rank
                 var addRequest = _client.NewRequest("/projects/projectrank", Method.POST);
-                addRequest.AddBody(new List<ProjectRank> { new ProjectRank { Name = rank } });
+                addRequest.AddJsonBody(new List<ProjectRank> { new ProjectRank { Name = rank } });
                 var addResponse = _client.Execute<List<ProjectRank>>(addRequest);
                 if (addResponse.Data.Any()) data.Add(addResponse.Data.First());
                 else throw new Exception($"Could not find or create a contract type named {rank} in Cosential");
@@ -1380,7 +1401,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
             //Associate the rank to the project
             var request = _client.NewRequest($"projects/{projectId}/projectrank", Method.POST);
-            request.AddBody(data);
+            request.AddJsonBody(data);
             var results = _client.Execute<List<ProjectRank>>(request);
             return results.Data;
         }
@@ -1388,9 +1409,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         ///<summary>Deletes rank for a project.</summary>
         public void DeleteRank(int projectId, string rankId)
         {
+            if (rankId == null) throw new ArgumentNullException(nameof(rankId));
             var request = _client.NewRequest("projects/{projectId}/projectrank/{rankId}", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("rankId", rankId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("rankId", rankId);
             _client.Execute(request);
         }
 
@@ -1398,7 +1420,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public void DeleteRanks(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/projectrank", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
             _client.Execute(request);
         }
 
@@ -1419,7 +1441,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<ProjectPublishableReason> GetPublishableReasons(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/publishablereason");
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<List<ProjectPublishableReason>>(request);
             return results.Data;
@@ -1429,8 +1451,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public ProjectPublishableReason GetPublishableReason(int projectId, int publishableReasonId)
         {
             var request = _client.NewRequest("projects/{projectId}/publishablereason/{publishableReasonId}");
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("publishableReasonId", publishableReasonId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("publishableReasonId", publishableReasonId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<ProjectPublishableReason>(request);
             return results.Data;
@@ -1455,7 +1477,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             {
                 //Add new publishable reason
                 var addRequest = _client.NewRequest("/projects/publishablereason", Method.POST);
-                addRequest.AddBody(new List<ProjectPublishableReason> { new ProjectPublishableReason { Name = reason } });
+                addRequest.AddJsonBody(new List<ProjectPublishableReason> { new ProjectPublishableReason { Name = reason } });
                 var addResponse = _client.Execute<List<ProjectPublishableReason>>(addRequest);
                 if (addResponse.Data.Any()) data.Add(addResponse.Data.First());
                 else throw new Exception($"Could not find or create a contract type named {reason} in Cosential");
@@ -1463,7 +1485,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
             //Associate the publishable reason to the project
             var request = _client.NewRequest($"projects/{projectId}/publishablereason", Method.POST);
-            request.AddBody(data);
+            request.AddJsonBody(data);
             var results = _client.Execute<List<ProjectPublishableReason>>(request);
             return results.Data;
         }
@@ -1471,9 +1493,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         ///<summary>Deletes publishable reason for a project.</summary>
         public void DeletePublishableReason(int projectId, string publishableReasonId)
         {
+            if (publishableReasonId == null) throw new ArgumentNullException(nameof(publishableReasonId));
             var request = _client.NewRequest("projects/{projectId}/publishablereason/{publishableReasonId}", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("publishableReasonId", publishableReasonId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("publishableReasonId", publishableReasonId);
             _client.Execute(request);
         }
 
@@ -1481,7 +1504,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public void DeletePublishableReasons(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/publishablereason", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
             _client.Execute(request);
         }
 
@@ -1493,7 +1516,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public ProjectAESchedule GetAESchedule(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/aeschedule");
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<ProjectAESchedule>(request);
             return results.Data;
@@ -1503,8 +1526,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public ProjectAESchedule AddAEScheduleToProject(int projectId, ProjectAESchedule aESchedule)
         {
             var request = _client.NewRequest("projects/{projectId}/aeschedule", Method.POST);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddBody(aESchedule);
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddJsonBody(aESchedule);
 
             var results = _client.Execute<ProjectAESchedule>(request);
             return results.Data;
@@ -1518,7 +1541,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<ProjectConsultant> GetConsultants(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/consultants");
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<List<ProjectConsultant>>(request);
             return results.Data;
@@ -1528,8 +1551,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public ProjectConsultant GetConsultant(int projectId, int consultantId)
         {
             var request = _client.NewRequest("projects/{projectId}/consultants/{consultantId}");
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("consultantId", consultantId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("consultantId", consultantId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<ProjectConsultant>(request);
             return results.Data;
@@ -1539,8 +1562,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<ProjectConsultant> AddConsultantsToProject(int projectId, List<ProjectConsultant> consultants)
         {
             var request = _client.NewRequest("projects/{projectId}/consultants", Method.POST);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddBody(consultants);
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddJsonBody(consultants);
 
             var results = _client.Execute<List<ProjectConsultant>>(request);
             return results.Data;
@@ -1549,9 +1572,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         ///<summary>Deletes consultant for a project.</summary>
         public void DeleteConsultant(int projectId, string consultantId)
         {
+            if (consultantId == null) throw new ArgumentNullException(nameof(consultantId));
             var request = _client.NewRequest("projects/{projectId}/consultants/{consultantId}", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("consultantId", consultantId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("consultantId", consultantId);
             _client.Execute(request);
         }
 
@@ -1559,7 +1583,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public void DeleteConsultants(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/consultants", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
             _client.Execute(request);
         }
 
@@ -1571,7 +1595,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<ProjectConsultantContact> GetConsultantContacts(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/consultantcontacts");
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<List<ProjectConsultantContact>>(request);
             return results.Data;
@@ -1581,8 +1605,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public ProjectConsultantContact GetConsultantContact(int projectId, int consultantContactId)
         {
             var request = _client.NewRequest("projects/{projectId}/consultantcontacts/{consultantContactId}");
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("consultantContactId", consultantContactId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("consultantContactId", consultantContactId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<ProjectConsultantContact>(request);
             return results.Data;
@@ -1592,8 +1616,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<ProjectConsultantContact> AddConsultantContactsToProject(int projectId, List<ProjectConsultantContact> consultantContacts)
         {
             var request = _client.NewRequest("projects/{projectId}/consultantcontacts", Method.POST);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddBody(consultantContacts);
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddJsonBody(consultantContacts);
 
             var results = _client.Execute<List<ProjectConsultantContact>>(request);
             return results.Data;
@@ -1602,9 +1626,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         ///<summary>Deletes consultant contact for a project.</summary>
         public void DeleteConsultantContact(int projectId, string consultantContactId)
         {
+            if (consultantContactId == null) throw new ArgumentNullException(nameof(consultantContactId));
             var request = _client.NewRequest("projects/{projectId}/consultantcontacts/{consultantContactId}", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("consultantContactId", consultantContactId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("consultantContactId", consultantContactId);
             _client.Execute(request);
         }
 
@@ -1612,7 +1637,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public void DeleteConsultantContacts(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/consultantcontacts", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
             _client.Execute(request);
         }
 
@@ -1624,7 +1649,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<ProjectComponent> GetComponents(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/components");
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<List<ProjectComponent>>(request);
             return results.Data;
@@ -1634,8 +1659,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public ProjectComponent GetComponent(int projectId, int componentId)
         {
             var request = _client.NewRequest("projects/{projectId}/components/{componentId}");
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("componentId", componentId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("componentId", componentId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<ProjectComponent>(request);
             return results.Data;
@@ -1645,8 +1670,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<ProjectComponent> AddComponentsToProject(int projectId, List<ProjectComponent> components)
         {
             var request = _client.NewRequest("projects/{projectId}/components", Method.POST);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddBody(components);
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddJsonBody(components);
 
             var results = _client.Execute<List<ProjectComponent>>(request);
             return results.Data;
@@ -1655,9 +1680,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         ///<summary>Deletes component for a project.</summary>
         public void DeleteComponent(int projectId, string componentId)
         {
+            if (componentId == null) throw new ArgumentNullException(nameof(componentId));
             var request = _client.NewRequest("projects/{projectId}/components/{componentId}", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("componentId", componentId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("componentId", componentId);
             _client.Execute(request);
         }
 
@@ -1665,7 +1691,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public void DeleteComponents(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/components", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
             _client.Execute(request);
         }
 
@@ -1677,7 +1703,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<Email> GetEmails(int projectId)
         {
             var request = _client.NewRequest("projects/{projectId}/emails");
-            request.AddUrlSegment("projectId", projectId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<List<Email>>(request);
             return results.Data;
@@ -1687,8 +1713,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public Email GetEmail(int projectId, int emailId)
         {
             var request = _client.NewRequest("projects/{projectId}/emails/{emailId}");
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("emailId", emailId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("emailId", emailId.ToString(CultureInfo.InvariantCulture));
 
             var results = _client.Execute<Email>(request);
             return results.Data;
@@ -1698,8 +1724,8 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public IList<Email> AddEmailsToProject(int projectId, List<Email> emails)
         {
             var request = _client.NewRequest("projects/{projectId}/emails", Method.POST);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddBody(emails);
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddJsonBody(emails);
 
             var results = _client.Execute<List<Email>>(request);
             return results.Data;
@@ -1708,9 +1734,10 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         ///<summary>Deletes email for a project.</summary>
         public void DeleteEmail(int projectId, string emailId)
         {
+            if (emailId == null) throw new ArgumentNullException(nameof(emailId));
             var request = _client.NewRequest("projects/{projectId}/emails/{emailId}", Method.DELETE);
-            request.AddUrlSegment("projectId", projectId.ToString());
-            request.AddUrlSegment("emailId", emailId.ToString());
+            request.AddUrlSegment("projectId", projectId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("emailId", emailId);
             _client.Execute(request);
         }
 

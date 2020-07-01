@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using Cosential.Integrations.Compass.Client.Models;
@@ -21,7 +22,7 @@ namespace Cosential.Integrations.Compass.Client
         public Company Get(int companyId)
         {
             var request = NewRequest("companies/{id}", Method.GET);
-            request.AddUrlSegment("id", companyId.ToString());
+            request.AddUrlSegment("id", companyId.ToString(CultureInfo.InvariantCulture));
 
             var results = Execute<Company>(request);
             return results.Data;
@@ -30,8 +31,8 @@ namespace Cosential.Integrations.Compass.Client
         public List<Company> List(int from, int size, bool full=true)
         {
             var request = NewRequest("companies", Method.GET);
-            request.AddQueryParameter("from", from.ToString());
-            request.AddQueryParameter("size", size.ToString());
+            request.AddQueryParameter("from", from.ToString(CultureInfo.InvariantCulture));
+            request.AddQueryParameter("size", size.ToString(CultureInfo.InvariantCulture));
             request.AddQueryParameter("full", full.ToString());
 
             var results = Execute<List<Company>>(request);

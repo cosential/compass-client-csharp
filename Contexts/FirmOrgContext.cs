@@ -9,10 +9,10 @@ using RestSharp;
 
 namespace Cosential.Integrations.Compass.Client.Contexts
 {
-    public class FirmOrgContext
+    public static class FirmOrgContext
     {
 
-        internal string GetPrimaryKeyName(FirmOrg firmorg)
+        internal static string GetPrimaryKeyName(FirmOrg firmorg)
         {
             switch (firmorg)
             {

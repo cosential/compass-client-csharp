@@ -53,6 +53,7 @@ namespace Cosential.Integrations.Compass.Client
 
         public T Deserialize<T>(IRestResponse response)
         {
+            if (response == null) throw new ArgumentNullException(nameof(response));
             try
             {
                 return JsonConvert.DeserializeObject<T>(response.Content);

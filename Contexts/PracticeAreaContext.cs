@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -22,7 +23,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<PracticeArea> GetAsync(int id, CancellationToken cancelToken, int? parentId = null)
         {
             var request = _client.NewRequest($"firmorgs/practiceareas/{id}");
-            var results = await _client.ExecuteAsync<PracticeArea>(request, cancelToken);
+            var results = await _client.ExecuteAsync<PracticeArea>(request, cancelToken).ConfigureAwait(false);
 
             return results.Data;
 
@@ -34,7 +35,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             request.AddQueryParameter("Version", Convert.ToBase64String(rowVersion));
             if (includeDeleted) request.AddQueryParameter("includeDeleted", true.ToString());
 
-            var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, token);
+            var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, token).ConfigureAwait(false);
 
             return results.Data;
         }
@@ -42,17 +43,18 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<UpsertResult<PracticeArea>> UpsertAsync(PracticeArea entity, CancellationToken cancelToken,
             int? parentId = null)
         {
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
             var result = new UpsertResult<PracticeArea>();
 
             if (entity.PracticeAreaID.HasValue && entity.PracticeAreaID.Value > 0)
             {
                 result.Action = UpsertAction.Updated;
-                result.Data = await UpdateAsync(entity, cancelToken);
+                result.Data = await UpdateAsync(entity, cancelToken).ConfigureAwait(false);
             }
             else
             {
                 result.Action = UpsertAction.Created;
-                result.Data = await CreateAsync(entity, cancelToken);
+                result.Data = await CreateAsync(entity, cancelToken).ConfigureAwait(false);
             }
 
             return result;
@@ -61,27 +63,28 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<PracticeArea> CreateAsync(PracticeArea entity, CancellationToken cancelToken,
             int? parentId = null)
         {
-            var divisions = await CreateAsync(new[] { entity }, cancelToken);
+            var divisions = await CreateAsync(new[] { entity }, cancelToken).ConfigureAwait(false);
             return divisions.FirstOrDefault();
         }
 
         public async Task<List<PracticeArea>> CreateAsync(IEnumerable<PracticeArea> entities, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("firmorgs/practiceareas", Method.POST);
-            request.AddBody(entities);
+            request.AddJsonBody(entities);
 
-            var response = await _client.ExecuteAsync<List<PracticeArea>>(request, cancelToken);
+            var response = await _client.ExecuteAsync<List<PracticeArea>>(request, cancelToken).ConfigureAwait(false);
 
             return response.Data;
         }
 
         public async Task<PracticeArea> UpdateAsync(PracticeArea entity, CancellationToken cancelToken)
         {
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
             var request = _client.NewRequest("firmorgs/practiceareas/{id}", Method.PUT);
             request.AddUrlSegment("id", entity.PracticeAreaID.ToString());
-            request.AddBody(entity);
+            request.AddJsonBody(entity);
 
-            var response = await _client.ExecuteAsync<PracticeArea>(request, cancelToken);
+            var response = await _client.ExecuteAsync<PracticeArea>(request, cancelToken).ConfigureAwait(false);
 
             return response.Data;
         }
@@ -89,9 +92,9 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task DeleteAsync(int id, CancellationToken cancelToken, int? parentId = null)
         {
             var request = _client.NewRequest("firmorgs/practiceareas/{id}", Method.DELETE);
-            request.AddUrlSegment("id", id.ToString());
+            request.AddUrlSegment("id", id.ToString(CultureInfo.InvariantCulture));
 
-            await _client.ExecuteAsync(request, cancelToken);
+            await _client.ExecuteAsync(request, cancelToken).ConfigureAwait(false);
         }
 
         public Task<TM> GetMetadataAync<TM>(MetadataScope scope, int entityId, CancellationToken cancellationToken,

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Runtime.Remoting.Messaging;
@@ -33,59 +34,61 @@ namespace Cosential.Integrations.Compass.Contexts
         public async Task<Company> GetAsync(int companyId, CancellationToken cancelToken, int? parentId = null)
         {
             var request = _client.NewRequest("companies/{id}");
-            request.AddUrlSegment("id", companyId.ToString());
+            request.AddUrlSegment("id", companyId.ToString(CultureInfo.InvariantCulture));
 
-            var results = await _client.ExecuteAsync<Company>(request, cancelToken);
+            var results = await _client.ExecuteAsync<Company>(request, cancelToken).ConfigureAwait(false);
             return results.Data;
         }
 
         public async Task<Company> UpdateAsync(Company entity, CancellationToken cancel)
         {
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
             var request = _client.NewRequest("companies/{id}", Method.PUT);
             request.AddUrlSegment("id", entity.CompanyId.ToString());
-            request.AddBody(entity);
+            request.AddJsonBody(entity);
 
-            var results = await _client.ExecuteAsync<Company>(request, cancel);
+            var results = await _client.ExecuteAsync<Company>(request, cancel).ConfigureAwait(false);
             return results.Data;
         }
 
         public async Task DeleteAsync(int id, CancellationToken cancel, int? parentId = null)
         {
             var request = _client.NewRequest("companies/{id}", Method.DELETE);
-            request.AddUrlSegment("id", id.ToString());
+            request.AddUrlSegment("id", id.ToString(CultureInfo.InvariantCulture));
             
-            await _client.ExecuteAsync<Company>(request, cancel);
+            await _client.ExecuteAsync<Company>(request, cancel).ConfigureAwait(false);
         }
 
         public async Task<Company> CreateAsync(Company entity, CancellationToken cancel, int? parentId = null)
         {
-            var result = await CreateAsync(new[] { entity }, cancel);
+            var result = await CreateAsync(new[] { entity }, cancel).ConfigureAwait(false);
             return result.FirstOrDefault();
         }
 
         public async Task<IList<Company>> CreateAsync(IEnumerable<Company> entities, CancellationToken cancel)
         {
             var request = _client.NewRequest("companies", Method.POST);
-            request.AddBody(entities);
+            request.AddJsonBody(entities);
 
-            var results = await _client.ExecuteAsync<List<Company>>(request, cancel);
+            var results = await _client.ExecuteAsync<List<Company>>(request, cancel).ConfigureAwait(false);
             return results.Data;
         }
 
         public async Task<UpsertResult<Company>> UpsertAsync(Company entity, CancellationToken cancelToken,
             int? parentId = null)
         {
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
             var result = new UpsertResult<Company>();
 
             if (entity.CompanyId.HasValue && entity.CompanyId.Value > 0)
             {
                 result.Action = UpsertAction.Updated;
-                result.Data = await UpdateAsync(entity, cancelToken);
+                result.Data = await UpdateAsync(entity, cancelToken).ConfigureAwait(false);
             }
             else
             {
                 result.Action = UpsertAction.Created;
-                result.Data = await CreateAsync(entity, cancelToken);
+                result.Data = await CreateAsync(entity, cancelToken).ConfigureAwait(false);
             }
 
             return result;
@@ -94,8 +97,8 @@ namespace Cosential.Integrations.Compass.Contexts
         public List<Company> List(int from, int size, bool full = true)
         {
             var request = _client.NewRequest("companies");
-            request.AddQueryParameter("from", from.ToString());
-            request.AddQueryParameter("size", size.ToString());
+            request.AddQueryParameter("from", from.ToString(CultureInfo.InvariantCulture));
+            request.AddQueryParameter("size", size.ToString(CultureInfo.InvariantCulture));
             request.AddQueryParameter("full", full.ToString());
 
             var results = _client.Execute<List<Company>>(request);
@@ -122,7 +125,7 @@ namespace Cosential.Integrations.Compass.Contexts
             var request = _client.NewRequest("companies/changes");
             if (version != null) request.AddQueryParameter("version", Convert.ToBase64String(version));
             if (includeDeleted) request.AddQueryParameter("includeDeleted", true.ToString());
-            var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, cancel);
+            var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, cancel).ConfigureAwait(false);
             return results.Data;
         }
 
@@ -154,10 +157,10 @@ namespace Cosential.Integrations.Compass.Contexts
             int? parentId = null)
         {
             var request = _client.NewRequest("companies/{id}/metadata/{scope}");
-            request.AddUrlSegment("id", id.ToString());
+            request.AddUrlSegment("id", id.ToString(CultureInfo.InvariantCulture));
             request.AddUrlSegment("scope", scope.ToString());
 
-            var result = await _client.ExecuteAsync<TM>(request, cancellationToken);
+            var result = await _client.ExecuteAsync<TM>(request, cancellationToken).ConfigureAwait(false);
             return result.Data;
         }
 
@@ -165,11 +168,11 @@ namespace Cosential.Integrations.Compass.Contexts
             CancellationToken cancellationToken, int? parentId = null)
         {
             var request = _client.NewRequest("companies/{id}/metadata/{scope}", Method.PUT);
-            request.AddUrlSegment("id", entityId.ToString());
+            request.AddUrlSegment("id", entityId.ToString(CultureInfo.InvariantCulture));
             request.AddUrlSegment("scope", scope.ToString());
-            request.AddBody(data);
+            request.AddJsonBody(data);
 
-            var result = await _client.ExecuteAsync<TM>(request, cancellationToken);
+            var result = await _client.ExecuteAsync<TM>(request, cancellationToken).ConfigureAwait(false);
             return result.Data;
         }
 
