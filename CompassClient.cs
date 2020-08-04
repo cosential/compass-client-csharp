@@ -215,7 +215,7 @@ namespace Cosential.Integrations.Compass.Client
         {
             if (_log.IsDebugEnabled)
             {
-                _log.Debug(ResponseStatusCodeException.BuildCurl(response, _client));
+               // _log.Debug(ResponseStatusCodeException.BuildCurl(response, _client));
             }
 
             if (response.ErrorException != null || response.StatusCode == HttpStatusCode.InternalServerError)
