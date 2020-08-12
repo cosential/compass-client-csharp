@@ -7,7 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompassApiClient", "Compass
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompassApiClientTests", "CompassApiClientTests\CompassApiClientTests.csproj", "{71E6F95C-4E0D-43AB-8C23-DBA0A9F41FEB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCompassClient", "..\TestCompassClient\TestCompassClient.csproj", "{8D198C14-45D5-4D4B-BA68-565B6A4C36C1}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C3AB1D7B-66C8-4D3D-9671-CB525C25DC2E}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +26,6 @@ Global
 		{71E6F95C-4E0D-43AB-8C23-DBA0A9F41FEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71E6F95C-4E0D-43AB-8C23-DBA0A9F41FEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71E6F95C-4E0D-43AB-8C23-DBA0A9F41FEB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8D198C14-45D5-4D4B-BA68-565B6A4C36C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8D198C14-45D5-4D4B-BA68-565B6A4C36C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8D198C14-45D5-4D4B-BA68-565B6A4C36C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8D198C14-45D5-4D4B-BA68-565B6A4C36C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

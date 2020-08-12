@@ -129,7 +129,9 @@ namespace Cosential.Integrations.Compass.Client.Models
         public string OpportunityLongText5 { get; set; }
         public string approvalLevel { get; set; }
         public string approvalStatus { get; set; }
+        #pragma warning disable CA2227 // having a writable ICollection is not an issue for DTO objects
         public virtual ICollection<Office> Offices { get; set; }
+        #pragma warning restore CA2227
 
     }
 }

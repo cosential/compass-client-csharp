@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -32,9 +33,9 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<StaffTeam> GetAsync(int id, CancellationToken cancelToken, int? parentId = null)
         {
             var request = _client.NewRequest("opportunities/staffteam/{id}");
-            request.AddUrlSegment("id", id.ToString());
+            request.AddUrlSegment("id", id.ToString(CultureInfo.InvariantCulture));
 
-            var results = await _client.ExecuteAsync<StaffTeam>(request, cancelToken);
+            var results = await _client.ExecuteAsync<StaffTeam>(request, cancelToken).ConfigureAwait(false);
 
             return results.Data;
         }
@@ -42,18 +43,19 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<UpsertResult<StaffTeam>> UpsertAsync(StaffTeam entity, CancellationToken cancelToken,
             int? parentId = null)
         {
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
 
             var result = new UpsertResult<StaffTeam>();
 
             if (entity.OppStaffTeamID > 0)
             {
                 result.Action = UpsertAction.Updated;
-                result.Data = await UpdateAsync(entity, cancelToken);
+                result.Data = await UpdateAsync(entity, cancelToken).ConfigureAwait(false);
             }
             else
             {
                 result.Action = UpsertAction.Created;
-                result.Data = await CreateAsync(entity, cancelToken);
+                result.Data = await CreateAsync(entity, cancelToken).ConfigureAwait(false);
             }
 
             return result;
@@ -62,27 +64,28 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
         public async Task<StaffTeam> CreateAsync(StaffTeam entity, CancellationToken cancelToken, int? parentId = null)
         {
-            var staffTeams = await CreateAsync(new[] { entity }, cancelToken );
+            var staffTeams = await CreateAsync(new[] { entity }, cancelToken ).ConfigureAwait(false);
             return staffTeams.FirstOrDefault();
         }
 
         public async Task<List<StaffTeam>> CreateAsync(IEnumerable<StaffTeam> entities, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/staffteam", Method.POST);
-            request.AddBody(entities);
+            request.AddJsonBody(entities);
 
-            var response = await _client.ExecuteAsync<List<StaffTeam>>(request, cancelToken);
+            var response = await _client.ExecuteAsync<List<StaffTeam>>(request, cancelToken).ConfigureAwait(false);
 
             return response.Data;
         }
 
         public async Task<StaffTeam> UpdateAsync(StaffTeam entity, CancellationToken cancelToken)
         {
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
             var request = _client.NewRequest("opportunities/staffteam/{id}", Method.PUT);
-            request.AddUrlSegment("id", entity.OppStaffTeamID.ToString());
-            request.AddBody(entity);
+            request.AddUrlSegment("id", entity.OppStaffTeamID.ToString(CultureInfo.InvariantCulture));
+            request.AddJsonBody(entity);
 
-            var response = await _client.ExecuteAsync<StaffTeam>(request, cancelToken);
+            var response = await _client.ExecuteAsync<StaffTeam>(request, cancelToken).ConfigureAwait(false);
 
             return response.Data;
         }
@@ -90,9 +93,9 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task DeleteAsync(long id, CancellationToken cancelToken, int? parentId = null)
         {
             var request = _client.NewRequest("opportunities/staffteam/{id}", Method.DELETE);
-            request.AddUrlSegment("id", id.ToString());
+            request.AddUrlSegment("id", id.ToString(CultureInfo.InvariantCulture));
 
-            await _client.ExecuteAsync(request, cancelToken);
+            await _client.ExecuteAsync(request, cancelToken).ConfigureAwait(false);
         }
 
         #endregion
@@ -102,9 +105,9 @@ namespace Cosential.Integrations.Compass.Client.Contexts
         public async Task<List<StaffTeamRole>> GetStaffTeamRoleAsync(int StaffTeamId, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("opportunities/staffteam/staffteamroles/{id}");
-            request.AddUrlSegment("id", StaffTeamId.ToString());
+            request.AddUrlSegment("id", StaffTeamId.ToString(CultureInfo.InvariantCulture));
 
-            var result = await _client.ExecuteAsync<List<StaffTeamRole>>(request, cancelToken);
+            var result = await _client.ExecuteAsync<List<StaffTeamRole>>(request, cancelToken).ConfigureAwait(false);
             return result.Data ?? new List<StaffTeamRole>();
         }
 
@@ -126,7 +129,7 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             var request = _client.NewRequest("opportunities/staffteam/changes");
             request.AddQueryParameter("includeDeleted", true.ToString());
 
-            var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, token);
+            var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, token).ConfigureAwait(false);
 
             return results.Data;
         }

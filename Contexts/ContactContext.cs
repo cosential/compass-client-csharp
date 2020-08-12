@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -22,22 +23,22 @@ namespace Cosential.Integrations.Compass.Client
         public async Task<List<Contact>> CreateAsync(IEnumerable<Contact> entities, CancellationToken cancelToken)
         {
             var request = _client.NewRequest("contacts", Method.POST);
-            request.AddBody(entities);
-            var results = await _client.ExecuteAsync<List<Contact>>(request, cancelToken);
+            request.AddJsonBody(entities);
+            var results = await _client.ExecuteAsync<List<Contact>>(request, cancelToken).ConfigureAwait(false);
             return results.Data;
         }
 
         public async Task<Contact> CreateAsync(Contact entity, CancellationToken cancelToken, int? parentId = null)
         {
-            var entities = await CreateAsync(new[] {entity}, cancelToken);
+            var entities = await CreateAsync(new[] {entity}, cancelToken).ConfigureAwait(false);
             return entities.FirstOrDefault();
         }
 
         public async Task DeleteAsync(int id, CancellationToken cancelToken, int? parentId = null)
         {
             var request = _client.NewRequest("contacts/{id}", Method.DELETE);
-            request.AddUrlSegment("id", id.ToString());
-            await _client.ExecuteAsync(request, cancelToken);
+            request.AddUrlSegment("id", id.ToString(CultureInfo.InvariantCulture));
+            await _client.ExecuteAsync(request, cancelToken).ConfigureAwait(false);
         }
 
         #region CRUD
@@ -45,7 +46,7 @@ namespace Cosential.Integrations.Compass.Client
         public Contact Get(int id)
         {
             var request = _client.NewRequest("contacts/{id}");
-            request.AddUrlSegment("id", id.ToString());
+            request.AddUrlSegment("id", id.ToString(CultureInfo.InvariantCulture));
             var results = _client.Execute<Contact>(request);
 
             return results.Data;
@@ -55,8 +56,8 @@ namespace Cosential.Integrations.Compass.Client
         public async Task<Contact> GetAsync(int id, CancellationToken cancelToken, int? parentId = null)
         {
             var request = _client.NewRequest("contacts/{id}");
-            request.AddUrlSegment("id", id.ToString());
-            var results = await _client.ExecuteAsync<Contact>(request, cancelToken);
+            request.AddUrlSegment("id", id.ToString(CultureInfo.InvariantCulture));
+            var results = await _client.ExecuteAsync<Contact>(request, cancelToken).ConfigureAwait(false);
             return results.Data;
         }
 
@@ -65,7 +66,7 @@ namespace Cosential.Integrations.Compass.Client
             var request = _client.NewRequest("contacts/changes");
             request.AddQueryParameter("version", Convert.ToBase64String(rowVersion));
             if (includeDeleted) request.AddQueryParameter("includeDeleted", true.ToString());
-            var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, token);
+            var results = await _client.ExecuteAsync<List<ChangeEvent>>(request, token).ConfigureAwait(false);
             return results.Data;
         }
 
@@ -75,8 +76,8 @@ namespace Cosential.Integrations.Compass.Client
         {
             var request = _client.NewRequest("contacts");
 
-            request.AddQueryParameter("from", from.ToString());
-            request.AddQueryParameter("size", take.ToString());
+            request.AddQueryParameter("from", from.ToString(CultureInfo.InvariantCulture));
+            request.AddQueryParameter("size", take.ToString(CultureInfo.InvariantCulture));
             request.AddQueryParameter("full", fullRecord.ToString());
 
             var results = _client.Execute<List<Contact>>(request);
@@ -85,30 +86,32 @@ namespace Cosential.Integrations.Compass.Client
 
         public async Task<Contact> UpdateAsync(Contact entity, CancellationToken cancelToken)
         {
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
             if (!entity.ContactId.HasValue) throw new Exception("entity id is required for update");
 
             var request = _client.NewRequest("contacts/{id}", Method.PUT);
-            request.AddUrlSegment("id", entity.ContactId.Value.ToString());
-            request.AddBody(entity);
+            request.AddUrlSegment("id", entity.ContactId.Value.ToString(CultureInfo.InvariantCulture));
+            request.AddJsonBody(entity);
 
-            var results = await _client.ExecuteAsync<Contact>(request, cancelToken);
+            var results = await _client.ExecuteAsync<Contact>(request, cancelToken).ConfigureAwait(false);
             return results.Data;
         }
 
         public async Task<UpsertResult<Contact>> UpsertAsync(Contact entity, CancellationToken cancelToken,
             int? parentId = null)
         {
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
             var result = new UpsertResult<Contact>();
 
             if (entity.ContactId.HasValue)
             {
                 result.Action = UpsertAction.Updated;
-                result.Data = await UpdateAsync(entity, cancelToken);
+                result.Data = await UpdateAsync(entity, cancelToken).ConfigureAwait(false);
             }
             else
             {
                 result.Action = UpsertAction.Created;
-                result.Data = await CreateAsync(entity, cancelToken);
+                result.Data = await CreateAsync(entity, cancelToken).ConfigureAwait(false);
             }
 
             return result;
@@ -119,7 +122,7 @@ namespace Cosential.Integrations.Compass.Client
         public List<ContactAddress> GetAddresses(int id)
         {
             var request = _client.NewRequest("contacts/{id}/addresses");
-            request.AddUrlSegment("id", id.ToString());
+            request.AddUrlSegment("id", id.ToString(CultureInfo.InvariantCulture));
             request.AddQueryParameter("q", "DefaultInd:true");
 
             var result = _client.Execute<List<ContactAddress>>(request);
@@ -130,10 +133,10 @@ namespace Cosential.Integrations.Compass.Client
             int? parentId = null)
         {
             var request = _client.NewRequest("contacts/{id}/metadata/{scope}");
-            request.AddUrlSegment("id", id.ToString());
+            request.AddUrlSegment("id", id.ToString(CultureInfo.InvariantCulture));
             request.AddUrlSegment("scope", scope.ToString());
 
-            var result = await _client.ExecuteAsync<TM>(request, cancellationToken);
+            var result = await _client.ExecuteAsync<TM>(request, cancellationToken).ConfigureAwait(false);
             return result.Data;
         }
 
@@ -141,11 +144,11 @@ namespace Cosential.Integrations.Compass.Client
             CancellationToken cancellationToken, int? parentId = null)
         {
             var request = _client.NewRequest("contacts/{id}/metadata/{scope}", Method.PUT);
-            request.AddUrlSegment("id", entityId.ToString());
+            request.AddUrlSegment("id", entityId.ToString(CultureInfo.InvariantCulture));
             request.AddUrlSegment("scope", scope.ToString());
-            request.AddBody(data);
+            request.AddJsonBody(data);
 
-            var result = await _client.ExecuteAsync<TM>(request, cancellationToken);
+            var result = await _client.ExecuteAsync<TM>(request, cancellationToken).ConfigureAwait(false);
             return result.Data;
         }
     }

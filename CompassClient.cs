@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,11 +18,12 @@ namespace Cosential.Integrations.Compass.Client
 {
     public class CompassClient : IDisposable
     {
+        private bool _isDisposed;
         private readonly RestClient _client;
         private readonly ILog _log;
 
         public static readonly Uri DefaultUri = new Uri("https://compass.cosential.com/api");
-        public readonly JsonSerializer Json;
+        public JsonSerializer Json { get; }
 
         private PersonnelContext _personnelContext;
         public PersonnelContext PersonnelContext => _personnelContext ?? (_personnelContext = new PersonnelContext(this));
@@ -98,15 +99,15 @@ namespace Cosential.Integrations.Compass.Client
             _client.ClearHandlers();
 
             _client.AddDefaultHeader("x-compass-api-key", apiKey.ToString());
-            _client.AddDefaultHeader("x-compass-firm-id", firmId.ToString());
+            _client.AddDefaultHeader("x-compass-firm-id", firmId.ToString(CultureInfo.InvariantCulture));
             _client.AddDefaultHeader("Accept", "application/json");
             _client.AddDefaultHeader("x-compass-show-error", "true");
 
-            _client.AddHandler("application/json", Json);
-            _client.AddHandler("text/json", Json);
-            _client.AddHandler("text/x-json", Json);
-            _client.AddHandler("text/javascript", Json);
-            _client.AddHandler("*+json", Json);
+            _client.AddHandler("application/json", () => Json);
+            _client.AddHandler("text/json", () => Json);
+            _client.AddHandler("text/x-json", () => Json);
+            _client.AddHandler("text/javascript", () => Json);
+            _client.AddHandler("*+json", () => Json);
         }
 
         public bool IsAuth()
@@ -132,7 +133,7 @@ namespace Cosential.Integrations.Compass.Client
         {
             var request = NewRequest("{entityType}/{id}/{subitem}");
             request.AddUrlSegment("entityType", entityType.ToPlural());
-            request.AddUrlSegment("id", entityId.ToString());
+            request.AddUrlSegment("id", entityId.ToString(CultureInfo.InvariantCulture));
             request.AddUrlSegment("subitem", subitem);
 
             var results = Execute<List<T>>(request);
@@ -163,17 +164,30 @@ namespace Cosential.Integrations.Compass.Client
 
         public IRestResponse<T> Execute<T>(RestRequest request) where T : new()
         {
-            //var ts = DateTime.Now;
+            var attempts = 1;
             var res = _client.Execute<T>(request);
-            //_log.Debug($"Call took [{DateTime.Now.Subtract(ts)}] to [{res.ResponseUri}]");
+            while (!res.IsSuccessful && attempts < 5)
+            {
+                Thread.Sleep(100);
+                res = _client.Execute<T>(request);
+                attempts++;
+            }
             ValidateResponse(res);
             return res;
         }
 
         public async Task<IRestResponse<T>> ExecuteAsync<T>(RestRequest request, CancellationToken cancel)
         {
-            //var ts = DateTime.Now;
-            var res = await _client.ExecuteTaskAsync<T>(request, cancel);
+            var attempts = 1;
+            var res = await _client.ExecuteAsync<T>(request, cancel).ConfigureAwait(false);
+
+            while (!res.IsSuccessful && attempts < 5)
+            {
+                Thread.Sleep(100);
+                res = await _client.ExecuteAsync<T>(request, cancel).ConfigureAwait(false);
+                attempts++;
+            }
+
             //_log.Debug($"Call took [{DateTime.Now.Subtract(ts)}] to [{res.ResponseUri}]");
             ValidateResponse(res);
             return res;
@@ -182,7 +196,16 @@ namespace Cosential.Integrations.Compass.Client
         public async Task<IRestResponse> ExecuteAsync(RestRequest request, CancellationToken cancel)
         {
             //var ts = DateTime.Now;
-            var res = await _client.ExecuteTaskAsync(request, cancel);
+            var attempts = 1;
+            var res = await _client.ExecuteAsync(request, cancel).ConfigureAwait(false);
+            
+            while (!res.IsSuccessful && attempts < 5)
+            {
+                Thread.Sleep(100);
+                res = await _client.ExecuteAsync(request, cancel).ConfigureAwait(false);
+                attempts++;
+            }
+
             //_log.Debug($"Call took [{DateTime.Now.Subtract(ts)}] to [{res.ResponseUri}]");
             ValidateResponse(res);
             return res;
@@ -190,14 +213,32 @@ namespace Cosential.Integrations.Compass.Client
 
         private void ValidateResponse(IRestResponse response)
         {
-            _log.Debug(ResponseStatusCodeException.BuildCurl(response, _client));
+            if (_log.IsDebugEnabled)
+            {
+                _log.Debug(ResponseStatusCodeException.BuildCurl(response, _client));
+            }
+
             if (response.ErrorException != null || response.StatusCode == HttpStatusCode.InternalServerError)
                 throw new ResponseStatusCodeException(response, _client);
         }
 
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
+        // The bulk of the clean-up code is implemented in Dispose(bool)
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_isDisposed) return;
+
+            if (disposing)
+            {
+                // free managed resources
+            }
+
+            _isDisposed = true;
         }
     }
 }
