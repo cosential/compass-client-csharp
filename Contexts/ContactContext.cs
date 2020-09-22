@@ -1,9 +1,7 @@
 ﻿using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Cosential.Integrations.Compass.Client.Contexts;
@@ -93,8 +91,11 @@ namespace Cosential.Integrations.Compass.Client
             request.AddUrlSegment("id", entity.ContactId.Value.ToString(CultureInfo.InvariantCulture));
             request.AddJsonBody(entity);
 
-            var results = await _client.ExecuteAsync<Contact>(request, cancelToken).ConfigureAwait(false);
-            return results.Data;
+            // This looks like it was broken in Compass in this PR set https://bitbucket.org/cosential/compass/pull-requests/206#chg-Compass/Controllers/ContactsController.cs
+            // I wasn't able to lock down exactly when, but the defect has been around for at least a year, so changing the interface now will break a bunch of external
+            // users.  Therefore I'm changing the library to accomodate the defect (the contact is being sent in an array) since it is the new defacto API.
+            var results = await _client.ExecuteAsync<IList<Contact>>(request, cancelToken).ConfigureAwait(false);
+            return results.Data.FirstOrDefault();
         }
 
         public async Task<UpsertResult<Contact>> UpsertAsync(Contact entity, CancellationToken cancelToken,
