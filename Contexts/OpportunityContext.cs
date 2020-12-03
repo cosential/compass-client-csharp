@@ -262,6 +262,25 @@ namespace Cosential.Integrations.Compass.Client.Contexts
             
         }
 
+        public async Task RemoveFirmOrgFromOpportunity(FirmOrg firmOrg, int opportunityId, int id, CancellationToken cancel)
+        {
+            var request = _client.NewRequest("opportunities/{opportunityId}/{firmOrg}/{oid}", Method.DELETE);
+            request.AddUrlSegment("opportunityId", opportunityId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("firmOrg", firmOrg.ToString());
+            request.AddUrlSegment("oid", id.ToString(CultureInfo.InvariantCulture));
+            await _client.ExecuteAsync(request, cancel).ConfigureAwait(false);
+        }
+
+        public async Task AddFirmOrgToOpportunity(FirmOrg firmOrg, int opportunityId, List<int> idList, CancellationToken cancel)
+        {
+            var request = _client.NewRequest("opportunities/{id}/{firmOrg}", Method.POST);
+            request.AddUrlSegment("id", opportunityId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("firmOrg", firmOrg.ToString());
+            request.AddJsonBody(idList.Select(
+                i => new Dictionary<string, int> { { FirmOrgContext.GetPrimaryKeyName(firmOrg), i } }));
+            await _client.ExecuteAsync(request, cancel).ConfigureAwait(false);
+        }
+
         public async Task SetFirmOrgIdListAsync(FirmOrg firmorg, int opportunityId, List<int> idList, CancellationToken cancel)
         {
             var oldIdList = await GetFirmOrgIdListAsync(firmorg, opportunityId, cancel).ConfigureAwait(false);
@@ -270,22 +289,12 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
             foreach (var i in removeIdList)
             {
-                var request = _client.NewRequest("opportunities/{id}/{firmorg}/{oid}", Method.DELETE);
-                request.AddUrlSegment("id", opportunityId.ToString(CultureInfo.InvariantCulture));
-                request.AddUrlSegment("firmorg", firmorg.ToString());
-                request.AddUrlSegment("oid", i.ToString(CultureInfo.InvariantCulture));
-                await _client.ExecuteAsync(request, cancel).ConfigureAwait(false);
+                await RemoveFirmOrgFromOpportunity(firmorg, opportunityId, i, cancel).ConfigureAwait(false);
             }
 
             if (addIdList.Any())
             {
-                var request = _client.NewRequest("opportunities/{id}/{firmorg}", Method.POST);
-                request.AddUrlSegment("id", opportunityId.ToString(CultureInfo.InvariantCulture));
-                request.AddUrlSegment("firmorg", firmorg.ToString());
-                request.AddJsonBody(addIdList.Select(
-                    i => new Dictionary<string, int> {{ FirmOrgContext.GetPrimaryKeyName(firmorg), i}}));
-
-                await _client.ExecuteAsync(request, cancel).ConfigureAwait(false);
+                await AddFirmOrgToOpportunity(firmorg, opportunityId, addIdList, cancel).ConfigureAwait(false);
             }
         }
 
@@ -339,6 +348,19 @@ namespace Cosential.Integrations.Compass.Client.Contexts
 
             var result = await _client.ExecuteAsync<List<StaffTeam>>(request, cancelToken).ConfigureAwait(false);
             return result.Data ?? new List<StaffTeam>();
+        }
+
+        public async Task<StaffTeam> UpdateStaffTeamAsync(int opportunityId, StaffTeam staffTeam, CancellationToken cancellationToken)
+        {
+            if (staffTeam == null) throw new ArgumentNullException(nameof(staffTeam));
+
+            var request = _client.NewRequest("opportunities/{id}/staffteam/{oppStaffTeamID}", Method.PUT);
+            request.AddUrlSegment("id", opportunityId.ToString(CultureInfo.InvariantCulture));
+            request.AddUrlSegment("oppStaffTeamID", staffTeam.OppStaffTeamID.ToString(CultureInfo.InvariantCulture));
+            request.AddJsonBody(staffTeam);
+
+            var result = await _client.ExecuteAsync<StaffTeam>(request, cancellationToken).ConfigureAwait(false);
+            return result.Data ?? new StaffTeam();
         }
 
         public async Task RemoveStaffTeamAsync(int opportunityId, long staffTeamId, CancellationToken cancelToken)
